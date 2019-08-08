@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Анна Беккаревич](https://up.htmlacademy.ru/ecmascript/9/user/627089).
-* Наставник: `Неизвестно`.
+* Наставник: [Артём Рудов](https://up.htmlacademy.ru/ecmascript/9/user/345377).
 
 ---
 
