@@ -10,9 +10,15 @@ const getUserTemplate = (user) => `
   </section>
 `;
 
-const user = {
-  rating: `Movie Buff`,
-  url: `images/bitmap@2x.png`
-};
+const users = [
+  {
+    rating: `Movie Buff`,
+    url: `images/bitmap@2x.png`
+  },
+  {
+    rating: `Movie Buff 2`,
+    url: `images/bitmap@2x.png`
+  }
+];
 
-export {getUserTemplate, user};
+export {getUserTemplate, users};
