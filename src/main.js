@@ -1,8 +1,8 @@
 import {getSearchTemplate} from "./components/search";
 import {getUserTemplate, users} from "./components/users";
 import {getMainNavTemplate, getSortTemplate, navList, sortList} from "./components/menu";
-import {getFilmsTemplate, films} from "./components/films";
-// import {getFilmDetails} from "./components/details";
+import {getFilmsTemplate} from "./components/films";
+import {films} from "./components/data";
 
 /**
  * Renders component inside container
@@ -21,4 +21,3 @@ renderComponent(headerContainer, getUserTemplate(users[0]));
 renderComponent(mainContainer, getMainNavTemplate(navList));
 renderComponent(mainContainer, getSortTemplate(sortList));
 renderComponent(mainContainer, getFilmsTemplate(films));
-// renderComponent(mainContainer, getFilmDetails(films[0]));
