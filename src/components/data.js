@@ -1,7 +1,8 @@
 import {getRandSelection, getRandomIntInclusive} from "./util";
 import {getCountByFlag} from "./menu";
 
-const FILMS_COUNT = 15;
+const FILMS_COUNT = 16;
+const FILMS_PER_PAGE = 5;
 const IMG_PATH = `./images/posters/`;
 const TITLES = [
   `The Dance of Life`,
@@ -214,7 +215,26 @@ const getSortTypes = (names) => {
 };
 
 const films = new Array(FILMS_COUNT).fill({}).map(getFilm);
+
+const pages = [];
+
+/**
+ * Groups films into pages
+ * @param {Array} filmsData
+ * @return {[]}
+ */
+const groupFilmsIntoPages = (filmsData) => {
+  const filmsCopy = filmsData.slice();
+  while (filmsCopy.length > 0) {
+    let page = filmsCopy.splice(0, FILMS_PER_PAGE);
+    pages.push(page);
+  }
+  return pages;
+};
+
+groupFilmsIntoPages(films);
+
 const filters = getFilters(FILTER_NAMES);
 const sortList = getSortTypes(SORT_NAMES);
 
-export {films, filters, sortList, comments, USER_TITLES, FILMS_COUNT_BY_USER};
+export {films, pages, filters, sortList, comments, USER_TITLES, FILMS_COUNT_BY_USER, FILMS_COUNT};

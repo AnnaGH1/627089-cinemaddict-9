@@ -26,19 +26,35 @@ const getFilmTemplate = (film) => `
 `;
 
 /**
- * Gets filmsData template
- * @param {Array} filmsData
+ * Gets films list template
  * @return {string}
  */
-const getFilmsTemplate = (filmsData) => `
+const getFilmsListTemplate = () => `
   <section class="films">
     <section class="films-list">
       <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
       <div class="films-list__container">
-      ${filmsData.map(getFilmTemplate).join(``)}
       </div>
       ${getShowMoreTemplate()}
     </section>
+  </section>
+`;
+
+/**
+ * Gets films items template
+ * @param {Array} filmsData
+ * @return {string}
+ */
+const getFilmsItemsTemplate = (filmsData) => `
+  ${filmsData.map(getFilmTemplate).join(``)}
+`;
+
+/**
+ * Gets featured films template
+ * @param {Array} filmsData
+ * @return {string}
+ */
+const getFeaturedFilmsTemplate = (filmsData) => `
     <section class="films-list--extra">
       <h2 class="films-list__title">Top rated</h2>
 
@@ -57,4 +73,4 @@ const getFilmsTemplate = (filmsData) => `
     </section>
 `;
 
-export {getFilmsTemplate};
+export {getFilmsListTemplate, getFilmsItemsTemplate, getFeaturedFilmsTemplate};
