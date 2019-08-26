@@ -12,7 +12,7 @@ const getFilmTemplate = (film) => `
     <p class="film-card__info">
       <span class="film-card__year">${film.year}</span>
       <span class="film-card__duration">${film.duration}</span>
-      <span class="film-card__genre">${film.genre}</span>
+      <span class="film-card__genre">${Array.from(film.genres)[0]}</span>
     </p>
     <img src="${film.url}" alt="" class="film-card__poster">
     <p class="film-card__description">${film.description}</p>

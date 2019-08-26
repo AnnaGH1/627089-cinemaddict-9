@@ -44,54 +44,13 @@ const getSortTemplate = (list) => `
   </ul>
 `;
 
-const navList = [
-  {
-    name: `All movies`,
-    isActive: true,
-    count: ``,
-    url: `#all`
-  },
-  {
-    name: `Watchlist`,
-    isActive: false,
-    count: 13,
-    url: `#watchlist`
-  },
-  {
-    name: `History`,
-    isActive: false,
-    count: 4,
-    url: `#history`
-  },
-  {
-    name: `Favorites`,
-    isActive: false,
-    count: 8,
-    url: `#favorites`
-  },
-  {
-    name: `Stats`,
-    isActive: false,
-    count: ``,
-    url: `stats`
-  }
-];
-const sortList = [
-  {
-    name: `default`,
-    isActive: true,
-    url: `#`
-  },
-  {
-    name: `date`,
-    isActive: false,
-    url: `#`
-  },
-  {
-    name: `rating`,
-    isActive: false,
-    url: `#`
-  },
-];
+/**
+ * Counts films by flag
+ * @param {Array} filmsList
+ * @param {string} flag
+ * @return {number}
+ */
+const getCountByFlag = (filmsList, flag) => filmsList.filter((el) => el[flag]).length;
 
-export {getMainNavTemplate, getSortTemplate, navList, sortList};
+
+export {getMainNavTemplate, getSortTemplate, getCountByFlag};

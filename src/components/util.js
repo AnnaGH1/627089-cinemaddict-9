@@ -4,7 +4,7 @@
  * @param {number} count
  * @return {Array}
  */
-const getRandEls = (arr, count) => {
+const getRandSelection = (arr, count) => {
   const selection = [];
   while (selection.length < count) {
     selection.push(arr[Math.floor(Math.random() * arr.length)]);
@@ -24,4 +24,4 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export {getRandEls, getRandomIntInclusive};
+export {getRandSelection, getRandomIntInclusive};

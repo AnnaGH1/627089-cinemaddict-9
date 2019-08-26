@@ -1,8 +1,8 @@
+import {films, filters, sortList, USER_TITLES, FILMS_COUNT_BY_USER} from "./components/data";
 import {getSearchTemplate} from "./components/search";
-import {getUserTemplate, users} from "./components/users";
-import {getMainNavTemplate, getSortTemplate, navList, sortList} from "./components/menu";
+import {getUserTemplate, defineUser} from "./components/users";
+import {getMainNavTemplate, getSortTemplate} from "./components/menu";
 import {getFilmsTemplate} from "./components/films";
-import {films} from "./components/data";
 
 /**
  * Renders component inside container
@@ -17,7 +17,7 @@ const headerContainer = document.querySelector(`.header`);
 const mainContainer = document.querySelector(`.main`);
 
 renderComponent(headerContainer, getSearchTemplate());
-renderComponent(headerContainer, getUserTemplate(users[0]));
-renderComponent(mainContainer, getMainNavTemplate(navList));
+renderComponent(headerContainer, getUserTemplate(defineUser(FILMS_COUNT_BY_USER, USER_TITLES)));
+renderComponent(mainContainer, getMainNavTemplate(filters));
 renderComponent(mainContainer, getSortTemplate(sortList));
 renderComponent(mainContainer, getFilmsTemplate(films));
