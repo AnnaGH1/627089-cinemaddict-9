@@ -1,4 +1,4 @@
-import {films, pages, filters, sortList, userTitles, FilmsCount} from "./components/data";
+import {films, filmsTopRated, filmsMostCommented, filters, sortList, userTitles, FilmsCount, PromoCategory} from "./components/data";
 import {getSearchTemplate} from "./components/search";
 import {getUserTemplate, defineUser} from "./components/users";
 import {getMainNavTemplate, getSortTemplate} from "./components/menu";
@@ -27,22 +27,24 @@ renderComponent(mainContainer, getFilmsListTemplate());
 const filmsContainerOuter = mainContainer.querySelector(`.films`);
 const filmsContainer = mainContainer.querySelector(`.films-list`);
 const filmsContainerInner = mainContainer.querySelector(`.films-list__container`);
-renderComponent(filmsContainerInner, getFilmsItemsTemplate(pages[0]));
-renderComponent(filmsContainerOuter, getFeaturedFilmsTemplate(films));
+let filmPageStart = 0;
+let filmPageEnd = FilmsCount.PER_PAGE;
+renderComponent(filmsContainerInner, getFilmsItemsTemplate(films.slice(filmPageStart, filmPageEnd)));
+renderComponent(filmsContainerOuter, getFeaturedFilmsTemplate(filmsTopRated, PromoCategory.RATING));
+renderComponent(filmsContainerOuter, getFeaturedFilmsTemplate(filmsMostCommented, PromoCategory.COMMENTS));
 
 // Footer
 const filmsAvailable = document.querySelector(`.footer__statistics`).querySelector(`p`);
 filmsAvailable.textContent = `${FilmsCount.TOTAL} movies inside`;
 
 // Load more films
-let pageRendered = 0;
-const lastPageToRender = pages.length - 1;
-
 const loadMore = document.querySelector(`.films-list__show-more`);
 loadMore.addEventListener(`click`, () => {
-  pageRendered++;
-  if (pageRendered === lastPageToRender) {
+  filmPageStart += FilmsCount.PER_PAGE;
+  filmPageEnd += FilmsCount.PER_PAGE;
+
+  if (filmPageEnd >= films.length) {
     filmsContainer.removeChild(loadMore);
   }
-  renderComponent(filmsContainerInner, getFilmsItemsTemplate(pages[pageRendered]));
+  renderComponent(filmsContainerInner, getFilmsItemsTemplate(films.slice(filmPageStart, filmPageEnd)));
 });

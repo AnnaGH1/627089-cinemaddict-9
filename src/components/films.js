@@ -16,7 +16,7 @@ const getFilmTemplate = (film) => `
     </p>
     <img src="${film.url}" alt="" class="film-card__poster">
     <p class="film-card__description">${film.description}</p>
-    <a class="film-card__comments">${film.comments} comments</a>
+    <a class="film-card__comments">${film.comments} ${film.comments === 1 ? `comment` : `comments`}</a>
         <form class="film-card__controls">
             <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${film.isToWatchlist ? `film-card__controls-item--active` : ``}">Add to watchlist</button>
             <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${film.isWatched ? `film-card__controls-item--active` : ``}">Mark as watched</button>
@@ -52,23 +52,15 @@ const getFilmsItemsTemplate = (filmsData) => `
 /**
  * Gets featured films template
  * @param {Array} filmsData
+ * @param {string} title
  * @return {string}
  */
-const getFeaturedFilmsTemplate = (filmsData) => `
+const getFeaturedFilmsTemplate = (filmsData, title) => `
     <section class="films-list--extra">
-      <h2 class="films-list__title">Top rated</h2>
+      <h2 class="films-list__title">${title}</h2>
 
       <div class="films-list__container">
-        ${getFilmTemplate(filmsData[0])}
-        ${getFilmTemplate(filmsData[2])}
-      </div>
-    </section>
-    <section class="films-list--extra">
-      <h2 class="films-list__title">Most commented</h2>
-
-      <div class="films-list__container">
-        ${getFilmTemplate(filmsData[3])}
-        ${getFilmTemplate(filmsData[4])}
+        ${filmsData.map(getFilmTemplate).join(``)}
       </div>
     </section>
 `;

@@ -87,17 +87,34 @@ const FilmsData = {
     `Mary Beth Hughes`,
   ],
 };
-const IMG_PATH = `./images/posters/`;
 const FilmsCount = {
   TOTAL: 16,
   PER_PAGE: 5,
   BY_USER: 1,
+  FEATURED: 2,
 };
 const Rating = {
   MIN: 1,
   MAX: 5,
 };
-const FEATURED_ITEMS_MAX = 3;
+const Year = {
+  MIN: 1920,
+  MAX: 2018,
+};
+const Duration = {
+  MIN: 20,
+  MAX: 180,
+};
+const CommentsCount = {
+  MIN: 0,
+  MAX: 10,
+};
+const PromoCategory = {
+  RATING: `Top rated`,
+  COMMENTS: `Most commented`,
+};
+const IMG_PATH = `./images/posters/`;
+const CONTENT_ITEMS_MAX = 3;
 const userTitles = {
   novice: {
     min: 1,
@@ -147,16 +164,16 @@ const getFilm = () => (
     title: FilmsData.TITLES[Math.floor(Math.random() * FilmsData.TITLES.length)],
     category: FilmsData.CATEGORIES[getRandomIntInclusive(0, FilmsData.CATEGORIES.length - 1)],
     rating: getRandomIntInclusive(Rating.MIN, Rating.MAX),
-    year: getRandomIntInclusive(1920, 2018),
-    duration: `${getRandomIntInclusive(60, 120)} min`,
+    year: getRandomIntInclusive(Year.MIN, Year.MAX),
+    duration: `${getRandomIntInclusive(Duration.MIN, Duration.MAX)} min`,
     country: FilmsData.COUNTRIES[getRandomIntInclusive(0, FilmsData.COUNTRIES.length - 1)],
     director: FilmsData.DIRECTORS[getRandomIntInclusive(0, FilmsData.DIRECTORS.length - 1)],
-    writers: new Set(getRandSelection(FilmsData.WRITERS, FEATURED_ITEMS_MAX)),
-    actors: new Set(getRandSelection(FilmsData.ACTORS, FEATURED_ITEMS_MAX)),
-    genres: new Set(getRandSelection(FilmsData.GENRES, FEATURED_ITEMS_MAX)),
+    writers: new Set(getRandSelection(FilmsData.WRITERS, CONTENT_ITEMS_MAX)),
+    actors: new Set(getRandSelection(FilmsData.ACTORS, CONTENT_ITEMS_MAX)),
+    genres: new Set(getRandSelection(FilmsData.GENRES, CONTENT_ITEMS_MAX)),
     url: `${IMG_PATH}${FilmsData.IMAGES[Math.floor(Math.random() * FilmsData.IMAGES.length)]}`,
-    description: getRandSelection(FilmsData.DESCRIPTION, FEATURED_ITEMS_MAX).join(` `).toString(),
-    comments: getRandomIntInclusive(1, 5),
+    description: getRandSelection(FilmsData.DESCRIPTION, CONTENT_ITEMS_MAX).join(` `).toString(),
+    comments: getRandomIntInclusive(CommentsCount.MIN, CommentsCount.MAX),
     isToWatchlist: Boolean(Math.round(Math.random())),
     isWatched: Boolean(Math.round(Math.random())),
     isFavorite: Boolean(Math.round(Math.random())),
@@ -210,7 +227,7 @@ const getFilters = (names) => {
 /**
  * Gets sort types data
  * @param {Array} names
- * @return {[]}
+ * @return {Array}
  */
 const getSortTypes = (names) => {
   const sortTypes = [];
@@ -225,26 +242,10 @@ const getSortTypes = (names) => {
 };
 
 const films = new Array(FilmsCount.TOTAL).fill({}).map(getFilm);
-
-const pages = [];
-
-/**
- * Groups films into pages
- * @param {Array} filmsData
- * @return {[]}
- */
-const groupFilmsIntoPages = (filmsData) => {
-  const filmsCopy = filmsData.slice();
-  while (filmsCopy.length > 0) {
-    let page = filmsCopy.splice(0, FilmsCount.PER_PAGE);
-    pages.push(page);
-  }
-  return pages;
-};
-
-groupFilmsIntoPages(films);
+const filmsTopRated = films.slice(0, FilmsCount.FEATURED);
+const filmsMostCommented = films.slice(0, FilmsCount.FEATURED);
 
 const filters = getFilters(Control.FILTERS);
 const sortList = getSortTypes(Control.SORT_TYPES);
 
-export {films, pages, filters, sortList, comments, userTitles, FilmsCount};
+export {films, filmsTopRated, filmsMostCommented, filters, sortList, comments, userTitles, FilmsCount, PromoCategory};

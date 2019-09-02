@@ -5,9 +5,7 @@ import {comments} from "./data";
  * @param {string} genre
  * @return {string}
  */
-const getGenreTemplate = (genre) => `
-  <span class="film-details__genre">${genre}</span>
-`;
+const getGenreTemplate = (genre) => `<span class="film-details__genre">${genre}</span>`;
 
 /**
  * Gets comment template
