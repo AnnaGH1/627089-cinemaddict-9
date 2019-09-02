@@ -1,80 +1,116 @@
 import {getRandSelection, getRandomIntInclusive} from "./util";
 import {getCountByFlag} from "./menu";
 
-const FILMS_COUNT = 16;
-const FILMS_PER_PAGE = 5;
+const Control = {
+  FILTERS: [
+    `All movies`,
+    `Watchlist`,
+    `History`,
+    `Favorites`,
+    `Stats`,
+  ],
+  SORT_TYPES: [
+    `default`,
+    `date`,
+    `rating`,
+  ],
+};
+const FilmsData = {
+  TITLES: [
+    `The Dance of Life`,
+    `Sagebrush Trail`,
+    `The Man with the Golden Arm`,
+    `Santa Claus Conquers the Martians`,
+    `Popeye the Sailor Meets Sindbad the Sailor`,
+  ],
+  IMAGES: [
+    `the-dance-of-life.jpg`,
+    `sagebrush-trail.jpg`,
+    `the-man-with-the-golden-arm.jpg`,
+    `santa-claus-conquers-the-martians.jpg`,
+    `popeye-meets-sinbad.png`,
+    `made-for-each-other.png`,
+    `the-great-flamarion.jpg`,
+  ],
+  GENRES: [
+    `Musical`,
+    `Western`,
+    `Drama`,
+    `Comedy`,
+    `Cartoon`,
+    `Film-Noir`,
+    `Mystery`,
+  ],
+  DESCRIPTION: [
+    `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+    `Cras aliquet varius magna, non porta ligula feugiat eget.`,
+    `Fusce tristique felis at fermentum pharetra.`,
+    `Aliquam id orci ut lectus varius viverra.`,
+    `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
+    `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
+    `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
+    `Sed sed nisi sed augue convallis suscipit in sed felis.`,
+    `Aliquam erat volutpat.`,
+    `Nunc fermentum tortor ac porta dapibus.`,
+    `In rutrum ac purus sit amet tempus.`,
+  ],
+  CATEGORIES: [
+    `G`,
+    `PG`,
+    `PG-13`,
+    `R`,
+    `18+`,
+  ],
+  COUNTRIES: [
+    `USA`,
+    `Russia`,
+    `Belgium`,
+    `India`,
+    `Australia`,
+  ],
+  DIRECTORS: [
+    `Anthony Mann`,
+    `Heinz Herald`,
+    `Richard Weil`,
+    `Mary Beth Hughes`,
+  ],
+  WRITERS: [
+    `Anthony Mann`,
+    `Heinz Herald`,
+    `Richard Weil`,
+    `Mary Beth Hughes`,
+  ],
+  ACTORS: [
+    `Anthony Mann`,
+    `Heinz Herald`,
+    `Richard Weil`,
+    `Mary Beth Hughes`,
+  ],
+};
 const IMG_PATH = `./images/posters/`;
-const TITLES = [
-  `The Dance of Life`,
-  `Sagebrush Trail`,
-  `The Man with the Golden Arm`,
-  `Santa Claus Conquers the Martians`,
-  `Popeye the Sailor Meets Sindbad the Sailor`,
-];
-const IMAGES = [
-  `the-dance-of-life.jpg`,
-  `sagebrush-trail.jpg`,
-  `the-man-with-the-golden-arm.jpg`,
-  `santa-claus-conquers-the-martians.jpg`,
-  `popeye-meets-sinbad.png`,
-  `made-for-each-other.png`,
-  `the-great-flamarion.jpg`,
-];
-const GENRES = [
-  `Musical`,
-  `Western`,
-  `Drama`,
-  `Comedy`,
-  `Cartoon`,
-  `Film-Noir`,
-  `Mystery`,
-];
-const ITEMS_MAX = 3;
-const DESCRIPTION = [
-  `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-  `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-  `Fusce tristique felis at fermentum pharetra.`,
-  `Aliquam id orci ut lectus varius viverra.`,
-  `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
-  `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
-  `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
-  `Sed sed nisi sed augue convallis suscipit in sed felis.`,
-  `Aliquam erat volutpat.`,
-  `Nunc fermentum tortor ac porta dapibus.`,
-  `In rutrum ac purus sit amet tempus.`,
-];
-const CATEGORY = [
-  `G`,
-  `PG`,
-  `PG-13`,
-  `R`,
-  `18+`,
-];
-const COUNTRIES = [
-  `USA`,
-  `Russia`,
-  `Belgium`,
-  `India`,
-  `Australia`,
-];
-const DIRECTORS = [
-  `Anthony Mann`,
-  `Heinz Herald`,
-  `Richard Weil`,
-  `Mary Beth Hughes`,
-];
-const WRITERS = [
-  `Anthony Mann`,
-  `Heinz Herald`,
-  `Richard Weil`,
-  `Mary Beth Hughes`,
-];
-const ACTORS = [
-  `Anthony Mann`,
-  `Heinz Herald`,
-  `Richard Weil`,
-  `Mary Beth Hughes`,
-];
+const FilmsCount = {
+  TOTAL: 16,
+  PER_PAGE: 5,
+  BY_USER: 1,
+};
+const Rating = {
+  MIN: 1,
+  MAX: 5,
+};
+const FEATURED_ITEMS_MAX = 3;
+const userTitles = {
+  novice: {
+    min: 1,
+    max: 10,
+  },
+  fan: {
+    min: 11,
+    max: 20,
+  },
+  movieBuff: {
+    min: 21,
+  },
+};
 const comments = [
   {
     author: `Tim Macoveev`,
@@ -101,32 +137,6 @@ const comments = [
     time: `today`,
   },
 ];
-const FILTER_NAMES = [
-  `All movies`,
-  `Watchlist`,
-  `History`,
-  `Favorites`,
-  `Stats`,
-];
-const SORT_NAMES = [
-  `default`,
-  `date`,
-  `rating`,
-];
-const USER_TITLES = {
-  novice: {
-    min: 1,
-    max: 10,
-  },
-  fan: {
-    min: 11,
-    max: 20,
-  },
-  movieBuff: {
-    min: 21,
-  },
-};
-const FILMS_COUNT_BY_USER = 1;
 
 /**
  * Gets random film
@@ -134,18 +144,18 @@ const FILMS_COUNT_BY_USER = 1;
  */
 const getFilm = () => (
   {
-    title: TITLES[Math.floor(Math.random() * TITLES.length)],
-    category: CATEGORY[getRandomIntInclusive(0, CATEGORY.length - 1)],
-    rating: getRandomIntInclusive(1, 5),
+    title: FilmsData.TITLES[Math.floor(Math.random() * FilmsData.TITLES.length)],
+    category: FilmsData.CATEGORIES[getRandomIntInclusive(0, FilmsData.CATEGORIES.length - 1)],
+    rating: getRandomIntInclusive(Rating.MIN, Rating.MAX),
     year: getRandomIntInclusive(1920, 2018),
     duration: `${getRandomIntInclusive(60, 120)} min`,
-    country: COUNTRIES[getRandomIntInclusive(0, COUNTRIES.length - 1)],
-    director: DIRECTORS[getRandomIntInclusive(0, DIRECTORS.length - 1)],
-    writers: new Set(getRandSelection(WRITERS, ITEMS_MAX)),
-    actors: new Set(getRandSelection(ACTORS, ITEMS_MAX)),
-    genres: new Set(getRandSelection(GENRES, ITEMS_MAX)),
-    url: `${IMG_PATH}${IMAGES[Math.floor(Math.random() * IMAGES.length)]}`,
-    description: getRandSelection(DESCRIPTION, 3).join(` `).toString(),
+    country: FilmsData.COUNTRIES[getRandomIntInclusive(0, FilmsData.COUNTRIES.length - 1)],
+    director: FilmsData.DIRECTORS[getRandomIntInclusive(0, FilmsData.DIRECTORS.length - 1)],
+    writers: new Set(getRandSelection(FilmsData.WRITERS, FEATURED_ITEMS_MAX)),
+    actors: new Set(getRandSelection(FilmsData.ACTORS, FEATURED_ITEMS_MAX)),
+    genres: new Set(getRandSelection(FilmsData.GENRES, FEATURED_ITEMS_MAX)),
+    url: `${IMG_PATH}${FilmsData.IMAGES[Math.floor(Math.random() * FilmsData.IMAGES.length)]}`,
+    description: getRandSelection(FilmsData.DESCRIPTION, FEATURED_ITEMS_MAX).join(` `).toString(),
     comments: getRandomIntInclusive(1, 5),
     isToWatchlist: Boolean(Math.round(Math.random())),
     isWatched: Boolean(Math.round(Math.random())),
@@ -214,7 +224,7 @@ const getSortTypes = (names) => {
   return sortTypes;
 };
 
-const films = new Array(FILMS_COUNT).fill({}).map(getFilm);
+const films = new Array(FilmsCount.TOTAL).fill({}).map(getFilm);
 
 const pages = [];
 
@@ -226,7 +236,7 @@ const pages = [];
 const groupFilmsIntoPages = (filmsData) => {
   const filmsCopy = filmsData.slice();
   while (filmsCopy.length > 0) {
-    let page = filmsCopy.splice(0, FILMS_PER_PAGE);
+    let page = filmsCopy.splice(0, FilmsCount.PER_PAGE);
     pages.push(page);
   }
   return pages;
@@ -234,7 +244,7 @@ const groupFilmsIntoPages = (filmsData) => {
 
 groupFilmsIntoPages(films);
 
-const filters = getFilters(FILTER_NAMES);
-const sortList = getSortTypes(SORT_NAMES);
+const filters = getFilters(Control.FILTERS);
+const sortList = getSortTypes(Control.SORT_TYPES);
 
-export {films, pages, filters, sortList, comments, USER_TITLES, FILMS_COUNT_BY_USER, FILMS_COUNT};
+export {films, pages, filters, sortList, comments, userTitles, FilmsCount};

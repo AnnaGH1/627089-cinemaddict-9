@@ -1,4 +1,4 @@
-import {films, pages, filters, sortList, USER_TITLES, FILMS_COUNT_BY_USER, FILMS_COUNT} from "./components/data";
+import {films, pages, filters, sortList, userTitles, FilmsCount} from "./components/data";
 import {getSearchTemplate} from "./components/search";
 import {getUserTemplate, defineUser} from "./components/users";
 import {getMainNavTemplate, getSortTemplate} from "./components/menu";
@@ -18,7 +18,7 @@ const mainContainer = document.querySelector(`.main`);
 
 // Controls
 renderComponent(headerContainer, getSearchTemplate());
-renderComponent(headerContainer, getUserTemplate(defineUser(FILMS_COUNT_BY_USER, USER_TITLES)));
+renderComponent(headerContainer, getUserTemplate(defineUser(FilmsCount.BY_USER, userTitles)));
 renderComponent(mainContainer, getMainNavTemplate(filters));
 renderComponent(mainContainer, getSortTemplate(sortList));
 
@@ -32,7 +32,7 @@ renderComponent(filmsContainerOuter, getFeaturedFilmsTemplate(films));
 
 // Footer
 const filmsAvailable = document.querySelector(`.footer__statistics`).querySelector(`p`);
-filmsAvailable.textContent = `${FILMS_COUNT} movies inside`;
+filmsAvailable.textContent = `${FilmsCount.TOTAL} movies inside`;
 
 // Load more films
 let pageRendered = 0;
