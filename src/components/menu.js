@@ -44,13 +44,4 @@ const getSortTemplate = (list) => `
   </ul>
 `;
 
-/**
- * Counts films by flag
- * @param {Array} filmsList
- * @param {string} flag
- * @return {number}
- */
-const getCountByFlag = (filmsList, flag) => filmsList.filter((el) => el[flag]).length;
-
-
-export {getMainNavTemplate, getSortTemplate, getCountByFlag};
+export {getMainNavTemplate, getSortTemplate};
