@@ -1,24 +1,34 @@
 /**
  * Gets user template
- * @param {Object} user
+ * @param {Object} userData
  * @return {string}
  */
-const getUserTemplate = (user) => `
+const getUserTemplate = (userData) => `
   <section class="header__profile profile">
-    <p class="profile__rating">${user.rating}</p>
-    <img class="profile__avatar" src="${user.url}" alt="Avatar" width="35" height="35">
+    <p class="profile__rating">${userData.title}</p>
+    <img class="profile__avatar" src="${userData.url}" alt="Avatar" width="35" height="35">
   </section>
 `;
 
-const users = [
-  {
-    rating: `Movie Buff`,
-    url: `images/bitmap@2x.png`
-  },
-  {
-    rating: `Movie Buff 2`,
-    url: `images/bitmap@2x.png`
+/**
+ * Assigns title to user based on a number of films watched
+ * @param {number} filmsCountData
+ * @param {Object} titlesData
+ * @return {Object}
+ */
+const defineUser = (filmsCountData, titlesData) => {
+  const user = {};
+  user.url = `images/bitmap@2x.png`;
+  if (filmsCountData > titlesData.movieBuff.min) {
+    user.title = `Movie Buff`;
+  } else if (filmsCountData >= titlesData.fan.min && filmsCountData <= titlesData.fan.max) {
+    user.title = `Fan`;
+  } else if (filmsCountData >= titlesData.novice.min && filmsCountData <= titlesData.novice.max) {
+    user.title = `Novice`;
+  } else {
+    user.title = ``;
   }
-];
+  return user;
+};
 
-export {getUserTemplate, users};
+export {getUserTemplate, defineUser};

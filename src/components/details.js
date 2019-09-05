@@ -1,3 +1,33 @@
+import {comments} from "./data";
+
+/**
+ * Gets genre template
+ * @param {string} genre
+ * @return {string}
+ */
+const getGenreTemplate = (genre) => `<span class="film-details__genre">${genre}</span>`;
+
+/**
+ * Gets comment template
+ * @param {Object} comment
+ * @return {string}
+ */
+const getCommentTemplate = (comment) => `
+    <li class="film-details__comment">
+      <span class="film-details__comment-emoji">
+        <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji">
+      </span>
+      <div>
+        <p class="film-details__comment-text">${comment.text}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${comment.author}</span>
+          <span class="film-details__comment-day">${comment.time}</span>
+          <button class="film-details__comment-delete">Delete</button>
+        </p>
+      </div>
+    </li>
+`;
+
 /**
  * Gets film details
  * @param {Object} film
@@ -12,16 +42,16 @@ const getFilmDetails = (film) => `
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/the-great-flamarion.jpg" alt="">
+            <img class="film-details__poster-img" src="${film.url}" alt="${film.title}">
   
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${film.category}</p>
           </div>
   
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
-                <h3 class="film-details__title">${film.name}</h3>
-                <p class="film-details__title-original">Original: ${film.name}</p>
+                <h3 class="film-details__title">${film.title}</h3>
+                <p class="film-details__title-original">Original: ${film.title}</p>
               </div>
   
               <div class="film-details__rating">
@@ -32,19 +62,19 @@ const getFilmDetails = (film) => `
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Anthony Mann</td>
+                <td class="film-details__cell">${film.director}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+                <td class="film-details__cell">${[...film.writers].join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+                <td class="film-details__cell">${[...film.actors].join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">30 March 1945</td>
+                <td class="film-details__cell">${film.year}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -52,14 +82,13 @@ const getFilmDetails = (film) => `
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
+                <td class="film-details__cell">${film.country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+                <td class="film-details__term">${film.genres.size === 1 ? `Genre` : `Genres`}</td>
                 <td class="film-details__cell">
-                  <span class="film-details__genre">Drama</span>
-                  <span class="film-details__genre">Film-Noir</span>
-                  <span class="film-details__genre">Mystery</span></td>
+                    ${[...film.genres].map(getGenreTemplate).join(``)}
+                  </td>
               </tr>
             </table>
   
@@ -70,13 +99,13 @@ const getFilmDetails = (film) => `
         </div>
   
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${film.isWatchlist ? `checked` : ``}>
           <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
   
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${film.isHistory ? `checked` : ``}>
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
   
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${film.isFavorites ? `checked` : ``}>
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
       </div>
@@ -86,58 +115,7 @@ const getFilmDetails = (film) => `
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
   
           <ul class="film-details__comments-list">
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Interesting setting and a good cast</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">Tim Macoveev</span>
-                  <span class="film-details__comment-day">3 days ago</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/sleeping.png" width="55" height="55" alt="emoji">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Booooooooooring</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">John Doe</span>
-                  <span class="film-details__comment-day">2 days ago</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/puke.png" width="55" height="55" alt="emoji">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Very very old. Meh</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">John Doe</span>
-                  <span class="film-details__comment-day">2 days ago</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
-            <li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="./images/emoji/angry.png" width="55" height="55" alt="emoji">
-              </span>
-              <div>
-                <p class="film-details__comment-text">Almost two hours? Seriously?</p>
-                <p class="film-details__comment-info">
-                  <span class="film-details__comment-author">John Doe</span>
-                  <span class="film-details__comment-day">Today</span>
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>
+            ${comments.map(getCommentTemplate).join(``)}
           </ul>
   
           <div class="film-details__new-comment">
