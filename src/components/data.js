@@ -1,20 +1,22 @@
-import {getRandSelection, getRandomIntInclusive} from "./util";
+import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats} from "./utils";
 
+const IMG_PATH = `./images/posters/`;
+const MOCK_ITEMS_MAX = 3;
 const Control = {
-  FILTERS: [
-    `All movies`,
-    `Watchlist`,
-    `History`,
-    `Favorites`,
-    `Stats`,
-  ],
+  FILTERS: {
+    all: countAll,
+    watchlist: countByFlag,
+    history: countByFlag,
+    favorites: countByFlag,
+    stats: countStats,
+  },
   SORT_TYPES: [
     `default`,
     `date`,
     `rating`,
   ],
 };
-const FilmsData = {
+const Films = {
   TITLES: [
     `The Dance of Life`,
     `Sagebrush Trail`,
@@ -112,8 +114,6 @@ const PromoCategory = {
   RATING: `Top rated`,
   COMMENTS: `Most commented`,
 };
-const IMG_PATH = `./images/posters/`;
-const MOCK_ITEMS_MAX = 3;
 const userTitles = {
   novice: {
     min: 1,
@@ -160,18 +160,18 @@ const comments = [
  */
 const getFilm = () => (
   {
-    title: FilmsData.TITLES[Math.floor(Math.random() * FilmsData.TITLES.length)],
-    category: FilmsData.CATEGORIES[getRandomIntInclusive(0, FilmsData.CATEGORIES.length - 1)],
+    title: Films.TITLES[Math.floor(Math.random() * Films.TITLES.length)],
+    category: Films.CATEGORIES[getRandomIntInclusive(0, Films.CATEGORIES.length - 1)],
     rating: getRandomIntInclusive(Rating.MIN, Rating.MAX),
     year: getRandomIntInclusive(Year.MIN, Year.MAX),
     duration: `${getRandomIntInclusive(Duration.MIN, Duration.MAX)} min`,
-    country: FilmsData.COUNTRIES[getRandomIntInclusive(0, FilmsData.COUNTRIES.length - 1)],
-    director: FilmsData.DIRECTORS[getRandomIntInclusive(0, FilmsData.DIRECTORS.length - 1)],
-    writers: new Set(getRandSelection(FilmsData.WRITERS, MOCK_ITEMS_MAX)),
-    actors: new Set(getRandSelection(FilmsData.ACTORS, MOCK_ITEMS_MAX)),
-    genres: new Set(getRandSelection(FilmsData.GENRES, MOCK_ITEMS_MAX)),
-    url: `${IMG_PATH}${FilmsData.IMAGES[Math.floor(Math.random() * FilmsData.IMAGES.length)]}`,
-    description: getRandSelection(FilmsData.DESCRIPTION, MOCK_ITEMS_MAX).join(` `).toString(),
+    country: Films.COUNTRIES[getRandomIntInclusive(0, Films.COUNTRIES.length - 1)],
+    director: Films.DIRECTORS[getRandomIntInclusive(0, Films.DIRECTORS.length - 1)],
+    writers: new Set(getRandSelection(Films.WRITERS, MOCK_ITEMS_MAX)),
+    actors: new Set(getRandSelection(Films.ACTORS, MOCK_ITEMS_MAX)),
+    genres: new Set(getRandSelection(Films.GENRES, MOCK_ITEMS_MAX)),
+    url: `${IMG_PATH}${Films.IMAGES[Math.floor(Math.random() * Films.IMAGES.length)]}`,
+    description: getRandSelection(Films.DESCRIPTION, MOCK_ITEMS_MAX).join(` `).toString(),
     comments: getRandomIntInclusive(CommentsCount.MIN, CommentsCount.MAX),
     isWatchlist: Boolean(Math.round(Math.random())),
     isHistory: Boolean(Math.round(Math.random())),
@@ -180,35 +180,22 @@ const getFilm = () => (
 );
 
 /**
- * Gets url from name
- * @param {string} name
- * @return {string}
- */
-const getUrl = (name) => (name === `All movies`) ? `#all` : `#${name.toLowerCase()}`;
-
-/**
  * Gets filters data
- * @param {Array} filtersNames
- * @param {Array} filmsList
- * @return {[]}
+ * @param {Object} filtersData - names and count functions
+ * @param {Array} films
+ * @return {Array}
  */
-const getFilters = (filtersNames, filmsList) => {
+const getFilters = (filtersData, films) => {
   const filters = [];
-  filtersNames.forEach((name) => {
-    const filter = {};
-    filter.name = name;
-    filter.url = getUrl(name);
-    filter.isActive = false;
-    if (filter.name === `All movies`) {
-      filter.count = filmsList.length;
-      filter.isActive = true;
-    } else if (filter.name === `Stats`) {
-      filter.count = ``;
-    } else {
-      const flag = `is${filter.name}`;
-      filter.count = filmsList.filter((el) => el[flag]).length;
-    }
-    filters.push(filter);
+  Object.keys(filtersData).forEach((key) => {
+    const name = (key === `all`) ? `${capitalizeFirstLetter(key)} movies` : capitalizeFirstLetter(key);
+    const flag = `is${capitalizeFirstLetter(key)}`;
+    filters.push({
+      name,
+      url: `#${key}`,
+      count: filtersData[key](films, flag),
+      isActive: false,
+    });
   });
   return filters;
 };
