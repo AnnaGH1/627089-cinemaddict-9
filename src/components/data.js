@@ -207,13 +207,11 @@ const getFilters = (filtersData, films) => {
  */
 const getSortTypes = (names) => {
   const sortTypes = [];
-  names.forEach((name) => {
-    const type = {};
-    type.name = name;
-    type.url = `#${name}`;
-    type.isActive = name === `default`;
-    sortTypes.push(type);
-  });
+  names.forEach((name) => sortTypes.push({
+    name,
+    url: `#${name}`,
+    isActive: false,
+  }));
   return sortTypes;
 };
 
