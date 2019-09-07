@@ -1,3 +1,43 @@
+const Position = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+};
+
+/**
+ * Creates Element
+ * @param {string} template
+ * @return {ChildNode}
+ */
+const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+  return newElement.firstChild;
+};
+
+/**
+ * Renders element
+ * @param {Element} container
+ * @param {Element} element
+ * @param {string} place
+ */
+const render = (container, element, place) => {
+  switch (place) {
+    case Position.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case Position.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+/**
+ * Unrenders element
+ * @param {Element} element
+ * @return {Element}
+ */
+const unrender = (element) => element ? element.remove() : element;
+
 /**
  * Gets random elements from array
  * @param {Array} arr
@@ -52,4 +92,4 @@ const countByFlag = (films, flag) => films.filter((el) => el[flag]).length;
  */
 const countStats = () => ``;
 
-export {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats};
+export {Position, createElement, render, unrender, getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats};
