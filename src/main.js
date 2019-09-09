@@ -1,5 +1,5 @@
 import {render, unrender} from "./components/utils";
-import {films, filmsTopRated, filmsMostCommented, filters, sortList, userTitles, FilmsCount, PromoCategory} from "./components/data";
+import {IMG_USER, films, filmsTopRated, filmsMostCommented, filters, sortList, userTitle, FilmsCount, PromoCategory} from "./components/data";
 import {getSearchTemplate} from "./components/search";
 import {getUserTemplate, defineUser} from "./components/users";
 import {getMainNavTemplate, getSortTemplate} from "./components/menu";
@@ -21,7 +21,7 @@ const mainContainer = document.querySelector(`.main`);
 
 // Controls
 renderComponent(headerContainer, getSearchTemplate());
-renderComponent(headerContainer, getUserTemplate(defineUser(FilmsCount.BY_USER, userTitles)));
+renderComponent(headerContainer, getUserTemplate(defineUser(FilmsCount.BY_USER, userTitle, IMG_USER)));
 renderComponent(mainContainer, getMainNavTemplate(filters));
 renderComponent(mainContainer, getSortTemplate(sortList));
 
@@ -32,6 +32,8 @@ const loadMoreContainer = mainContainer.querySelector(`.films-list`);
 const filmsContainer = mainContainer.querySelector(`.films-list__container`);
 
 const filmsContainersFeatured = mainContainer.querySelectorAll(`.films-list--extra .films-list__container`);
+const containerTopRated = filmsContainersFeatured[0];
+const containerMostCommented = filmsContainersFeatured[1];
 
 let filmPageStart = 0;
 let filmPageEnd = FilmsCount.PER_PAGE;
@@ -74,8 +76,8 @@ const renderFilm = (item, container) => {
 films.slice(filmPageStart, filmPageEnd).forEach((el) => renderFilm(el, filmsContainer));
 
 // Render featured films
-filmsTopRated.forEach((el) => renderFilm(el, filmsContainersFeatured[0]));
-filmsMostCommented.forEach((el) => renderFilm(el, filmsContainersFeatured[1]));
+filmsTopRated.forEach((el) => renderFilm(el, containerTopRated));
+filmsMostCommented.forEach((el) => renderFilm(el, containerMostCommented));
 
 // Footer
 const filmsAvailable = document.querySelector(`.footer__statistics`).querySelector(`p`);

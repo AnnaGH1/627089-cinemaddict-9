@@ -1,6 +1,7 @@
-import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats} from "./utils";
+import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder} from "./utils";
 
 const IMG_PATH = `./images/posters/`;
+const IMG_USER = `./images/bitmap@2x.png`;
 const MOCK_ITEMS_MAX = 3;
 const Control = {
   FILTERS: {
@@ -114,17 +115,24 @@ const PromoCategory = {
   RATING: `Top rated`,
   COMMENTS: `Most commented`,
 };
-const userTitles = {
+const userTitle = {
   novice: {
+    title: `Novice`,
+    isHolder,
     min: 1,
     max: 10,
   },
   fan: {
+    title: `Fan`,
+    isHolder,
     min: 11,
     max: 20,
   },
   movieBuff: {
+    title: `Movie Buff`,
+    isHolder,
     min: 21,
+    max: FilmsCount.TOTAL,
   },
 };
 const comments = [
@@ -222,4 +230,4 @@ const filmsMostCommented = films.slice(0, FilmsCount.FEATURED);
 const filters = getFilters(Control.FILTERS, films);
 const sortList = getSortTypes(Control.SORT_TYPES);
 
-export {films, filmsTopRated, filmsMostCommented, filters, sortList, comments, userTitles, FilmsCount, PromoCategory};
+export {IMG_USER, films, filmsTopRated, filmsMostCommented, filters, sortList, comments, userTitle, FilmsCount, PromoCategory};

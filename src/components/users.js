@@ -12,21 +12,19 @@ const getUserTemplate = (userData) => `
 
 /**
  * Assigns title to user based on a number of films watched
- * @param {number} filmsCountData
- * @param {Object} titlesData
+ * @param {number} count
+ * @param {Object} title
+ * @param {string} image
  * @return {Object}
  */
-const defineUser = (filmsCountData, titlesData) => {
+const defineUser = (count, title, image) => {
   const user = {};
-  user.url = `images/bitmap@2x.png`;
-  if (filmsCountData > titlesData.movieBuff.min) {
-    user.title = `Movie Buff`;
-  } else if (filmsCountData >= titlesData.fan.min && filmsCountData <= titlesData.fan.max) {
-    user.title = `Fan`;
-  } else if (filmsCountData >= titlesData.novice.min && filmsCountData <= titlesData.novice.max) {
-    user.title = `Novice`;
-  } else {
-    user.title = ``;
+  user.url = image;
+  for (let key of Object.keys(title)) {
+    if (title[key].isHolder(count, title[key])) {
+      user.title = title[key].title;
+      break;
+    }
   }
   return user;
 };

@@ -100,4 +100,12 @@ const countByFlag = (films, flag) => films.filter((el) => el[flag]).length;
  */
 const countStats = () => ``;
 
-export {createElement, render, unrender, getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats};
+/**
+ * Checks user title based on a number of films watched
+ * @param {number} count
+ * @param {Object} title
+ * @return {boolean}
+ */
+const isHolder = (count, title) => count >= title.min && count <= title.max;
+
+export {createElement, render, unrender, getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder};
