@@ -1,7 +1,8 @@
-import {createElement} from "./utils";
+import AbstractComponent from "./abstract-component";
 
-class Film {
+class Film extends AbstractComponent {
   constructor(film) {
+    super();
     this._title = film.title;
     this._category = film.category;
     this._rating = film.rating;
@@ -18,14 +19,6 @@ class Film {
     this._isWatchlist = film.isWatchlist;
     this._isHistory = film.isHistory;
     this._isFavorites = film.isFavorites;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
   }
 
   getTemplate() {
