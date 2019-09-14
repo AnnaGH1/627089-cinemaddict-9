@@ -1,3 +1,12 @@
+const Position = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+};
+const Key = {
+  ESCAPE_IE: `Escape`,
+  ESCAPE: `Esc`,
+};
+
 /**
  * Prepends element to container
  * @param {Element} container
@@ -108,4 +117,4 @@ const countStats = () => ``;
  */
 const isHolder = (count, title) => count >= title.min && count <= title.max;
 
-export {createElement, render, unrender, getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder};
+export {Position, Key, createElement, render, unrender, getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder};
