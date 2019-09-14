@@ -1,7 +1,13 @@
-/**
- * Gets message template
- * @return {string}
- */
-const getMessageTemplate = () => `<div class="no-result">There are no movies in our database</div>`;
+import AbstractComponent from './abstract-component';
 
-export {getMessageTemplate};
+class Message extends AbstractComponent {
+  constructor() {
+    super();
+  }
+
+  getTemplate() {
+    return `<div class="no-result">There are no movies in our database</div>`;
+  }
+}
+
+export {Message as default};

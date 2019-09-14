@@ -55,6 +55,16 @@ const render = (container, element, place) => renderMap[place](container, elemen
  */
 const unrender = (element) => element ? element.remove() : element;
 
+
+/**
+ * Renders component inside container
+ * @param {Element} container
+ * @param {string} component
+ * @param {string} position for component
+ * @return {Element}
+ */
+const renderComponent = (container, component, position = Position.BEFOREEND) => container.insertAdjacentHTML(position, component);
+
 /**
  * Gets random elements from array
  * @param {Array} arr
@@ -117,4 +127,4 @@ const countStats = () => ``;
  */
 const isHolder = (count, title) => count >= title.min && count <= title.max;
 
-export {Position, Key, createElement, render, unrender, getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder};
+export {Position, Key, createElement, render, unrender, renderComponent, getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder};

@@ -111,10 +111,6 @@ const CommentsCount = {
   MIN: 0,
   MAX: 10,
 };
-const PromoCategory = {
-  RATING: `Top rated`,
-  COMMENTS: `Most commented`,
-};
 const userTitle = {
   novice: {
     title: `Novice`,
@@ -230,4 +226,4 @@ const filmsMostCommented = films.slice(0, FilmsCount.FEATURED);
 const filters = getFilters(Control.FILTERS, films);
 const sortList = getSortTypes(Control.SORT_TYPES);
 
-export {IMG_USER, films, filmsTopRated, filmsMostCommented, filters, sortList, comments, userTitle, FilmsCount, PromoCategory};
+export {IMG_USER, films, filmsTopRated, filmsMostCommented, filters, sortList, comments, userTitle, FilmsCount};

@@ -1,8 +1,9 @@
-import {createElement} from "./utils";
-import {comments} from "./data";
+import AbstractComponent from './abstract-component';
+import {comments} from './data';
 
-class Popup {
+class Popup extends AbstractComponent {
   constructor(film) {
+    super();
     this._title = film.title;
     this._category = film.category;
     this._rating = film.rating;
@@ -19,49 +20,6 @@ class Popup {
     this._isWatchlist = film.isWatchlist;
     this._isHistory = film.isHistory;
     this._isFavorites = film.isFavorites;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-    return this._element;
-  }
-
-  /**
-   * Gets genre template
-   * @param {string} genre
-   * @return {string}
-   */
-  static getGenreTemplate(genre) {
-    return `<span class="film-details__genre">${genre}</span>`;
-  }
-
-  /**
-   * Gets comment template
-   * @param {Object} comment
-   * @return {string}
-   */
-  static getCommentTemplate(comment) {
-    return `<li class="film-details__comment">
-      <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji">
-      </span>
-      <div>
-        <p class="film-details__comment-text">${comment.text}</p>
-        <p class="film-details__comment-info">
-          <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${comment.time}</span>
-          <button class="film-details__comment-delete">Delete</button>
-        </p>
-      </div>
-    </li>`;
   }
 
   /**
@@ -187,6 +145,36 @@ class Popup {
     </form>
   </section>`;
   }
+
+  /**
+   * Gets genre template
+   * @param {string} genre
+   * @return {string}
+   */
+  static getGenreTemplate(genre) {
+    return `<span class="film-details__genre">${genre}</span>`;
+  }
+
+  /**
+   * Gets comment template
+   * @param {Object} comment
+   * @return {string}
+   */
+  static getCommentTemplate(comment) {
+    return `<li class="film-details__comment">
+      <span class="film-details__comment-emoji">
+        <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji">
+      </span>
+      <div>
+        <p class="film-details__comment-text">${comment.text}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${comment.author}</span>
+          <span class="film-details__comment-day">${comment.time}</span>
+          <button class="film-details__comment-delete">Delete</button>
+        </p>
+      </div>
+    </li>`;
+  }
 }
 
-export {Popup};
+export {Popup as default};
