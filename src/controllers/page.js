@@ -22,6 +22,47 @@ class PageController {
     this._filmsContainer = null;
     this._loadMoreContainer = null;
     this._filmsSequence = null;
+    this._filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
+  }
+
+  _renderMessage() {
+    render(this._container, this._message.getElement(), Position.BEFOREEND);
+  }
+
+  _renderFilters() {
+    renderComponent(this._container, getMainNavTemplate(filters));
+  }
+
+  _renderSort() {
+    render(this._container, this._sort.getElement(), Position.BEFOREEND);
+    this._sort.getElement().addEventListener(`click`, this._onSortLinkClick.bind(this));
+  }
+
+  _renderPageLayout() {
+    render(this._container, this._pageLayout.getElement(), Position.BEFOREEND);
+    // Update reference to containers
+    this._filmsContainer = this._container.querySelector(`.films-list__container`);
+    this._loadMoreContainer = this._container.querySelector(`.films-list`);
+  }
+
+  _renderFeaturedFilms() {
+    const filmsContainersFeatured = this._container.querySelectorAll(`.films-list--extra .films-list__container`);
+    const containerTopRated = filmsContainersFeatured[0];
+    const containerMostCommented = filmsContainersFeatured[1];
+    sortedByRating
+      .slice(0, FilmsCount.FEATURED)
+      .forEach((el) => this._renderFilm(containerTopRated, el));
+    sortedByComments
+      .slice(0, FilmsCount.FEATURED)
+      .forEach((el) => this._renderFilm(containerMostCommented, el));
+  }
+
+  _updateFilmsCount(el) {
+    el.textContent = `${FilmsCount.TOTAL} movies inside`;
+  }
+
+  updateNoFilms(el) {
+    el.textContent = ``;
   }
 
   _removePreviousFilms() {
@@ -103,40 +144,17 @@ class PageController {
 
   init() {
     // Show message if there are no films
-    if (FilmsCount.TOTAL === 0) {
-      render(this._container, this._message.getElement(), Position.BEFOREEND);
+    if (!FilmsCount.TOTAL) {
+      this._renderMessage();
+      this.updateNoFilms(this._filmsCountEl);
     } else {
-      // Controls - filters
-      renderComponent(this._container, getMainNavTemplate(filters));
-      // Controls - sort
-      render(this._container, this._sort.getElement(), Position.BEFOREEND);
-      this._sort.getElement().addEventListener(`click`, this._onSortLinkClick.bind(this));
-
-      // Render page layout
-      render(this._container, this._pageLayout.getElement(), Position.BEFOREEND);
-
-      // Update reference to containers
-      this._filmsContainer = this._container.querySelector(`.films-list__container`);
-      this._loadMoreContainer = this._container.querySelector(`.films-list`);
-
-      // Render featured films
-      const filmsContainersFeatured = this._container.querySelectorAll(`.films-list--extra .films-list__container`);
-      const containerTopRated = filmsContainersFeatured[0];
-      const containerMostCommented = filmsContainersFeatured[1];
-      sortedByRating
-        .slice(0, FilmsCount.FEATURED)
-        .forEach((el) => this._renderFilm(containerTopRated, el));
-      sortedByComments
-        .slice(0, FilmsCount.FEATURED)
-        .forEach((el) => this._renderFilm(containerMostCommented, el));
-
-      // Render film list
+      // Render page otherwise
+      this._renderFilters();
+      this._renderSort();
+      this._renderPageLayout();
+      this._renderFeaturedFilms();
       this._renderFilmList(this._films);
-
-      // Footer
-      const filmsAvailable = document.querySelector(`.footer__statistics`).querySelector(`p`);
-      filmsAvailable.textContent = `${FilmsCount.TOTAL} movies inside`;
-
+      this._updateFilmsCount(this._filmsCountEl);
     }
   }
 
