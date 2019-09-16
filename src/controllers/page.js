@@ -19,43 +19,41 @@ class PageController {
     this._show = new Show();
     this._filmPageStart = 0;
     this._filmPageEnd = FilmsCount.PER_PAGE;
+    this._filmsContainer = null;
+    this._loadMoreContainer = null;
+    this._filmsSequence = null;
   }
 
-  _renderFilmList(filmList) {
-    const filmsContainer = this._container.querySelector(`.films-list__container`);
-    const loadMoreContainer = this._container.querySelector(`.films-list`);
+  _removePreviousFilms() {
+    // Reset previous films sequence
+    this._filmsSequence = null;
 
-    // Remove previous films
-    filmsContainer.innerHTML = ``;
+    // Remove previous films elements
+    this._filmsContainer.innerHTML = ``;
 
     // If rendered, remove show more button corresponding to the previous films
     if (this._show._element) {
       unrender(this._show.getElement());
       this._show.removeElement();
     }
+  }
 
-    // Reset page counters
+  _resetPageCounters() {
     this._filmPageStart = 0;
     this._filmPageEnd = FilmsCount.PER_PAGE;
+  }
+
+  _renderFilmList(filmsSequence) {
+    this._removePreviousFilms();
+    this._resetPageCounters();
+    this._filmsSequence = filmsSequence;
 
     // Render films
-    filmList.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(filmsContainer, el));
+    this._filmsSequence.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(this._filmsContainer, el));
 
     // Render show more button
-    render(loadMoreContainer, this._show.getElement(), Position.BEFOREEND);
-
-    this._show.getElement().addEventListener(`click`, () => {
-      this._filmPageStart += FilmsCount.PER_PAGE;
-      this._filmPageEnd += FilmsCount.PER_PAGE;
-
-      if (this._filmPageEnd >= filmList.length) {
-        // Remove show more button when last film is rendered
-        unrender(this._show.getElement());
-        this._show.removeElement();
-      }
-
-      filmList.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(filmsContainer, el));
-    });
+    render(this._loadMoreContainer, this._show.getElement(), Position.BEFOREEND);
+    this._show.getElement().addEventListener(`click`, this._onShowButtonClick.bind(this));
   }
 
   _renderFilm(container, item) {
@@ -103,26 +101,6 @@ class PageController {
     render(container, film.getElement(), Position.BEFOREEND);
   }
 
-  _onSortLinkClick(e) {
-    e.preventDefault();
-    if (e.target.tagName !== `A`) {
-      return;
-    }
-
-    // Get films by sort type
-    switch (e.target.dataset.sortType) {
-      case `date`:
-        this._renderFilmList(sortedByYear);
-        break;
-      case `rating`:
-        this._renderFilmList(sortedByRating);
-        break;
-      case `default`:
-        this._renderFilmList(this._films);
-        break;
-    }
-  }
-
   init() {
     // Show message if there are no films
     if (FilmsCount.TOTAL === 0) {
@@ -132,12 +110,14 @@ class PageController {
       renderComponent(this._container, getMainNavTemplate(filters));
       // Controls - sort
       render(this._container, this._sort.getElement(), Position.BEFOREEND);
-      this._sort.getElement().addEventListener(`click`, (e) => {
-        this._onSortLinkClick(e);
-      });
+      this._sort.getElement().addEventListener(`click`, this._onSortLinkClick.bind(this));
 
       // Render page layout
       render(this._container, this._pageLayout.getElement(), Position.BEFOREEND);
+
+      // Update reference to containers
+      this._filmsContainer = this._container.querySelector(`.films-list__container`);
+      this._loadMoreContainer = this._container.querySelector(`.films-list`);
 
       // Render featured films
       const filmsContainersFeatured = this._container.querySelectorAll(`.films-list--extra .films-list__container`);
@@ -158,6 +138,39 @@ class PageController {
       filmsAvailable.textContent = `${FilmsCount.TOTAL} movies inside`;
 
     }
+  }
+
+  _onSortLinkClick(e) {
+    e.preventDefault();
+    if (e.target.tagName !== `A`) {
+      return;
+    }
+
+    // Get films by sort type
+    switch (e.target.dataset.sortType) {
+      case `date`:
+        this._renderFilmList(sortedByYear);
+        break;
+      case `rating`:
+        this._renderFilmList(sortedByRating);
+        break;
+      case `default`:
+        this._renderFilmList(this._films);
+        break;
+    }
+  }
+
+  _onShowButtonClick() {
+    this._filmPageStart += FilmsCount.PER_PAGE;
+    this._filmPageEnd += FilmsCount.PER_PAGE;
+
+    if (this._filmPageEnd >= this._filmsSequence.length) {
+      // Remove show more button when last film is rendered
+      unrender(this._show.getElement());
+      this._show.removeElement();
+    }
+
+    this._filmsSequence.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(this._filmsContainer, el));
   }
 }
 
