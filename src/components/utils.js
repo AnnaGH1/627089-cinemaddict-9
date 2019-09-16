@@ -127,4 +127,20 @@ const countStats = () => ``;
  */
 const isHolder = (count, title) => count >= title.min && count <= title.max;
 
-export {Position, Key, createElement, render, unrender, renderComponent, getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder};
+/**
+ * Sorts array elements in descending order by property
+ * @param {Array.<Object>} list
+ * @param {string} prop
+ * @return {Array}
+ */
+const sortByPropDown = (list, prop) => list.slice().sort((a, b) => b[prop] - a[prop]);
+
+/**
+ * Sorts array elements in ascending order by property
+ * @param {Array.<Object>} list
+ * @param {string} prop
+ * @return {Array}
+ */
+const sortByPropUp = (list, prop) => list.slice().sort((a, b) => a[prop] - b[prop]);
+
+export {Position, Key, createElement, render, unrender, renderComponent, getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, sortByPropDown, sortByPropUp};

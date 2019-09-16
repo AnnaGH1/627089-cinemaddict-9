@@ -22,26 +22,4 @@ const getMainNavTemplate = (list) => `
   </nav>
 `;
 
-/**
- * Gets sort item template
- * @param {Object} item
- * @return {string}
- */
-const getSortItemTemplate = (item) => `
-  <li>
-    <a href="${item.url}" class="sort__button ${item.isActive ? `sort__button--active` : ``}">Sort by ${item.name}</a>
-  </li>
-`;
-
-/**
- * Gets sort template
- * @param {Array} list
- * @return {string}
- */
-const getSortTemplate = (list) => `
-  <ul class="sort">
-    ${list.map(getSortItemTemplate).join(``)}
-  </ul>
-`;
-
-export {getMainNavTemplate, getSortTemplate};
+export {getMainNavTemplate};

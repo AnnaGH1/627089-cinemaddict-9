@@ -1,4 +1,4 @@
-import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder} from "./utils";
+import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, sortByPropDown, sortByPropUp} from "./utils";
 
 const IMG_PATH = `./images/posters/`;
 const IMG_USER = `./images/bitmap@2x.png`;
@@ -11,11 +11,6 @@ const Control = {
     favorites: countByFlag,
     stats: countStats,
   },
-  SORT_TYPES: [
-    `default`,
-    `date`,
-    `rating`,
-  ],
 };
 const Films = {
   TITLES: [
@@ -204,26 +199,10 @@ const getFilters = (filtersData, films) => {
   return filters;
 };
 
-/**
- * Gets sort types data
- * @param {Array} names
- * @return {Array}
- */
-const getSortTypes = (names) => {
-  const sortTypes = [];
-  names.forEach((name) => sortTypes.push({
-    name,
-    url: `#${name}`,
-    isActive: false,
-  }));
-  return sortTypes;
-};
-
 const films = new Array(FilmsCount.TOTAL).fill({}).map(getFilm);
-const filmsTopRated = films.slice(0, FilmsCount.FEATURED);
-const filmsMostCommented = films.slice(0, FilmsCount.FEATURED);
-
+const sortedByRating = sortByPropDown(films, `rating`);
+const sortedByComments = sortByPropDown(films, `comments`);
+const sortedByYear = sortByPropUp(films, `year`);
 const filters = getFilters(Control.FILTERS, films);
-const sortList = getSortTypes(Control.SORT_TYPES);
 
-export {IMG_USER, films, filmsTopRated, filmsMostCommented, filters, sortList, comments, userTitle, FilmsCount};
+export {IMG_USER, films, sortedByRating, sortedByComments, sortedByYear, filters, comments, userTitle, FilmsCount};
