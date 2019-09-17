@@ -22,7 +22,6 @@ class PageController {
     this._filmsContainer = null;
     this._loadMoreContainer = null;
     this._filmsSequence = null;
-    this._filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
   }
 
   _renderMessage() {
@@ -61,7 +60,7 @@ class PageController {
     el.textContent = `${FilmsCount.TOTAL} movies inside`;
   }
 
-  updateNoFilms(el) {
+  _updateNoFilms(el) {
     el.textContent = ``;
   }
 
@@ -112,21 +111,21 @@ class PageController {
 
     // Open popup
     film.getElement()
-      .querySelectorAll(`.film-card__poster, .film-card__title, .film-card__comments`)
-      .forEach((el) => {
-        el.addEventListener(`click`, () => {
+      .addEventListener(`click`, (e) => {
+        if (e.target.className === `film-card__poster` || `film-card__title` || `film-card__comments`) {
           render(body, popup.getElement(), Position.BEFOREEND);
           document.addEventListener(`keydown`, onEscKeyDown);
-        });
+        }
       });
 
     // Close popup
     popup.getElement()
-      .querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, () => {
-        unrender(popup.getElement());
-        popup.removeElement();
-        document.removeEventListener(`keydown`, onEscKeyDown);
+      .addEventListener(`click`, (e) => {
+        if (e.target.className === `film-details__close-btn`) {
+          unrender(popup.getElement());
+          popup.removeElement();
+          document.removeEventListener(`keydown`, onEscKeyDown);
+        }
       });
 
     // Prevent close on Esc keydown when comment is being made
@@ -143,10 +142,14 @@ class PageController {
   }
 
   init() {
+    const filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
+
     // Show message if there are no films
     if (!FilmsCount.TOTAL) {
       this._renderMessage();
-      this.updateNoFilms(this._filmsCountEl);
+      if (filmsCountEl) {
+        this._updateNoFilms(filmsCountEl);
+      }
     } else {
       // Render page otherwise
       this._renderFilters();
@@ -154,7 +157,9 @@ class PageController {
       this._renderPageLayout();
       this._renderFeaturedFilms();
       this._renderFilmList(this._films);
-      this._updateFilmsCount(this._filmsCountEl);
+      if (filmsCountEl) {
+        this._updateFilmsCount(filmsCountEl);
+      }
     }
   }
 
