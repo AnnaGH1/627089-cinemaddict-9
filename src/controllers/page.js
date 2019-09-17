@@ -22,6 +22,11 @@ class PageController {
     this._filmsContainer = null;
     this._loadMoreContainer = null;
     this._filmsSequence = null;
+    this._sortMap = {
+      date: sortedByYear,
+      rating: sortedByRating,
+      default: this._films,
+    };
   }
 
   _renderMessage() {
@@ -168,19 +173,7 @@ class PageController {
     if (e.target.tagName !== `A`) {
       return;
     }
-
-    // Get films by sort type
-    switch (e.target.dataset.sortType) {
-      case `date`:
-        this._renderFilmList(sortedByYear);
-        break;
-      case `rating`:
-        this._renderFilmList(sortedByRating);
-        break;
-      case `default`:
-        this._renderFilmList(this._films);
-        break;
-    }
+    this._renderFilmList(this._sortMap[e.target.dataset.sortType]);
   }
 
   _onShowButtonClick() {
