@@ -16,10 +16,8 @@ const getNavItemTemplate = (item) => `
  * @param {Array} list
  * @return {string}
  */
-const getMainNavTemplate = (list) => `
+export const getMainNavTemplate = (list) => `
   <nav class="main-navigation">
     ${list.map(getNavItemTemplate).join(``)}
   </nav>
 `;
-
-export {getMainNavTemplate};

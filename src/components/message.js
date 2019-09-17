@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component';
 
-class Message extends AbstractComponent {
+export default class Message extends AbstractComponent {
   constructor() {
     super();
   }
@@ -9,5 +9,3 @@ class Message extends AbstractComponent {
     return `<div class="no-result">There are no movies in our database</div>`;
   }
 }
-
-export {Message as default};

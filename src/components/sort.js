@@ -1,6 +1,10 @@
 import AbstractComponent from './abstract-component';
 
-class Sort extends AbstractComponent {
+export default class Sort extends AbstractComponent {
+  constructor() {
+    super();
+  }
+
   getTemplate() {
     return `<ul class="sort">
     <li>
@@ -15,5 +19,3 @@ class Sort extends AbstractComponent {
   </ul>`;
   }
 }
-
-export {Sort as default};

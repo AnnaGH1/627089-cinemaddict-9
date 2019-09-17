@@ -1,7 +1,7 @@
 import AbstractComponent from './abstract-component';
 import {comments} from './data';
 
-class Popup extends AbstractComponent {
+export default class Popup extends AbstractComponent {
   constructor(film) {
     super();
     this._title = film.title;
@@ -176,5 +176,3 @@ class Popup extends AbstractComponent {
     </li>`;
   }
 }
-
-export {Popup as default};

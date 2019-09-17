@@ -1,7 +1,7 @@
 import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, sortByPropDown, sortByPropUp} from "./utils";
 
 const IMG_PATH = `./images/posters/`;
-const IMG_USER = `./images/bitmap@2x.png`;
+export const IMG_USER = `./images/bitmap@2x.png`;
 const MOCK_ITEMS_MAX = 3;
 const Control = {
   FILTERS: {
@@ -84,7 +84,7 @@ const Films = {
     `Mary Beth Hughes`,
   ],
 };
-const FilmsCount = {
+export const FilmsCount = {
   TOTAL: 16,
   PER_PAGE: 5,
   BY_USER: 1,
@@ -106,7 +106,7 @@ const CommentsCount = {
   MIN: 0,
   MAX: 10,
 };
-const userTitle = {
+export const userTitle = {
   novice: {
     title: `Novice`,
     isHolder,
@@ -126,7 +126,7 @@ const userTitle = {
     max: FilmsCount.TOTAL,
   },
 };
-const comments = [
+export const comments = [
   {
     author: `Tim Macoveev`,
     text: `Interesting setting and a good cast`,
@@ -199,10 +199,8 @@ const getFilters = (filtersData, films) => {
   return filters;
 };
 
-const films = new Array(FilmsCount.TOTAL).fill({}).map(getFilm);
-const sortedByRating = sortByPropDown(films, `rating`);
-const sortedByComments = sortByPropDown(films, `comments`);
-const sortedByYear = sortByPropUp(films, `year`);
-const filters = getFilters(Control.FILTERS, films);
-
-export {IMG_USER, films, sortedByRating, sortedByComments, sortedByYear, filters, comments, userTitle, FilmsCount};
+export const films = new Array(FilmsCount.TOTAL).fill({}).map(getFilm);
+export const sortedByRating = sortByPropDown(films, `rating`);
+export const sortedByComments = sortByPropDown(films, `comments`);
+export const sortedByYear = sortByPropUp(films, `year`);
+export const filters = getFilters(Control.FILTERS, films);

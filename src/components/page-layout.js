@@ -1,6 +1,10 @@
 import AbstractComponent from './abstract-component';
 
-class PageLayout extends AbstractComponent {
+export default class PageLayout extends AbstractComponent {
+  constructor() {
+    super();
+  }
+
   getTemplate() {
     return `<section class="films">
       <section class="films-list">
@@ -27,5 +31,3 @@ class PageLayout extends AbstractComponent {
     </section>`;
   }
 }
-
-export {PageLayout as default};

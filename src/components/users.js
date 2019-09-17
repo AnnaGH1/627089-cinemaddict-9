@@ -3,7 +3,7 @@
  * @param {Object} userData
  * @return {string}
  */
-const getUserTemplate = (userData) => `
+export const getUserTemplate = (userData) => `
   <section class="header__profile profile">
     <p class="profile__rating">${userData.title}</p>
     <img class="profile__avatar" src="${userData.url}" alt="Avatar" width="35" height="35">
@@ -17,7 +17,7 @@ const getUserTemplate = (userData) => `
  * @param {string} image
  * @return {Object}
  */
-const defineUser = (count, title, image) => {
+export const defineUser = (count, title, image) => {
   const user = {};
   user.url = image;
   for (let key of Object.keys(title)) {
@@ -28,5 +28,3 @@ const defineUser = (count, title, image) => {
   }
   return user;
 };
-
-export {getUserTemplate, defineUser};
