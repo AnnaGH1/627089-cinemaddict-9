@@ -1,8 +1,8 @@
-const Position = {
+export const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
 };
-const Key = {
+export const Key = {
   ESCAPE_IE: `Escape`,
   ESCAPE: `Esc`,
 };
@@ -33,7 +33,7 @@ const renderMap = {
  * @param {string} template
  * @return {ChildNode}
  */
-const createElement = (template) => {
+export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;
   return newElement.firstChild;
@@ -46,14 +46,14 @@ const createElement = (template) => {
  * @param {string} place
  * @return {*|void}
  */
-const render = (container, element, place) => renderMap[place](container, element);
+export const render = (container, element, place) => renderMap[place](container, element);
 
 /**
  * Unrenders element
  * @param {Element} element
  * @return {Element}
  */
-const unrender = (element) => element ? element.remove() : element;
+export const unrender = (element) => element ? element.remove() : element;
 
 
 /**
@@ -63,7 +63,7 @@ const unrender = (element) => element ? element.remove() : element;
  * @param {string} position for component
  * @return {Element}
  */
-const renderComponent = (container, component, position = Position.BEFOREEND) => container.insertAdjacentHTML(position, component);
+export const renderComponent = (container, component, position = Position.BEFOREEND) => container.insertAdjacentHTML(position, component);
 
 /**
  * Gets random elements from array
@@ -71,7 +71,7 @@ const renderComponent = (container, component, position = Position.BEFOREEND) =>
  * @param {number} count
  * @return {Array}
  */
-const getRandSelection = (arr, count) => {
+export const getRandSelection = (arr, count) => {
   const selection = [];
   while (selection.length < count) {
     selection.push(arr[Math.floor(Math.random() * arr.length)]);
@@ -85,7 +85,7 @@ const getRandSelection = (arr, count) => {
  * @param {number} max
  * @return {number}
  */
-const getRandomIntInclusive = (min, max) => {
+export const getRandomIntInclusive = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -96,14 +96,14 @@ const getRandomIntInclusive = (min, max) => {
  * @param {string} string
  * @return {string}
  */
-const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+export const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
 /**
  * Counts all films
  * @param {Array} films
  * @return {number}
  */
-const countAll = (films) => films.length;
+export const countAll = (films) => films.length;
 
 /**
  * Counts films by flag
@@ -111,13 +111,13 @@ const countAll = (films) => films.length;
  * @param {string} flag
  * @return {number}
  */
-const countByFlag = (films, flag) => films.filter((el) => el[flag]).length;
+export const countByFlag = (films, flag) => films.filter((el) => el[flag]).length;
 
 /**
  * Assigns an empty string for Stats count
  * @return {string}
  */
-const countStats = () => ``;
+export const countStats = () => ``;
 
 /**
  * Checks user title based on a number of films watched
@@ -125,6 +125,20 @@ const countStats = () => ``;
  * @param {Object} title
  * @return {boolean}
  */
-const isHolder = (count, title) => count >= title.min && count <= title.max;
+export const isHolder = (count, title) => count >= title.min && count <= title.max;
 
-export {Position, Key, createElement, render, unrender, renderComponent, getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder};
+/**
+ * Sorts array elements in descending order by property
+ * @param {Array.<Object>} list
+ * @param {string} prop
+ * @return {Array}
+ */
+export const sortByPropDown = (list, prop) => list.slice().sort((a, b) => b[prop] - a[prop]);
+
+/**
+ * Sorts array elements in ascending order by property
+ * @param {Array.<Object>} list
+ * @param {string} prop
+ * @return {Array}
+ */
+export const sortByPropUp = (list, prop) => list.slice().sort((a, b) => a[prop] - b[prop]);

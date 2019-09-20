@@ -1,9 +1,11 @@
 import AbstractComponent from './abstract-component';
 
-class Show extends AbstractComponent {
+export default class Show extends AbstractComponent {
+  constructor() {
+    super();
+  }
+
   getTemplate() {
     return `<button class="films-list__show-more">Show more</button>`;
   }
 }
-
-export {Show as default};

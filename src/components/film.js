@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component';
 
-class Film extends AbstractComponent {
+export default class Film extends AbstractComponent {
   constructor(film) {
     super();
     this._title = film.title;
@@ -41,5 +41,3 @@ class Film extends AbstractComponent {
   </article>`;
   }
 }
-
-export {Film as default};
