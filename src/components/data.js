@@ -204,3 +204,6 @@ export const sortedByRating = sortByPropDown(films, `rating`);
 export const sortedByComments = sortByPropDown(films, `comments`);
 export const sortedByYear = sortByPropUp(films, `year`);
 export const filters = getFilters(Control.FILTERS, films);
+export const body = document.querySelector(`body`);
+export const filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
+

@@ -1,15 +1,13 @@
-import {Position, Key, render, unrender, renderComponent} from '../components/utils';
-import {filters, FilmsCount, sortedByYear, sortedByComments, sortedByRating} from '../components/data';
+import {Position, render, unrender, renderComponent} from '../components/utils';
+import {filters, FilmsCount, sortedByYear, sortedByComments, sortedByRating, filmsCountEl} from '../components/data';
 import {getMainNavTemplate} from '../components/menu';
 import Message from '../components/message';
-import Film from '../components/film';
-import Popup from '../components/popup';
 import Show from '../components/show';
 import PageLayout from '../components/page-layout';
 import Sort from '../components/sort';
+import FilmController from './film';
 
-
-class PageController {
+export default class PageController {
   constructor(container, films) {
     this._container = container;
     this._films = films;
@@ -22,6 +20,8 @@ class PageController {
     this._filmsContainer = null;
     this._loadMoreContainer = null;
     this._filmsSequence = null;
+    this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
     this._sortMap = {
       date: sortedByYear,
       rating: sortedByRating,
@@ -102,59 +102,15 @@ class PageController {
   }
 
   _renderFilm(container, item) {
-    const film = new Film(item);
-    const popup = new Popup(item);
-    const body = document.querySelector(`body`);
-
-    // Closes popup on Esc keydown
-    const onEscKeyDown = (e) => {
-      if (e.key === Key.ESCAPE_IE || e.key === Key.ESCAPE) {
-        unrender(popup.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    // Open popup
-    film.getElement()
-      .addEventListener(`click`, (e) => {
-        if (e.target.className === `film-card__poster` || `film-card__title` || `film-card__comments`) {
-          render(body, popup.getElement(), Position.BEFOREEND);
-          document.addEventListener(`keydown`, onEscKeyDown);
-        }
-      });
-
-    // Close popup
-    popup.getElement()
-      .addEventListener(`click`, (e) => {
-        if (e.target.className === `film-details__close-btn`) {
-          unrender(popup.getElement());
-          popup.removeElement();
-          document.removeEventListener(`keydown`, onEscKeyDown);
-        }
-      });
-
-    // Prevent close on Esc keydown when comment is being made
-    popup.getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`focus`, () => document.removeEventListener(`keydown`, onEscKeyDown));
-
-    // Allow close on Esc keydown when comment is not being made
-    popup.getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`blur`, () => document.addEventListener(`keydown`, onEscKeyDown));
-
-    render(container, film.getElement(), Position.BEFOREEND);
+    const filmController = new FilmController(container, item, this._onDataChange, this._onViewChange);
+    filmController.init();
   }
 
   init() {
-    const filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
-
     // Show message if there are no films
     if (!FilmsCount.TOTAL) {
       this._renderMessage();
-      if (filmsCountEl) {
-        this._updateNoFilms(filmsCountEl);
-      }
+      this._updateNoFilms(filmsCountEl);
     } else {
       // Render page otherwise
       this._renderFilters();
@@ -162,9 +118,7 @@ class PageController {
       this._renderPageLayout();
       this._renderFeaturedFilms();
       this._renderFilmList(this._films);
-      if (filmsCountEl) {
-        this._updateFilmsCount(filmsCountEl);
-      }
+      this._updateFilmsCount(filmsCountEl);
     }
   }
 
@@ -188,6 +142,11 @@ class PageController {
 
     this._filmsSequence.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(this._filmsContainer, el));
   }
-}
 
-export {PageController as default};
+  _onDataChange(newData, oldData) {
+    this._films[this._films.findIndex((el) => el === oldData)] = newData;
+    this._renderFilmList(this._films);
+  }
+
+  _onViewChange() {}
+}
