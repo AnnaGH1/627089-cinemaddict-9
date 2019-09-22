@@ -8,6 +8,10 @@ export const Key = {
   ENTER: `Enter`,
 };
 
+export const isCtrlEnterKeydown = (e) => e.ctrlKey && e.key === Key.ENTER;
+
+export const isCommandEnterKeydown = (e) => e.metaKey && e.key === Key.ENTER;
+
 /**
  * Prepends element to container
  * @param {Element} container

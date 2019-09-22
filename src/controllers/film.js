@@ -1,7 +1,7 @@
 import Film from "../components/film";
 import Popup from "../components/popup";
-import {Key, Position, render, unrender} from "../components/utils";
-import {body} from '../components/data';
+import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender} from "../components/utils";
+import {comments, body} from '../components/data';
 
 export default class FilmController {
   constructor(container, data, onDataChange, onViewChange) {
@@ -11,6 +11,12 @@ export default class FilmController {
     this._onViewChange = onViewChange;
     this._film = new Film(data);
     this._popup = new Popup(data);
+  }
+
+  _clearPrevEmoji() {
+    this._popup.getElement()
+      .querySelectorAll(`.film-details__emoji-item`)
+      .forEach((el) => el.removeAttribute(`checked`));
   }
 
   _openPopup() {
@@ -53,6 +59,26 @@ export default class FilmController {
           this._onPopupControlClick(e);
         }
       });
+
+    // Add comment - emoji
+    this._popup.getElement()
+      .addEventListener(`click`, (e) => {
+        if (e.target.getAttribute(`alt`) === `emoji` && e.target.parentNode.classList.contains(`film-details__emoji-label`)) {
+          e.preventDefault();
+          this._onEmojiClick(e);
+        }
+      });
+
+    // Add comment - text and submit
+    this._popup.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`keydown`, (e) => {
+        // Check if comment is not empty
+        if (this._popup.getElement().querySelector(`.film-details__comment-input`).value && (isCtrlEnterKeydown(e) || isCommandEnterKeydown(e))) {
+          e.preventDefault();
+          this._onCommentSubmit();
+        }
+      });
   }
 
   init() {
@@ -66,7 +92,7 @@ export default class FilmController {
         }
       });
 
-    // Open popup handler
+    // Open popup
     this._film.getElement()
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`film-card__poster`) || e.target.classList.contains(`film-card__title`) || e.target.classList.contains(`film-card__comments`)) {
@@ -133,5 +159,23 @@ export default class FilmController {
     };
 
     this._onDataChange(entry, this._data);
+  }
+
+  _onEmojiClick(e) {
+    this._clearPrevEmoji();
+    e.target.parentNode.previousElementSibling.setAttribute(`checked`, ``);
+  }
+
+  _onCommentSubmit() {
+    const formEl = this._popup.getElement().querySelector(`.film-details__inner`);
+    const formData = new FormData(formEl);
+    const entry = {
+      author: `Author`,
+      text: formData.get(`comment`),
+      emoji: formData.get(`comment-emoji`) ? formData.get(`comment-emoji`) : `smile`,
+      time: Date.now(),
+    };
+    comments.push(entry);
+    formEl.reset();
   }
 }

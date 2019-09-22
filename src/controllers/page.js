@@ -1,5 +1,5 @@
-import {Position, render, unrender, renderComponent} from '../components/utils';
-import {filters, FilmsCount, sortedByYear, sortedByComments, sortedByRating, filmsCountEl} from '../components/data';
+import {Position, render, unrender, renderComponent, sortByPropDown, sortByPropUp} from '../components/utils';
+import {filters, FilmsCount, filmsCountEl} from '../components/data';
 import {getMainNavTemplate} from '../components/menu';
 import Message from '../components/message';
 import Show from '../components/show';
@@ -22,11 +22,6 @@ export default class PageController {
     this._filmsSequence = null;
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
-    this._sortMap = {
-      date: sortedByYear,
-      rating: sortedByRating,
-      default: this._films,
-    };
   }
 
   _renderMessage() {
@@ -49,10 +44,14 @@ export default class PageController {
     this._loadMoreContainer = this._container.querySelector(`.films-list`);
   }
 
-  _renderFeaturedFilms() {
+  _renderFeaturedFilms(films) {
+    this._removePrevFeaturedFilms();
     const filmsContainersFeatured = this._container.querySelectorAll(`.films-list--extra .films-list__container`);
     const containerTopRated = filmsContainersFeatured[0];
     const containerMostCommented = filmsContainersFeatured[1];
+    const sortedByRating = sortByPropDown(films, `rating`);
+    const sortedByComments = sortByPropDown(films, `comments`);
+
     sortedByRating
       .slice(0, FilmsCount.FEATURED)
       .forEach((el) => this._renderFilm(containerTopRated, el));
@@ -69,7 +68,7 @@ export default class PageController {
     el.textContent = ``;
   }
 
-  _removePreviousFilms() {
+  _removePrevFilms() {
     // Reset previous films sequence
     this._filmsSequence = null;
 
@@ -83,13 +82,20 @@ export default class PageController {
     }
   }
 
+  _removePrevFeaturedFilms() {
+    this._container.querySelectorAll(`.films-list--extra .films-list__container`)
+      .forEach((el) => {
+        el.innerHTML = ``;
+      });
+  }
+
   _resetPageCounters() {
     this._filmPageStart = 0;
     this._filmPageEnd = FilmsCount.PER_PAGE;
   }
 
   _renderFilmList(filmsSequence) {
-    this._removePreviousFilms();
+    this._removePrevFilms();
     this._resetPageCounters();
     this._filmsSequence = filmsSequence;
 
@@ -116,8 +122,8 @@ export default class PageController {
       this._renderFilters();
       this._renderSort();
       this._renderPageLayout();
-      this._renderFeaturedFilms();
       this._renderFilmList(this._films);
+      this._renderFeaturedFilms(this._films);
       this._updateFilmsCount(filmsCountEl);
     }
   }
@@ -127,7 +133,14 @@ export default class PageController {
     if (e.target.tagName !== `A`) {
       return;
     }
-    this._renderFilmList(this._sortMap[e.target.dataset.sortType]);
+
+    const sortMap = {
+      date: sortByPropUp(this._films, `year`),
+      rating: sortByPropDown(this._films, `rating`),
+      default: this._films,
+    };
+
+    this._renderFilmList(sortMap[e.target.dataset.sortType]);
   }
 
   _onShowButtonClick() {
@@ -146,6 +159,7 @@ export default class PageController {
   _onDataChange(newData, oldData) {
     this._films[this._films.findIndex((el) => el === oldData)] = newData;
     this._renderFilmList(this._films);
+    this._renderFeaturedFilms(this._films);
   }
 
   _onViewChange() {}

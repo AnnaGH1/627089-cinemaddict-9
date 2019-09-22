@@ -1,4 +1,4 @@
-import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, sortByPropDown, sortByPropUp} from "./utils";
+import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder} from "./utils";
 
 const IMG_PATH = `./images/posters/`;
 export const IMG_USER = `./images/bitmap@2x.png`;
@@ -200,9 +200,6 @@ const getFilters = (filtersData, films) => {
 };
 
 export const films = new Array(FilmsCount.TOTAL).fill({}).map(getFilm);
-export const sortedByRating = sortByPropDown(films, `rating`);
-export const sortedByComments = sortByPropDown(films, `comments`);
-export const sortedByYear = sortByPropUp(films, `year`);
 export const filters = getFilters(Control.FILTERS, films);
 export const body = document.querySelector(`body`);
 export const filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
