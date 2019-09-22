@@ -45,28 +45,10 @@ export default class FilmController {
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`blur`, () => document.addEventListener(`keydown`, onEscKeyDown));
 
-    // Toggle watchlist
+    // Toggle controls
     this._popup.getElement()
       .addEventListener(`click`, (e) => {
-        if (e.target.classList.contains(`film-details__control-label--watchlist`)) {
-          e.preventDefault();
-          this._onPopupControlClick(e);
-        }
-      });
-
-    // Toggle history
-    this._popup.getElement()
-      .addEventListener(`click`, (e) => {
-        if (e.target.classList.contains(`film-details__control-label--watched`)) {
-          e.preventDefault();
-          this._onPopupControlClick(e);
-        }
-      });
-
-    // Toggle favorites
-    this._popup.getElement()
-      .addEventListener(`click`, (e) => {
-        if (e.target.classList.contains(`film-details__control-label--favorite`)) {
+        if (e.target.classList.contains(`film-details__control-label--watchlist`) || e.target.classList.contains(`film-details__control-label--watched`) || e.target.classList.contains(`film-details__control-label--favorite`)) {
           e.preventDefault();
           this._onPopupControlClick(e);
         }
@@ -74,15 +56,58 @@ export default class FilmController {
   }
 
   init() {
+
+    // Toggle controls
+    this._film.getElement()
+      .addEventListener(`click`, (e) => {
+        if (e.target.classList.contains(`film-card__controls-item--add-to-watchlist`) || e.target.classList.contains(`film-card__controls-item--mark-as-watched`) || e.target.classList.contains(`film-card__controls-item--favorite`)) {
+          e.preventDefault();
+          this._onFilmControlClick(e);
+        }
+      });
+
     // Open popup handler
     this._film.getElement()
       .addEventListener(`click`, (e) => {
-        if (e.target.className === `film-card__poster` || `film-card__title` || `film-card__comments`) {
-          this._openPopup();
+        if (e.target.classList.contains(`film-card__poster`) || e.target.classList.contains(`film-card__title`) || e.target.classList.contains(`film-card__comments`)) {
+          this._openPopup(e);
         }
       });
 
     render(this._container, this._film.getElement(), Position.BEFOREEND);
+  }
+
+  _onFilmControlClick(e) {
+    e.target.classList.toggle(`film-card__controls-item--active`);
+    const isWatchlist = this._film.getElement()
+      .querySelector(`.film-card__controls-item--add-to-watchlist`)
+      .classList.contains(`film-card__controls-item--active`);
+    const isHistory = this._film.getElement()
+      .querySelector(`.film-card__controls-item--mark-as-watched`)
+      .classList.contains(`film-card__controls-item--active`);
+    const isFavorites = this._film.getElement()
+      .querySelector(`.film-card__controls-item--favorite`)
+      .classList.contains(`film-card__controls-item--active`);
+    const entry = {
+      title: this._data.title,
+      category: this._data.category,
+      rating: this._data.rating,
+      year: this._data.year,
+      duration: this._data.duration,
+      country: this._data.country,
+      director: this._data.director,
+      writers: this._data.writers,
+      actors: this._data.actors,
+      genres: this._data.genres,
+      url: this._data.url,
+      description: this._data.description,
+      comments: this._data.comments,
+      isWatchlist,
+      isHistory,
+      isFavorites,
+    };
+
+    this._onDataChange(entry, this._data);
   }
 
   _onPopupControlClick(e) {
