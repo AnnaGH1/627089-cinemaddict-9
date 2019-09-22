@@ -13,10 +13,52 @@ export default class FilmController {
     this._popup = new Popup(data);
   }
 
+  _toggleFilmControls() {
+    this._film.getElement()
+      .addEventListener(`click`, (e) => {
+        if (e.target.classList.contains(`film-card__controls-item--add-to-watchlist`) || e.target.classList.contains(`film-card__controls-item--mark-as-watched`) || e.target.classList.contains(`film-card__controls-item--favorite`)) {
+          e.preventDefault();
+          this._onFilmControlClick(e);
+        }
+      });
+  }
+
+  _togglePopupControls() {
+    this._popup.getElement()
+      .addEventListener(`click`, (e) => {
+        if (e.target.classList.contains(`film-details__control-label--watchlist`) || e.target.classList.contains(`film-details__control-label--watched`) || e.target.classList.contains(`film-details__control-label--favorite`)) {
+          e.preventDefault();
+          this._onPopupControlClick(e);
+        }
+      });
+  }
+
   _clearPrevEmoji() {
     this._popup.getElement()
       .querySelectorAll(`.film-details__emoji-item`)
       .forEach((el) => el.removeAttribute(`checked`));
+  }
+
+  _addEmoji() {
+    this._popup.getElement()
+      .addEventListener(`click`, (e) => {
+        if (e.target.getAttribute(`alt`) === `emoji` && e.target.parentNode.classList.contains(`film-details__emoji-label`)) {
+          e.preventDefault();
+          this._onEmojiClick(e);
+        }
+      });
+  }
+
+  _addComment() {
+    this._popup.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`keydown`, (e) => {
+        // Check if comment is not empty
+        if (this._popup.getElement().querySelector(`.film-details__comment-input`).value && (isCtrlEnterKeydown(e) || isCommandEnterKeydown(e))) {
+          e.preventDefault();
+          this._onCommentSubmit();
+        }
+      });
   }
 
   _openPopup() {
@@ -27,9 +69,6 @@ export default class FilmController {
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
-
-    render(body, this._popup.getElement(), Position.BEFOREEND);
-    document.addEventListener(`keydown`, onEscKeyDown);
 
     // Close popup
     this._popup.getElement()
@@ -51,55 +90,33 @@ export default class FilmController {
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`blur`, () => document.addEventListener(`keydown`, onEscKeyDown));
 
-    // Toggle controls
-    this._popup.getElement()
-      .addEventListener(`click`, (e) => {
-        if (e.target.classList.contains(`film-details__control-label--watchlist`) || e.target.classList.contains(`film-details__control-label--watched`) || e.target.classList.contains(`film-details__control-label--favorite`)) {
-          e.preventDefault();
-          this._onPopupControlClick(e);
-        }
-      });
+    // Update data - popup controls
+    this._togglePopupControls();
 
-    // Add comment - emoji
-    this._popup.getElement()
-      .addEventListener(`click`, (e) => {
-        if (e.target.getAttribute(`alt`) === `emoji` && e.target.parentNode.classList.contains(`film-details__emoji-label`)) {
-          e.preventDefault();
-          this._onEmojiClick(e);
-        }
-      });
+    // Add emoji
+    this._addEmoji();
 
-    // Add comment - text and submit
-    this._popup.getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`keydown`, (e) => {
-        // Check if comment is not empty
-        if (this._popup.getElement().querySelector(`.film-details__comment-input`).value && (isCtrlEnterKeydown(e) || isCommandEnterKeydown(e))) {
-          e.preventDefault();
-          this._onCommentSubmit();
-        }
-      });
+    // Update data - comment
+    this._addComment();
+
+    // Render popup
+    render(body, this._popup.getElement(), Position.BEFOREEND);
+    document.addEventListener(`keydown`, onEscKeyDown);
   }
 
   init() {
-
-    // Toggle controls
-    this._film.getElement()
-      .addEventListener(`click`, (e) => {
-        if (e.target.classList.contains(`film-card__controls-item--add-to-watchlist`) || e.target.classList.contains(`film-card__controls-item--mark-as-watched`) || e.target.classList.contains(`film-card__controls-item--favorite`)) {
-          e.preventDefault();
-          this._onFilmControlClick(e);
-        }
-      });
+    // Update data - film controls
+    this._toggleFilmControls();
 
     // Open popup
     this._film.getElement()
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`film-card__poster`) || e.target.classList.contains(`film-card__title`) || e.target.classList.contains(`film-card__comments`)) {
-          this._openPopup(e);
+          this._openPopup();
         }
       });
 
+    // Render film
     render(this._container, this._film.getElement(), Position.BEFOREEND);
   }
 
