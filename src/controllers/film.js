@@ -65,18 +65,21 @@ export default class FilmController {
     // Closes popup on Esc keydown
     const onEscKeyDown = (e) => {
       if (e.key === Key.ESCAPE_IE || e.key === Key.ESCAPE) {
-        unrender(this._popup.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
+        closePopup();
       }
+    };
+
+    const closePopup = () => {
+      unrender(this._popup.getElement());
+      this._popup.removeElement();
+      document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
     // Close popup
     this._popup.getElement()
       .addEventListener(`click`, (e) => {
         if (e.target.className === `film-details__close-btn`) {
-          unrender(this._popup.getElement());
-          this._popup.removeElement();
-          document.removeEventListener(`keydown`, onEscKeyDown);
+          closePopup();
         }
       });
 
