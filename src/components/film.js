@@ -19,6 +19,7 @@ export default class Film extends AbstractComponent {
     this._isWatchlist = film.isWatchlist;
     this._isHistory = film.isHistory;
     this._isFavorites = film.isFavorites;
+    this._userScore = film.userScore;
   }
 
   getTemplate() {

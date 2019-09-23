@@ -126,7 +126,7 @@ export const userTitle = {
     max: FilmsCount.TOTAL,
   },
 };
-export const userScore = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+export const userScores = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 export const comments = [
   {
     author: `Tim Macoveev`,
@@ -182,6 +182,7 @@ const getFilm = () => (
     isWatchlist: Boolean(Math.round(Math.random())),
     isHistory: Boolean(Math.round(Math.random())),
     isFavorites: Boolean(Math.round(Math.random())),
+    userScore: null,
   }
 );
 
