@@ -29,6 +29,9 @@ export default class FilmController {
     this._film.getElement()
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`film-card__poster`) || e.target.classList.contains(`film-card__title`) || e.target.classList.contains(`film-card__comments`)) {
+          e.preventDefault();
+          // Close previous popups
+          this._onViewChange();
           this._openPopup();
         }
       });
@@ -146,6 +149,13 @@ export default class FilmController {
     this._updateRefPopup();
     this._updateHistoryView();
     document.addEventListener(`keydown`, onEscKeyDown);
+  }
+
+  setDefaultView() {
+    if (document.body.contains(this._popup.getElement())) {
+      unrender(this._popup.getElement());
+      this._popup.removeElement();
+    }
   }
 
   init() {

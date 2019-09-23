@@ -20,6 +20,7 @@ export default class PageController {
     this._filmsContainer = null;
     this._loadMoreContainer = null;
     this._filmsSequence = null;
+    this._subscriptions = [];
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
   }
@@ -110,6 +111,7 @@ export default class PageController {
   _renderFilm(container, item) {
     const filmController = new FilmController(container, item, this._onDataChange, this._onViewChange);
     filmController.init();
+    this._subscriptions.push(filmController.setDefaultView.bind(filmController));
   }
 
   init() {
@@ -162,5 +164,7 @@ export default class PageController {
     this._renderFeaturedFilms(this._films);
   }
 
-  _onViewChange() {}
+  _onViewChange() {
+    this._subscriptions.forEach((el) => el());
+  }
 }
