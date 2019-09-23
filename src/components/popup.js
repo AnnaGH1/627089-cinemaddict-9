@@ -1,5 +1,6 @@
 import AbstractComponent from './abstract-component';
 import {comments} from './data';
+import moment from 'moment';
 
 export default class Popup extends AbstractComponent {
   constructor(film) {
@@ -169,7 +170,7 @@ export default class Popup extends AbstractComponent {
         <p class="film-details__comment-text">${comment.text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${comment.time}</span>
+          <span class="film-details__comment-day">${moment(comment.time).format(`MMM DD YYYY`)}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>

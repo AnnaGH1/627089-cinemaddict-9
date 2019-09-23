@@ -131,25 +131,25 @@ export const comments = [
     author: `Tim Macoveev`,
     text: `Interesting setting and a good cast`,
     emoji: `smile`,
-    time: `3 days ago`,
+    time: 1569000535567,
   },
   {
     author: `John Doe`,
     text: `Booooooooooring`,
     emoji: `sleeping`,
-    time: `2 days ago`,
+    time: 1569200535567,
   },
   {
     author: `John Doe`,
     text: `Very very old. Meh`,
     emoji: `puke`,
-    time: `2 days ago`,
+    time: 1567200535567,
   },
   {
     author: `John Doe`,
     text: `Almost two hours? Seriously?`,
     emoji: `angry`,
-    time: `today`,
+    time: 1567800535567,
   },
 ];
 
