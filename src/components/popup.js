@@ -1,5 +1,6 @@
 import AbstractComponent from './abstract-component';
-import {comments} from './data';
+import {getRandSelection} from './utils';
+import {userScore, comments} from './data';
 import moment from 'moment';
 
 export default class Popup extends AbstractComponent {
@@ -17,7 +18,7 @@ export default class Popup extends AbstractComponent {
     this._genres = film.genres;
     this._url = film.url;
     this._description = film.description;
-    this._comments = film.comments;
+    this._commentsCount = film.commentsCount;
     this._isWatchlist = film.isWatchlist;
     this._isHistory = film.isHistory;
     this._isFavorites = film.isFavorites;
@@ -103,13 +104,13 @@ export default class Popup extends AbstractComponent {
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
       </div>
-  
+      ${this._getUserRatingTemplate()}    
       <div class="form-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._commentsCount}</span></h3>
   
           <ul class="film-details__comments-list">
-            ${comments.map(Popup.getCommentTemplate).join(``)}
+            ${getRandSelection(comments, this._commentsCount).map(Popup.getCommentTemplate).join(``)}
           </ul>
   
           <div class="film-details__new-comment">
@@ -175,5 +176,36 @@ export default class Popup extends AbstractComponent {
         </p>
       </div>
     </li>`;
+  }
+
+  _getUserRatingTemplate() {
+    return `<div class="form-details__middle-container">
+      <section class="film-details__user-rating-wrap">
+        <div class="film-details__user-rating-controls">
+          <button class="film-details__watched-reset" type="button">Undo</button>
+        </div>
+
+        <div class="film-details__user-score">
+          <div class="film-details__user-rating-poster">
+            <img src="${this._url}" alt="film-poster" class="film-details__user-rating-img">
+          </div>
+
+          <section class="film-details__user-rating-inner">
+            <h3 class="film-details__user-rating-title">${this._title}</h3>
+
+            <p class="film-details__user-rating-feelings">How you feel it?</p>
+
+            <div class="film-details__user-rating-score">
+                ${userScore.map(Popup.getScoreTemplate).join(``)}
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>`;
+  }
+
+  static getScoreTemplate(score) {
+    return `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${score}" id="rating-${score}">
+        <label class="film-details__user-rating-label" for="rating-${score}">${score}</label>`;
   }
 }

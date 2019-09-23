@@ -11,6 +11,26 @@ export default class FilmController {
     this._onViewChange = onViewChange;
     this._film = new Film(data);
     this._popup = new Popup(data);
+    this._userRatingEl = null;
+    this._userCommentEl = null;
+  }
+
+  _hideHistoryView() {
+    this._userRatingEl.classList.add(`visually-hidden`);
+    this._userCommentEl.classList.add(`visually-hidden`);
+  }
+
+  _showHistoryView() {
+    this._userRatingEl.classList.remove(`visually-hidden`);
+    this._userCommentEl.classList.remove(`visually-hidden`);
+  }
+
+  _updateHistoryView() {
+    if (this._data.isHistory) {
+      this._showHistoryView();
+    } else {
+      this._hideHistoryView();
+    }
   }
 
   _toggleFilmControls() {
@@ -104,6 +124,10 @@ export default class FilmController {
 
     // Render popup
     render(body, this._popup.getElement(), Position.BEFOREEND);
+    // Update references to popup elements
+    this._userRatingEl = this._popup.getElement().querySelector(`.form-details__middle-container`);
+    this._userCommentEl = this._popup.getElement().querySelector(`.film-details__new-comment`);
+    this._updateHistoryView();
     document.addEventListener(`keydown`, onEscKeyDown);
   }
 
@@ -147,7 +171,7 @@ export default class FilmController {
       genres: this._data.genres,
       url: this._data.url,
       description: this._data.description,
-      comments: this._data.comments,
+      commentsCount: this._data.commentsCount,
       isWatchlist,
       isHistory,
       isFavorites,
@@ -172,7 +196,7 @@ export default class FilmController {
       genres: this._data.genres,
       url: this._data.url,
       description: this._data.description,
-      comments: this._data.comments,
+      commentsCount: this._data.commentsCount,
       isWatchlist: !!formData.get(`watchlist`),
       isHistory: !!formData.get(`watched`),
       isFavorites: !!formData.get(`favorite`),

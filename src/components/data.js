@@ -104,7 +104,7 @@ const Duration = {
 };
 const CommentsCount = {
   MIN: 0,
-  MAX: 10,
+  MAX: 5,
 };
 export const userTitle = {
   novice: {
@@ -126,6 +126,7 @@ export const userTitle = {
     max: FilmsCount.TOTAL,
   },
 };
+export const userScore = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 export const comments = [
   {
     author: `Tim Macoveev`,
@@ -144,6 +145,12 @@ export const comments = [
     text: `Very very old. Meh`,
     emoji: `puke`,
     time: 1567200535567,
+  },
+  {
+    author: `Tim Macoveev`,
+    text: `Almost two hours? Seriously?`,
+    emoji: `angry`,
+    time: 1567800435567,
   },
   {
     author: `John Doe`,
@@ -171,7 +178,7 @@ const getFilm = () => (
     genres: new Set(getRandSelection(Films.GENRES, MOCK_ITEMS_MAX)),
     url: `${IMG_PATH}${Films.IMAGES[Math.floor(Math.random() * Films.IMAGES.length)]}`,
     description: getRandSelection(Films.DESCRIPTION, MOCK_ITEMS_MAX).join(` `).toString(),
-    comments: getRandomIntInclusive(CommentsCount.MIN, CommentsCount.MAX),
+    commentsCount: getRandomIntInclusive(CommentsCount.MIN, CommentsCount.MAX),
     isWatchlist: Boolean(Math.round(Math.random())),
     isHistory: Boolean(Math.round(Math.random())),
     isFavorites: Boolean(Math.round(Math.random())),
