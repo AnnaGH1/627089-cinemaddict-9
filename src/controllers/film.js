@@ -279,14 +279,34 @@ export default class FilmController {
   _onCommentSubmit() {
     const formEl = this._popup.getElement().querySelector(`.film-details__inner`);
     const formData = new FormData(formEl);
-    const entry = {
+    const entryComment = {
       author: `Author`,
       text: formData.get(`comment`),
       emoji: formData.get(`comment-emoji`) ? formData.get(`comment-emoji`) : `smile`,
       time: Date.now(),
     };
-    comments.push(entry);
+    comments.push(entryComment);
     formEl.reset();
+    const entryFilm = {
+      title: this._data.title,
+      category: this._data.category,
+      rating: this._data.rating,
+      year: this._data.year,
+      duration: this._data.duration,
+      country: this._data.country,
+      director: this._data.director,
+      writers: this._data.writers,
+      actors: this._data.actors,
+      genres: this._data.genres,
+      url: this._data.url,
+      description: this._data.description,
+      commentsCount: this._data.commentsCount + 1,
+      isWatchlist: this._data.isWatchlist,
+      isHistory: this._data.isHistory,
+      isFavorites: this._data.isFavorites,
+      userScore: this._data.userScore,
+    };
+    this._onDataChange(entryFilm, this._data);
   }
 
   _onScoreClick(e) {
