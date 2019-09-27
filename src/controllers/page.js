@@ -57,19 +57,34 @@ export default class PageController {
 
   _renderFeaturedFilms(films) {
     this._removePrevFeaturedFilms();
+    this._renderTopRated(films);
+    this._renderMostCommented(films);
+  }
 
+  _renderTopRated(films) {
+    const topRated = sortByPropDown(films, `rating`).filter((film) => film.rating > 0);
+    if (!topRated.length) {
+      return;
+    }
     // Render extra containers
     const filmsContainerOuter = this._container.querySelector(`.films`);
     render(filmsContainerOuter, this._extraContainerRating.getElement(), Position.BEFOREEND);
-    render(filmsContainerOuter, this._extraContainerComments.getElement(), Position.BEFOREEND);
-
     const containerTopRated = this._extraContainerRating.getElement().querySelector(`.films-list__container`);
-    const containerMostCommented = this._extraContainerComments.getElement().querySelector(`.films-list__container`);
-
-    sortByPropDown(films, `rating`)
+    topRated
       .slice(0, FilmsCount.FEATURED)
       .forEach((el) => this._renderFilm(containerTopRated, el));
-    sortByPropDown(films, `commentsCount`)
+  }
+
+  _renderMostCommented(films) {
+    const mostCommented = sortByPropDown(films, `commentsCount`).filter((film) => film.commentsCount > 0);
+    if (!mostCommented.length) {
+      return;
+    }
+    // Render extra containers
+    const filmsContainerOuter = this._container.querySelector(`.films`);
+    render(filmsContainerOuter, this._extraContainerComments.getElement(), Position.BEFOREEND);
+    const containerMostCommented = this._extraContainerComments.getElement().querySelector(`.films-list__container`);
+    mostCommented
       .slice(0, FilmsCount.FEATURED)
       .forEach((el) => this._renderFilm(containerMostCommented, el));
   }
