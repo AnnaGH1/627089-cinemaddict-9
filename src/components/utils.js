@@ -5,7 +5,12 @@ export const Position = {
 export const Key = {
   ESCAPE_IE: `Escape`,
   ESCAPE: `Esc`,
+  ENTER: `Enter`,
 };
+
+export const isCtrlEnterKeydown = (e) => e.ctrlKey && e.key === Key.ENTER;
+
+export const isCommandEnterKeydown = (e) => e.metaKey && e.key === Key.ENTER;
 
 /**
  * Prepends element to container
@@ -142,3 +147,30 @@ export const sortByPropDown = (list, prop) => list.slice().sort((a, b) => b[prop
  * @return {Array}
  */
 export const sortByPropUp = (list, prop) => list.slice().sort((a, b) => a[prop] - b[prop]);
+
+/**
+ * Assigns title to user based on a number of films watched
+ * @param {number} count
+ * @param {Object} title
+ * @param {string} image
+ * @return {Object}
+ */
+export const defineUser = (count, title, image) => {
+  const user = {};
+  user.url = image;
+  for (let key of Object.keys(title)) {
+    if (title[key].isHolder(count, title[key])) {
+      user.title = title[key].title;
+      break;
+    }
+  }
+  return user;
+};
+
+/**
+ * Get singular or plural noun form
+ * @param {string} noun
+ * @param {number} count
+ * @return {string}
+ */
+export const getNounForm = (noun, count) => count === 1 ? noun : noun + `s`;

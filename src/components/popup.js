@@ -1,5 +1,7 @@
 import AbstractComponent from './abstract-component';
-import {comments} from './data';
+import {getRandSelection, getNounForm} from './utils';
+import {userScores, comments} from './data';
+import moment from 'moment';
 
 export default class Popup extends AbstractComponent {
   constructor(film) {
@@ -16,10 +18,12 @@ export default class Popup extends AbstractComponent {
     this._genres = film.genres;
     this._url = film.url;
     this._description = film.description;
-    this._comments = film.comments;
+    this._commentsCount = film.commentsCount;
     this._isWatchlist = film.isWatchlist;
     this._isHistory = film.isHistory;
     this._isFavorites = film.isFavorites;
+    this._userScore = film.userScore;
+    this._getScoreTemplate = this._getScoreTemplate.bind(this);
   }
 
   /**
@@ -78,7 +82,7 @@ export default class Popup extends AbstractComponent {
                 <td class="film-details__cell">${this._country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">${this._genres.size === 1 ? `Genre` : `Genres`}</td>
+                <td class="film-details__term">${getNounForm(`Genre`, this._genres.size)}</td>
                 <td class="film-details__cell">
                     ${[...this._genres].map(Popup.getGenreTemplate).join(``)}
                   </td>
@@ -102,13 +106,13 @@ export default class Popup extends AbstractComponent {
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
       </div>
-  
+      ${this._getUserRatingTemplate()}    
       <div class="form-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._commentsCount}</span></h3>
   
           <ul class="film-details__comments-list">
-            ${comments.map(Popup.getCommentTemplate).join(``)}
+            ${getRandSelection(comments, this._commentsCount).map(Popup.getCommentTemplate).join(``)}
           </ul>
   
           <div class="film-details__new-comment">
@@ -119,22 +123,22 @@ export default class Popup extends AbstractComponent {
             </label>
   
             <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="sleeping">
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
               <label class="film-details__emoji-label" for="emoji-smile">
                 <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
               </label>
   
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="neutral-face">
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
               <label class="film-details__emoji-label" for="emoji-sleeping">
                 <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
               </label>
   
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="grinning">
-              <label class="film-details__emoji-label" for="emoji-gpuke">
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+              <label class="film-details__emoji-label" for="emoji-puke">
                 <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
               </label>
   
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="grinning">
+              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
               <label class="film-details__emoji-label" for="emoji-angry">
                 <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
               </label>
@@ -144,6 +148,37 @@ export default class Popup extends AbstractComponent {
       </div>
     </form>
   </section>`;
+  }
+
+  _getUserRatingTemplate() {
+    return `<div class="form-details__middle-container">
+      <section class="film-details__user-rating-wrap">
+        <div class="film-details__user-rating-controls">
+          <button class="film-details__watched-reset" type="button">Undo</button>
+        </div>
+
+        <div class="film-details__user-score">
+          <div class="film-details__user-rating-poster">
+            <img src="${this._url}" alt="film-poster" class="film-details__user-rating-img">
+          </div>
+
+          <section class="film-details__user-rating-inner">
+            <h3 class="film-details__user-rating-title">${this._title}</h3>
+
+            <p class="film-details__user-rating-feelings">How you feel it?</p>
+
+            <div class="film-details__user-rating-score">
+                ${userScores.map(this._getScoreTemplate).join(``)}
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>`;
+  }
+
+  _getScoreTemplate(score) {
+    return `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${score}" id="rating-${score}" ${this._userScore === score.toString() ? `checked` : ``}>
+        <label class="film-details__user-rating-label" for="rating-${score}">${score}</label>`;
   }
 
   /**
@@ -169,7 +204,7 @@ export default class Popup extends AbstractComponent {
         <p class="film-details__comment-text">${comment.text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${comment.time}</span>
+          <span class="film-details__comment-day">${moment(comment.time).format(`MMM DD YYYY`)}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>

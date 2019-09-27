@@ -1,4 +1,4 @@
-import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, sortByPropDown, sortByPropUp} from "./utils";
+import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, defineUser} from "./utils";
 
 const IMG_PATH = `./images/posters/`;
 export const IMG_USER = `./images/bitmap@2x.png`;
@@ -90,6 +90,10 @@ export const FilmsCount = {
   BY_USER: 1,
   FEATURED: 2,
 };
+export const PromoCategory = {
+  RATING: `Top rated`,
+  COMMENTS: `Most commented`,
+};
 const Rating = {
   MIN: 1,
   MAX: 5,
@@ -104,7 +108,7 @@ const Duration = {
 };
 const CommentsCount = {
   MIN: 0,
-  MAX: 10,
+  MAX: 5,
 };
 export const userTitle = {
   novice: {
@@ -126,30 +130,37 @@ export const userTitle = {
     max: FilmsCount.TOTAL,
   },
 };
+export const userScores = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 export const comments = [
   {
     author: `Tim Macoveev`,
     text: `Interesting setting and a good cast`,
     emoji: `smile`,
-    time: `3 days ago`,
+    time: 1569000535567,
   },
   {
     author: `John Doe`,
     text: `Booooooooooring`,
     emoji: `sleeping`,
-    time: `2 days ago`,
+    time: 1569200535567,
   },
   {
     author: `John Doe`,
     text: `Very very old. Meh`,
     emoji: `puke`,
-    time: `2 days ago`,
+    time: 1567200535567,
+  },
+  {
+    author: `Tim Macoveev`,
+    text: `Almost two hours? Seriously?`,
+    emoji: `angry`,
+    time: 1567800435567,
   },
   {
     author: `John Doe`,
     text: `Almost two hours? Seriously?`,
     emoji: `angry`,
-    time: `today`,
+    time: 1567800535567,
   },
 ];
 
@@ -171,10 +182,11 @@ const getFilm = () => (
     genres: new Set(getRandSelection(Films.GENRES, MOCK_ITEMS_MAX)),
     url: `${IMG_PATH}${Films.IMAGES[Math.floor(Math.random() * Films.IMAGES.length)]}`,
     description: getRandSelection(Films.DESCRIPTION, MOCK_ITEMS_MAX).join(` `).toString(),
-    comments: getRandomIntInclusive(CommentsCount.MIN, CommentsCount.MAX),
+    commentsCount: getRandomIntInclusive(CommentsCount.MIN, CommentsCount.MAX),
     isWatchlist: Boolean(Math.round(Math.random())),
     isHistory: Boolean(Math.round(Math.random())),
     isFavorites: Boolean(Math.round(Math.random())),
+    userScore: null,
   }
 );
 
@@ -200,7 +212,7 @@ const getFilters = (filtersData, films) => {
 };
 
 export const films = new Array(FilmsCount.TOTAL).fill({}).map(getFilm);
-export const sortedByRating = sortByPropDown(films, `rating`);
-export const sortedByComments = sortByPropDown(films, `comments`);
-export const sortedByYear = sortByPropUp(films, `year`);
 export const filters = getFilters(Control.FILTERS, films);
+export const body = document.querySelector(`body`);
+export const filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
+export const userType = defineUser(FilmsCount.BY_USER, userTitle, IMG_USER);

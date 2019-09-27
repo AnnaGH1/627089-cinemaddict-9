@@ -1,17 +1,17 @@
-import {renderComponent} from './components/utils';
-import {IMG_USER, films, userTitle, FilmsCount} from './components/data';
-import {getSearchTemplate} from './components/search';
-import {getUserTemplate, defineUser} from './components/users';
+import {Position, render} from './components/utils';
+import {films, userType, filters} from './components/data';
+import User from './components/user';
+import Search from './components/search';
 import PageController from './controllers/page';
 
 const headerContainer = document.querySelector(`.header`);
 const mainContainer = document.querySelector(`.main`);
+const user = new User(userType);
+const search = new Search();
+const pageController = new PageController(mainContainer, films, filters);
 
-// Controls
-renderComponent(headerContainer, getSearchTemplate());
-renderComponent(headerContainer, getUserTemplate(defineUser(FilmsCount.BY_USER, userTitle, IMG_USER)));
-
-const pageController = new PageController(mainContainer, films);
+render(headerContainer, user.getElement(), Position.BEFOREEND);
+render(headerContainer, search.getElement(), Position.BEFOREEND);
 pageController.init();
 
 
