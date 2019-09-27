@@ -1,17 +1,20 @@
-import {Position, render, unrender, renderComponent, sortByPropDown, sortByPropUp} from '../components/utils';
-import {filters, FilmsCount, filmsCountEl} from '../components/data';
-import {getMainNavTemplate} from '../components/menu';
+import {Position, render, unrender, sortByPropDown, sortByPropUp} from '../components/utils';
+import {FilmsCount, filmsCountEl} from '../components/data';
 import Message from '../components/message';
 import Show from '../components/show';
 import PageLayout from '../components/page-layout';
+import FilterContainer from '../components/filter-container';
+import Filter from '../components/filter';
 import Sort from '../components/sort';
 import FilmController from './film';
 
 export default class PageController {
-  constructor(container, films) {
+  constructor(container, films, filters) {
     this._container = container;
     this._films = films;
+    this._filters = filters;
     this._pageLayout = new PageLayout();
+    this._filterContainer = new FilterContainer();
     this._sort = new Sort();
     this._message = new Message();
     this._show = new Show();
@@ -30,7 +33,11 @@ export default class PageController {
   }
 
   _renderFilters() {
-    renderComponent(this._container, getMainNavTemplate(filters));
+    render(this._container, this._filterContainer.getElement(), Position.BEFOREEND);
+    this._filters.forEach((el) => {
+      const filter = new Filter(el);
+      render(this._filterContainer.getElement(), filter.getElement(), Position.BEFOREEND);
+    });
   }
 
   _renderSort() {

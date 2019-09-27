@@ -147,3 +147,22 @@ export const sortByPropDown = (list, prop) => list.slice().sort((a, b) => b[prop
  * @return {Array}
  */
 export const sortByPropUp = (list, prop) => list.slice().sort((a, b) => a[prop] - b[prop]);
+
+/**
+ * Assigns title to user based on a number of films watched
+ * @param {number} count
+ * @param {Object} title
+ * @param {string} image
+ * @return {Object}
+ */
+export const defineUser = (count, title, image) => {
+  const user = {};
+  user.url = image;
+  for (let key of Object.keys(title)) {
+    if (title[key].isHolder(count, title[key])) {
+      user.title = title[key].title;
+      break;
+    }
+  }
+  return user;
+};
