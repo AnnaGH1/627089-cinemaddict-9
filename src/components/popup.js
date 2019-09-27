@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component';
-import {getRandSelection} from './utils';
+import {getRandSelection, getNounForm} from './utils';
 import {userScores, comments} from './data';
 import moment from 'moment';
 
@@ -82,7 +82,7 @@ export default class Popup extends AbstractComponent {
                 <td class="film-details__cell">${this._country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">${this._genres.size === 1 ? `Genre` : `Genres`}</td>
+                <td class="film-details__term">${getNounForm(`Genre`, this._genres.size)}</td>
                 <td class="film-details__cell">
                     ${[...this._genres].map(Popup.getGenreTemplate).join(``)}
                   </td>

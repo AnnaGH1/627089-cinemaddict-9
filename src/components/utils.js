@@ -166,3 +166,11 @@ export const defineUser = (count, title, image) => {
   }
   return user;
 };
+
+/**
+ * Get singular or plural noun form
+ * @param {string} noun
+ * @param {number} count
+ * @return {string}
+ */
+export const getNounForm = (noun, count) => count === 1 ? noun : noun + `s`;
