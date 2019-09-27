@@ -1,8 +1,9 @@
 import {Position, render, unrender, sortByPropDown, sortByPropUp} from '../components/utils';
-import {FilmsCount, filmsCountEl} from '../components/data';
+import {FilmsCount, filmsCountEl, PromoCategory} from '../components/data';
 import Message from '../components/message';
 import Show from '../components/show';
 import PageLayout from '../components/page-layout';
+import ExtraContainer from '../components/extra-container';
 import FilterContainer from '../components/filter-container';
 import Filter from '../components/filter';
 import Sort from '../components/sort';
@@ -14,6 +15,8 @@ export default class PageController {
     this._films = films;
     this._filters = filters;
     this._pageLayout = new PageLayout();
+    this._extraContainerRating = new ExtraContainer(PromoCategory.RATING);
+    this._extraContainerComments = new ExtraContainer(PromoCategory.COMMENTS);
     this._filterContainer = new FilterContainer();
     this._sort = new Sort();
     this._message = new Message();
@@ -54,16 +57,19 @@ export default class PageController {
 
   _renderFeaturedFilms(films) {
     this._removePrevFeaturedFilms();
-    const filmsContainersFeatured = this._container.querySelectorAll(`.films-list--extra .films-list__container`);
-    const containerTopRated = filmsContainersFeatured[0];
-    const containerMostCommented = filmsContainersFeatured[1];
-    const sortedByRating = sortByPropDown(films, `rating`);
-    const sortedByComments = sortByPropDown(films, `comments`);
 
-    sortedByRating
+    // Render extra containers
+    const filmsContainerOuter = this._container.querySelector(`.films`);
+    render(filmsContainerOuter, this._extraContainerRating.getElement(), Position.BEFOREEND);
+    render(filmsContainerOuter, this._extraContainerComments.getElement(), Position.BEFOREEND);
+
+    const containerTopRated = this._extraContainerRating.getElement().querySelector(`.films-list__container`);
+    const containerMostCommented = this._extraContainerComments.getElement().querySelector(`.films-list__container`);
+
+    sortByPropDown(films, `rating`)
       .slice(0, FilmsCount.FEATURED)
       .forEach((el) => this._renderFilm(containerTopRated, el));
-    sortedByComments
+    sortByPropDown(films, `commentsCount`)
       .slice(0, FilmsCount.FEATURED)
       .forEach((el) => this._renderFilm(containerMostCommented, el));
   }
@@ -91,10 +97,10 @@ export default class PageController {
   }
 
   _removePrevFeaturedFilms() {
-    this._container.querySelectorAll(`.films-list--extra .films-list__container`)
-      .forEach((el) => {
-        el.innerHTML = ``;
-      });
+    unrender(this._extraContainerRating.getElement());
+    this._extraContainerRating.removeElement();
+    unrender(this._extraContainerComments.getElement());
+    this._extraContainerComments.removeElement();
   }
 
   _resetPageCounters() {

@@ -90,6 +90,10 @@ export const FilmsCount = {
   BY_USER: 1,
   FEATURED: 2,
 };
+export const PromoCategory = {
+  RATING: `Top rated`,
+  COMMENTS: `Most commented`,
+};
 const Rating = {
   MIN: 1,
   MAX: 5,
