@@ -204,7 +204,7 @@ export default class Popup extends AbstractComponent {
         <p class="film-details__comment-text">${comment.text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${moment(comment.time).format(`MMM DD YYYY`)}</span>
+          <span class="film-details__comment-day">${moment(comment.time).format(`MMM DD YYYY kk:mm`)}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>

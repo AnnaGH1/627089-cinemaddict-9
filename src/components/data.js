@@ -99,8 +99,8 @@ const Rating = {
   MAX: 5,
 };
 const Year = {
-  MIN: 1920,
-  MAX: 2018,
+  MIN: 0,
+  MAX: Date.now(),
 };
 const Duration = {
   MIN: 20,
