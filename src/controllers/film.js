@@ -1,7 +1,7 @@
-import Film from "../components/film";
-import Popup from "../components/popup";
-import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender} from "../components/utils";
-import {comments, body} from '../components/data';
+import FilmCard from "../components/film-mode/film-card";
+import FilmPopup from "../components/film-mode/film-popup";
+import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender} from "../utils";
+import {comments, body} from '../model/data';
 
 export default class FilmController {
   constructor(container, data, onDataChange, onViewChange) {
@@ -9,8 +9,8 @@ export default class FilmController {
     this._data = data;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
-    this._film = new Film(data);
-    this._popup = new Popup(data);
+    this._film = new FilmCard(data);
+    this._popup = new FilmPopup(data);
     this._userRatingEl = null;
     this._userCommentEl = null;
   }

@@ -1,6 +1,6 @@
-import AbstractComponent from './abstract-component';
+import AbstractComponent from '../abstract/abstract-component';
 
-export default class ExtraContainer extends AbstractComponent {
+export default class FeaturedContainer extends AbstractComponent {
   constructor(title) {
     super();
     this._title = title;

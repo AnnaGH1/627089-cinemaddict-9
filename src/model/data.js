@@ -1,4 +1,4 @@
-import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, defineUser} from "./utils";
+import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, defineUser} from "../utils";
 
 const IMG_PATH = `./images/posters/`;
 export const IMG_USER = `./images/bitmap@2x.png`;

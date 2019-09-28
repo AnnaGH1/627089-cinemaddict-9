@@ -1,9 +1,9 @@
-import AbstractComponent from './abstract-component';
-import {getRandSelection, getNounForm} from './utils';
-import {userScores, comments} from './data';
+import AbstractComponent from '../abstract/abstract-component';
+import {getRandSelection, getNounForm} from '../../utils';
+import {userScores, comments} from '../../model/data';
 import moment from 'moment';
 
-export default class Popup extends AbstractComponent {
+export default class FilmPopup extends AbstractComponent {
   constructor(film) {
     super();
     this._title = film.title;
@@ -84,7 +84,7 @@ export default class Popup extends AbstractComponent {
               <tr class="film-details__row">
                 <td class="film-details__term">${getNounForm(`Genre`, this._genres.size)}</td>
                 <td class="film-details__cell">
-                    ${[...this._genres].map(Popup.getGenreTemplate).join(``)}
+                    ${[...this._genres].map(FilmPopup.getGenreTemplate).join(``)}
                   </td>
               </tr>
             </table>
@@ -112,7 +112,7 @@ export default class Popup extends AbstractComponent {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._commentsCount}</span></h3>
   
           <ul class="film-details__comments-list">
-            ${getRandSelection(comments, this._commentsCount).map(Popup.getCommentTemplate).join(``)}
+            ${getRandSelection(comments, this._commentsCount).map(FilmPopup.getCommentTemplate).join(``)}
           </ul>
   
           <div class="film-details__new-comment">

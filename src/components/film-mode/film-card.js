@@ -1,8 +1,8 @@
-import AbstractComponent from './abstract-component';
-import {getNounForm} from './utils';
+import AbstractComponent from '../abstract/abstract-component';
+import {getNounForm} from '../../utils';
 import moment from 'moment';
 
-export default class Film extends AbstractComponent {
+export default class FilmCard extends AbstractComponent {
   constructor(film) {
     super();
     this._title = film.title;

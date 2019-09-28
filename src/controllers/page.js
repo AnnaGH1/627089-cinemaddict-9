@@ -5,15 +5,15 @@ import {
   sortByPropDown,
   sortByPropUp,
   getRandSelection
-} from '../components/utils';
-import {FilmsCount, filmsCountEl, PromoCategory} from '../components/data';
-import Message from '../components/message';
-import Show from '../components/show';
-import PageLayout from '../components/page-layout';
-import ExtraContainer from '../components/extra-container';
-import FilterContainer from '../components/filter-container';
-import Filter from '../components/filter';
-import Sort from '../components/sort';
+} from '../utils';
+import {FilmsCount, filmsCountEl, PromoCategory} from '../model/data';
+import Message from '../components/films-list/message';
+import Show from '../components/films-list/show';
+import PageLayout from '../components/films-list/page-layout';
+import FeaturedContainer from '../components/films-featured/featured-container';
+import FilterContainer from '../components/filter/filter-container';
+import Filter from '../components/filter/filter';
+import Sort from '../components/nav/sort';
 import FilmController from './film';
 
 export default class PageController {
@@ -24,8 +24,8 @@ export default class PageController {
     this._mostCommented = null;
     this._filters = filters;
     this._pageLayout = new PageLayout();
-    this._extraContainerRating = new ExtraContainer(PromoCategory.RATING);
-    this._extraContainerComments = new ExtraContainer(PromoCategory.COMMENTS);
+    this._extraContainerRating = new FeaturedContainer(PromoCategory.RATING);
+    this._extraContainerComments = new FeaturedContainer(PromoCategory.COMMENTS);
     this._filterContainer = new FilterContainer();
     this._sort = new Sort();
     this._message = new Message();
