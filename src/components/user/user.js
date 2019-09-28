@@ -1,4 +1,4 @@
-import AbstractComponent from './abstract-component';
+import AbstractComponent from '../abstract/abstract-component';
 
 export default class User extends AbstractComponent {
   constructor(user) {

@@ -1,4 +1,4 @@
-import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, defineUser} from "./utils";
+import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, defineUser} from "../utils";
 
 const IMG_PATH = `./images/posters/`;
 export const IMG_USER = `./images/bitmap@2x.png`;
@@ -95,12 +95,12 @@ export const PromoCategory = {
   COMMENTS: `Most commented`,
 };
 const Rating = {
-  MIN: 1,
+  MIN: 0,
   MAX: 5,
 };
 const Year = {
-  MIN: 1920,
-  MAX: 2018,
+  MIN: 0,
+  MAX: Date.now(),
 };
 const Duration = {
   MIN: 20,

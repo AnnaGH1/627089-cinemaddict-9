@@ -1,7 +1,7 @@
-import {Position, render} from './components/utils';
-import {films, userType, filters} from './components/data';
-import User from './components/user';
-import Search from './components/search';
+import {Position, render} from './utils';
+import {films, userType, filters} from './model/data';
+import User from './components/user/user';
+import Search from './components/nav/search';
 import PageController from './controllers/page';
 
 const headerContainer = document.querySelector(`.header`);

@@ -1,22 +1,31 @@
-import {Position, render, unrender, sortByPropDown, sortByPropUp} from '../components/utils';
-import {FilmsCount, filmsCountEl, PromoCategory} from '../components/data';
-import Message from '../components/message';
-import Show from '../components/show';
-import PageLayout from '../components/page-layout';
-import ExtraContainer from '../components/extra-container';
-import FilterContainer from '../components/filter-container';
-import Filter from '../components/filter';
-import Sort from '../components/sort';
+import {
+  Position,
+  render,
+  unrender,
+  sortByPropDown,
+  sortByPropUp,
+  getRandSelection
+} from '../utils';
+import {FilmsCount, filmsCountEl, PromoCategory} from '../model/data';
+import Message from '../components/films-list/message';
+import Show from '../components/films-list/show';
+import PageLayout from '../components/films-list/page-layout';
+import FeaturedContainer from '../components/films-featured/featured-container';
+import FilterContainer from '../components/filter/filter-container';
+import Filter from '../components/filter/filter';
+import Sort from '../components/nav/sort';
 import FilmController from './film';
 
 export default class PageController {
   constructor(container, films, filters) {
     this._container = container;
     this._films = films;
+    this._topRated = null;
+    this._mostCommented = null;
     this._filters = filters;
     this._pageLayout = new PageLayout();
-    this._extraContainerRating = new ExtraContainer(PromoCategory.RATING);
-    this._extraContainerComments = new ExtraContainer(PromoCategory.COMMENTS);
+    this._extraContainerRating = new FeaturedContainer(PromoCategory.RATING);
+    this._extraContainerComments = new FeaturedContainer(PromoCategory.COMMENTS);
     this._filterContainer = new FilterContainer();
     this._sort = new Sort();
     this._message = new Message();
@@ -62,30 +71,50 @@ export default class PageController {
   }
 
   _renderTopRated(films) {
-    const topRated = sortByPropDown(films, `rating`).filter((film) => film.rating > 0);
-    if (!topRated.length) {
+    const nonZeroRated = sortByPropDown(films, `rating`).filter((film) => film.rating > 0);
+    // Do not render if all films have zero rating
+    if (!nonZeroRated.length) {
       return;
     }
     // Render extra containers
     const filmsContainerOuter = this._container.querySelector(`.films`);
     render(filmsContainerOuter, this._extraContainerRating.getElement(), Position.BEFOREEND);
     const containerTopRated = this._extraContainerRating.getElement().querySelector(`.films-list__container`);
-    topRated
-      .slice(0, FilmsCount.FEATURED)
-      .forEach((el) => this._renderFilm(containerTopRated, el));
+    // Check if all films have equal rating
+    const rating = films[0].rating;
+    const isEqualRating = nonZeroRated.every((el) => el[`rating`] === rating);
+
+    // Get films selection
+    if (isEqualRating) {
+      this._topRated = getRandSelection(nonZeroRated, FilmsCount.FEATURED);
+    } else {
+      this._topRated = nonZeroRated.slice(0, FilmsCount.FEATURED);
+    }
+    this._topRated.forEach((el) => this._renderFilm(containerTopRated, el));
   }
 
   _renderMostCommented(films) {
-    const mostCommented = sortByPropDown(films, `commentsCount`).filter((film) => film.commentsCount > 0);
-    if (!mostCommented.length) {
+    const commented = sortByPropDown(films, `commentsCount`).filter((film) => film.commentsCount > 0);
+    // Do not render if all films have no comments
+    if (!commented.length) {
       return;
     }
     // Render extra containers
     const filmsContainerOuter = this._container.querySelector(`.films`);
     render(filmsContainerOuter, this._extraContainerComments.getElement(), Position.BEFOREEND);
     const containerMostCommented = this._extraContainerComments.getElement().querySelector(`.films-list__container`);
-    mostCommented
-      .slice(0, FilmsCount.FEATURED)
+    // Check if all films have equal comments count
+    const commentsCount = films[0].commentsCount;
+    const isEqualCommentsCount = commented.every((el) => el[`commentsCount`] === commentsCount);
+
+    // Get films selection
+    if (isEqualCommentsCount) {
+      this._mostCommented = getRandSelection(commented, FilmsCount.FEATURED);
+    } else {
+      this._mostCommented = commented.slice(0, FilmsCount.FEATURED);
+    }
+
+    this._mostCommented
       .forEach((el) => this._renderFilm(containerMostCommented, el));
   }
 

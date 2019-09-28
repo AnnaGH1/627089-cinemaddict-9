@@ -1,4 +1,4 @@
-import AbstractComponent from './abstract-component';
+import AbstractComponent from '../abstract/abstract-component';
 
 export default class Show extends AbstractComponent {
   constructor() {
