@@ -95,7 +95,7 @@ export const PromoCategory = {
   COMMENTS: `Most commented`,
 };
 const Rating = {
-  MIN: 1,
+  MIN: 0,
   MAX: 5,
 };
 const Year = {
