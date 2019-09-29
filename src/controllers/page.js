@@ -11,10 +11,10 @@ import Message from '../components/films-list/message';
 import Show from '../components/films-list/show';
 import PageLayout from '../components/films-list/page-layout';
 import FeaturedContainer from '../components/films-featured/featured-container';
-import FilterContainer from '../components/filter/filter-container';
-import Filter from '../components/filter/filter';
+import MainNavContainer from '../components/nav/main-nav-container';
 import Sort from '../components/nav/sort';
 import FilmController from './film';
+import MainNavItemController from './main-nav-item';
 
 export default class PageController {
   constructor(container, films, filters) {
@@ -26,7 +26,7 @@ export default class PageController {
     this._pageLayout = new PageLayout();
     this._extraContainerRating = new FeaturedContainer(PromoCategory.RATING);
     this._extraContainerComments = new FeaturedContainer(PromoCategory.COMMENTS);
-    this._filterContainer = new FilterContainer();
+    this._mainNavContainer = new MainNavContainer();
     this._sort = new Sort();
     this._message = new Message();
     this._show = new Show();
@@ -46,10 +46,8 @@ export default class PageController {
 
   _renderFilters() {
     render(this._container, this._filterContainer.getElement(), Position.BEFOREEND);
-    this._filters.forEach((el) => {
-      const filter = new Filter(el);
-      render(this._filterContainer.getElement(), filter.getElement(), Position.BEFOREEND);
-    });
+    const navItemController = new MainNavItemController(this._mainNavContainer.getElement(), this._filters);
+    navItemController.init();
   }
 
   _renderSort() {
