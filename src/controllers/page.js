@@ -45,7 +45,7 @@ export default class PageController {
   }
 
   _renderFilters() {
-    render(this._container, this._filterContainer.getElement(), Position.BEFOREEND);
+    render(this._container, this._mainNavContainer.getElement(), Position.BEFOREEND);
     const navItemController = new MainNavItemController(this._mainNavContainer.getElement(), this._filters);
     navItemController.init();
   }
