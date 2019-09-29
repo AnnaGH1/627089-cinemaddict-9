@@ -1,7 +1,8 @@
 import FilmCard from "../components/film-mode/film-card";
 import FilmPopup from "../components/film-mode/film-popup";
 import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender} from "../utils";
-import {comments, body} from '../model/data';
+import {comments} from '../model/data';
+import {body} from '../helper';
 
 export default class FilmController {
   constructor(container, data, onDataChange, onViewChange) {

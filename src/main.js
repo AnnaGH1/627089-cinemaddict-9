@@ -1,5 +1,6 @@
 import {Position, render} from './utils';
-import {films, userType, filters} from './model/data';
+import {films, filters} from './model/data';
+import {userType} from './helper';
 import User from './components/user/user';
 import Search from './components/nav/search';
 import PageController from './controllers/page';

@@ -6,7 +6,11 @@ import {
   sortByPropUp,
   getRandSelection
 } from '../utils';
-import {FilmsCount, filmsCountEl, PromoCategory} from '../model/data';
+import {
+  FilmsCount,
+  filmsCountEl,
+  PromoCategory,
+} from '../helper';
 import Message from '../components/films-list/message';
 import Show from '../components/films-list/show';
 import PageLayout from '../components/films-list/page-layout';

@@ -1,6 +1,7 @@
 import AbstractComponent from '../abstract/abstract-component';
 import {getRandSelection, getNounForm} from '../../utils';
-import {userScores, comments} from '../../model/data';
+import {comments} from '../../model/data';
+import {userScores} from '../../helper';
 import moment from 'moment';
 
 export default class FilmPopup extends AbstractComponent {
