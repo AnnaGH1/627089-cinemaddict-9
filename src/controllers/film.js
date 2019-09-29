@@ -1,7 +1,6 @@
 import FilmCard from "../components/film-mode/film-card";
 import FilmPopup from "../components/film-mode/film-popup";
 import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender} from "../utils";
-import {comments} from '../model/data';
 import {body} from '../helper';
 
 export default class FilmController {
@@ -190,7 +189,7 @@ export default class FilmController {
         genres: this._data.genres,
         url: this._data.url,
         description: this._data.description,
-        commentsCount: this._data.commentsCount,
+        comments: this._data.comments,
         isWatchlist,
         isHistory,
         isFavorites,
@@ -212,7 +211,7 @@ export default class FilmController {
         genres: this._data.genres,
         url: this._data.url,
         description: this._data.description,
-        commentsCount: this._data.commentsCount,
+        comments: this._data.comments,
         isWatchlist,
         isHistory,
         isFavorites,
@@ -240,7 +239,7 @@ export default class FilmController {
         genres: this._data.genres,
         url: this._data.url,
         description: this._data.description,
-        commentsCount: this._data.commentsCount,
+        comments: this._data.comments,
         isWatchlist: !!formData.get(`watchlist`),
         isHistory: !!formData.get(`watched`),
         isFavorites: !!formData.get(`favorite`),
@@ -262,7 +261,7 @@ export default class FilmController {
         genres: this._data.genres,
         url: this._data.url,
         description: this._data.description,
-        commentsCount: this._data.commentsCount,
+        comments: this._data.comments,
         isWatchlist: !!formData.get(`watchlist`),
         isHistory: !!formData.get(`watched`),
         isFavorites: !!formData.get(`favorite`),
@@ -286,7 +285,6 @@ export default class FilmController {
       emoji: formData.get(`comment-emoji`) ? formData.get(`comment-emoji`) : `smile`,
       time: Date.now(),
     };
-    comments.push(entryComment);
     formEl.reset();
     const entryFilm = {
       title: this._data.title,
@@ -301,7 +299,7 @@ export default class FilmController {
       genres: this._data.genres,
       url: this._data.url,
       description: this._data.description,
-      commentsCount: this._data.commentsCount + 1,
+      comments: [entryComment, ...this._data.comments],
       isWatchlist: this._data.isWatchlist,
       isHistory: this._data.isHistory,
       isFavorites: this._data.isFavorites,

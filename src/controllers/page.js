@@ -96,7 +96,7 @@ export default class PageController {
   }
 
   _renderMostCommented(films) {
-    const commented = sortByPropDown(films, `commentsCount`).filter((film) => film.commentsCount > 0);
+    const commented = films.filter((film) => film.comments.length > 0);
     // Do not render if all films have no comments
     if (!commented.length) {
       return;
@@ -106,14 +106,15 @@ export default class PageController {
     render(filmsContainerOuter, this._extraContainerComments.getElement(), Position.BEFOREEND);
     const containerMostCommented = this._extraContainerComments.getElement().querySelector(`.films-list__container`);
     // Check if all films have equal comments count
-    const commentsCount = films[0].commentsCount;
-    const isEqualCommentsCount = commented.every((el) => el[`commentsCount`] === commentsCount);
+    const commentsCount = commented[0].comments.length;
+    const isEqualCommentsCount = commented.every((el) => el[`comments`].length === commentsCount);
 
     // Get films selection
     if (isEqualCommentsCount) {
       this._mostCommented = getRandSelection(commented, FilmsCount.FEATURED);
     } else {
-      this._mostCommented = commented.slice(0, FilmsCount.FEATURED);
+      const commentedDesc = commented.sort((a, b) => b[`comments`].length - a[`comments`].length);
+      this._mostCommented = commentedDesc.slice(0, FilmsCount.FEATURED);
     }
 
     this._mostCommented

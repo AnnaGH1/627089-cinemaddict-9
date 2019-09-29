@@ -98,7 +98,7 @@ const CommentsCount = {
   MIN: 0,
   MAX: 5,
 };
-export const comments = [
+export const commentsStart = [
   {
     author: `Tim Macoveev`,
     text: `Interesting setting and a good cast`,
@@ -149,7 +149,7 @@ const getFilm = () => (
     genres: new Set(getRandSelection(Films.GENRES, MOCK_ITEMS_MAX)),
     url: `${IMG_PATH}${Films.IMAGES[Math.floor(Math.random() * Films.IMAGES.length)]}`,
     description: getRandSelection(Films.DESCRIPTION, MOCK_ITEMS_MAX).join(` `).toString(),
-    commentsCount: getRandomIntInclusive(CommentsCount.MIN, CommentsCount.MAX),
+    comments: getRandSelection(commentsStart, getRandomIntInclusive(CommentsCount.MIN, CommentsCount.MAX)),
     isWatchlist: Boolean(Math.round(Math.random())),
     isHistory: Boolean(Math.round(Math.random())),
     isFavorites: Boolean(Math.round(Math.random())),
