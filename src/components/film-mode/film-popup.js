@@ -71,7 +71,7 @@ export default class FilmPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${this._year}</td>
+                <td class="film-details__cell">${moment(this._year).format(`YYYY`)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>

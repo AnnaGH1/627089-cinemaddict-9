@@ -1,6 +1,6 @@
 import AbstractComponent from '../abstract/abstract-component';
 
-export default class Search extends AbstractComponent {
+export default class SearchQuery extends AbstractComponent {
   constructor() {
     super();
   }
