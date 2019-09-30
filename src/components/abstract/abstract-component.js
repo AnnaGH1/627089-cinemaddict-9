@@ -23,4 +23,12 @@ export default class AbstractComponent {
   getTemplate() {
     throw new Error(`Abstract method not implemented: getTemplate`);
   }
+
+  hide() {
+    this._element.classList.add(`visually-hidden`);
+  }
+
+  show() {
+    this._element.classList.remove(`visually-hidden`);
+  }
 }

@@ -3,6 +3,7 @@ import {FilmsCount, PromoCategory} from '../helper';
 import FilmController from './film';
 import Show from '../components/films-list/show';
 import FeaturedContainer from '../components/films-featured/featured-container';
+import SearchMessage from '../components/search/search-message';
 
 
 export default class FilmListController {
@@ -22,13 +23,14 @@ export default class FilmListController {
     this._subscriptions = [];
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._searchMessage = new SearchMessage();
   }
 
   _removePrevFilms() {
     // Reset previous films sequence
     this._filmsSequence = null;
 
-    // Remove previous films elements
+    // Remove previous films elements or search message
     this._filmsContainer.innerHTML = ``;
 
     // If rendered, remove show more button corresponding to the previous films
@@ -126,6 +128,14 @@ export default class FilmListController {
 
     this._mostCommented
       .forEach((el) => this._renderFilm(containerMostCommented, el));
+  }
+
+  renderSearchMessage() {
+    this._removePrevFilms();
+    this._resetPageCounters();
+    this._removePrevFeaturedFilms();
+
+    render(this._filmsContainer, this._searchMessage.getElement(), Position.BEFOREEND);
   }
 
   _onShowButtonClick() {
