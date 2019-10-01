@@ -7,6 +7,7 @@ import {
   defineUser
 } from '../utils';
 
+export const QUERY_LENGTH_MIN = 3;
 export const IMG_USER = `./images/bitmap@2x.png`;
 export const PromoCategory = {
   RATING: `Top rated`,

@@ -52,7 +52,7 @@ export default class FilmListController {
     this._subscriptions.push(filmController.setDefaultView.bind(filmController));
   }
 
-  renderFilmList(filmsSequence) {
+  renderFilmListMain(filmsSequence) {
     this._removePrevFilms();
     this._resetPageCounters();
     this._filmsSequence = filmsSequence;
@@ -154,7 +154,7 @@ export default class FilmListController {
 
   _onDataChange(newData, oldData) {
     this._films[this._films.findIndex((el) => el === oldData)] = newData;
-    this.renderFilmList(this._films);
+    this.renderFilmListMain(this._films);
     this.renderFeaturedFilms(this._films);
   }
 

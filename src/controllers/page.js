@@ -4,7 +4,6 @@ import {
   unrender,
   sortByPropDown,
   sortByPropUp,
-  Key,
 } from '../utils';
 import {
   FilmsCount,
@@ -17,8 +16,8 @@ import MainNavContainer from '../components/nav/main-nav-container';
 import Sort from '../components/nav/sort';
 import MainNavItemController from './main-nav-item';
 import FilmListController from './film-list';
+import SearchController from './search';
 import SearchResultCount from '../components/search/search-result-count';
-import SearchQuery from '../components/search/search-query';
 import User from '../components/user/user';
 
 export default class PageController {
@@ -26,7 +25,6 @@ export default class PageController {
     this._container = container;
     this._films = films;
     this._filters = filters;
-    this._searchQuery = new SearchQuery();
     this._searchResultCount = null;
     this._user = new User(userType);
     this._pageLayout = new PageLayout();
@@ -36,6 +34,9 @@ export default class PageController {
     this._filmsContainer = null;
     this._loadMoreContainer = null;
     this._filmListController = null;
+    this._searchController = null;
+    this._onSearchEntry = this._onSearchEntry.bind(this);
+    this._onSearchReset = this._onSearchReset.bind(this);
   }
 
   _renderMessage() {
@@ -44,21 +45,8 @@ export default class PageController {
 
   _renderSearchQuery() {
     const headerContainer = document.querySelector(`.header`);
-    render(headerContainer, this._searchQuery.getElement(), Position.BEFOREEND);
-
-    this._searchQuery.getElement()
-      .querySelector(`.search__field`)
-      .addEventListener(`keydown`, (e) => {
-        if (e.key === Key.ENTER) {
-          this._onSearchKeydown(e);
-        }
-      });
-
-    this._searchQuery.getElement()
-      .querySelector(`.search__reset`)
-      .addEventListener(`click`, (e) => {
-        this._onSearchReset(e);
-      });
+    this._searchController = new SearchController(headerContainer, this._onSearchEntry, this._onSearchReset);
+    this._searchController.init();
   }
 
   _renderUser() {
@@ -92,11 +80,6 @@ export default class PageController {
     el.textContent = ``;
   }
 
-  _renderFilmListsAll() {
-    this._filmListController.renderFilmList(this._films);
-    this._filmListController.renderFeaturedFilms(this._films);
-  }
-
   _renderSearchResultCount() {
     render(this._container, this._searchResultCount.getElement(), Position.AFTERBEGIN);
   }
@@ -107,21 +90,25 @@ export default class PageController {
     this._searchResultCount = null;
   }
 
-  _renderSearchResults() {
+  _renderSearchResults(filmsFound) {
     this._mainNavContainer.hide();
     this._sort.hide();
-    // Mock search results
-    const searchResult = this._films.slice(0, 3);
+
+    // If rendered from prev search - remove
+    if (this._searchResultCount) {
+      this._removeSearchResultCount();
+    }
+
     // Render result count
-    this._searchResultCount = new SearchResultCount(searchResult);
+    this._searchResultCount = new SearchResultCount(filmsFound);
     this._renderSearchResultCount();
 
     // Render message or film list
-    if (!searchResult.length) {
+    if (!filmsFound.length) {
       this._filmListController.renderSearchMessage();
     } else {
       this._filmListController._removePrevFeaturedFilms();
-      this._filmListController.renderFilmList(searchResult);
+      this._filmListController.renderFilmListMain(filmsFound);
     }
   }
 
@@ -143,8 +130,8 @@ export default class PageController {
 
       // Films list
       this._filmListController = new FilmListController(this._filmsContainer, this._loadMoreContainer, this._films);
-      this._renderFilmListsAll();
-
+      this._filmListController.renderFilmListMain(this._films);
+      this._filmListController.renderFeaturedFilms(this._films);
       // Footer
       this._updateFilmsCount(filmsCountEl);
     }
@@ -162,19 +149,26 @@ export default class PageController {
       default: this._films,
     };
 
-    this._filmListController.renderFilmList(sortMap[e.target.dataset.sortType]);
+    this._filmListController.renderFilmListMain(sortMap[e.target.dataset.sortType]);
   }
 
-  _onSearchKeydown(e) {
+  _onSearchEntry(e) {
     e.preventDefault();
-    this._renderSearchResults();
+    const filmsFound = this._films.filter((film) => film.title.includes(e.target.value));
+    this._renderSearchResults(filmsFound);
   }
 
   _onSearchReset(e) {
     e.preventDefault();
+    // Update search status
+    this._searchController._searchRun = false;
     this._mainNavContainer.show();
     this._sort.show();
-    this._removeSearchResultCount();
-    this._renderFilmListsAll();
+    // If rendered from prev search - remove
+    if (this._searchResultCount) {
+      this._removeSearchResultCount();
+    }
+    this._filmListController.renderFilmListMain(this._films);
+    this._filmListController.renderFeaturedFilms(this._films);
   }
 }
