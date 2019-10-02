@@ -8,7 +8,7 @@ export default class StatisticsController {
   }
 
   _renderStatistics() {
-    render(this._container, this._statistics.getElement(), Position.AFTERBEGIN);
+    render(this._container, this._statistics.getElement(), Position.BEFOREEND);
   }
 
   init() {

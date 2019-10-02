@@ -2,11 +2,7 @@ import {
   getRandSelection,
   getRandomIntInclusive
 } from "../utils";
-import {
-  FilmsCount,
-  FilterMap,
-  getFilters
-} from '../helper';
+import {FilmsCount} from '../helper';
 
 const IMG_PATH = `./images/posters/`;
 const MOCK_ITEMS_MAX = 3;
@@ -158,4 +154,3 @@ const getFilm = () => (
 );
 
 export const films = new Array(FilmsCount.TOTAL).fill({}).map(getFilm);
-export const filters = getFilters(FilterMap, films);
