@@ -4,52 +4,60 @@ import {
   unrender,
   sortByPropDown,
   sortByPropUp,
-  getRandSelection
 } from '../utils';
-import {FilmsCount, filmsCountEl, PromoCategory} from '../model/data';
+import {
+  FilmsCount,
+  filmsCountEl,
+  userType,
+} from '../helper';
 import Message from '../components/films-list/message';
-import Show from '../components/films-list/show';
 import PageLayout from '../components/films-list/page-layout';
-import FeaturedContainer from '../components/films-featured/featured-container';
-import FilterContainer from '../components/filter/filter-container';
-import Filter from '../components/filter/filter';
+import MainNavContainer from '../components/nav/main-nav-container';
 import Sort from '../components/nav/sort';
-import FilmController from './film';
+import MainNavItemController from './main-nav-item';
+import FilmListController from './film-list';
+import SearchController from './search';
+import SearchResultCount from '../components/search/search-result-count';
+import User from '../components/user/user';
 
 export default class PageController {
   constructor(container, films, filters) {
     this._container = container;
     this._films = films;
-    this._topRated = null;
-    this._mostCommented = null;
     this._filters = filters;
+    this._searchResultCount = null;
+    this._user = new User(userType);
     this._pageLayout = new PageLayout();
-    this._extraContainerRating = new FeaturedContainer(PromoCategory.RATING);
-    this._extraContainerComments = new FeaturedContainer(PromoCategory.COMMENTS);
-    this._filterContainer = new FilterContainer();
+    this._mainNavContainer = new MainNavContainer();
     this._sort = new Sort();
     this._message = new Message();
-    this._show = new Show();
-    this._filmPageStart = 0;
-    this._filmPageEnd = FilmsCount.PER_PAGE;
     this._filmsContainer = null;
     this._loadMoreContainer = null;
-    this._filmsSequence = null;
-    this._subscriptions = [];
-    this._onDataChange = this._onDataChange.bind(this);
-    this._onViewChange = this._onViewChange.bind(this);
+    this._filmListController = null;
+    this._searchController = null;
+    this._onSearchEntry = this._onSearchEntry.bind(this);
+    this._onSearchReset = this._onSearchReset.bind(this);
   }
 
   _renderMessage() {
     render(this._container, this._message.getElement(), Position.BEFOREEND);
   }
 
+  _renderSearchQuery() {
+    const headerContainer = document.querySelector(`.header`);
+    this._searchController = new SearchController(headerContainer, this._onSearchEntry, this._onSearchReset);
+    this._searchController.init();
+  }
+
+  _renderUser() {
+    const headerContainer = document.querySelector(`.header`);
+    render(headerContainer, this._user.getElement(), Position.BEFOREEND);
+  }
+
   _renderFilters() {
-    render(this._container, this._filterContainer.getElement(), Position.BEFOREEND);
-    this._filters.forEach((el) => {
-      const filter = new Filter(el);
-      render(this._filterContainer.getElement(), filter.getElement(), Position.BEFOREEND);
-    });
+    render(this._container, this._mainNavContainer.getElement(), Position.BEFOREEND);
+    const navItemController = new MainNavItemController(this._mainNavContainer.getElement(), this._filters);
+    navItemController.init();
   }
 
   _renderSort() {
@@ -64,60 +72,6 @@ export default class PageController {
     this._loadMoreContainer = this._container.querySelector(`.films-list`);
   }
 
-  _renderFeaturedFilms(films) {
-    this._removePrevFeaturedFilms();
-    this._renderTopRated(films);
-    this._renderMostCommented(films);
-  }
-
-  _renderTopRated(films) {
-    const nonZeroRated = sortByPropDown(films, `rating`).filter((film) => film.rating > 0);
-    // Do not render if all films have zero rating
-    if (!nonZeroRated.length) {
-      return;
-    }
-    // Render extra containers
-    const filmsContainerOuter = this._container.querySelector(`.films`);
-    render(filmsContainerOuter, this._extraContainerRating.getElement(), Position.BEFOREEND);
-    const containerTopRated = this._extraContainerRating.getElement().querySelector(`.films-list__container`);
-    // Check if all films have equal rating
-    const rating = films[0].rating;
-    const isEqualRating = nonZeroRated.every((el) => el[`rating`] === rating);
-
-    // Get films selection
-    if (isEqualRating) {
-      this._topRated = getRandSelection(nonZeroRated, FilmsCount.FEATURED);
-    } else {
-      this._topRated = nonZeroRated.slice(0, FilmsCount.FEATURED);
-    }
-    this._topRated.forEach((el) => this._renderFilm(containerTopRated, el));
-  }
-
-  _renderMostCommented(films) {
-    const commented = sortByPropDown(films, `commentsCount`).filter((film) => film.commentsCount > 0);
-    // Do not render if all films have no comments
-    if (!commented.length) {
-      return;
-    }
-    // Render extra containers
-    const filmsContainerOuter = this._container.querySelector(`.films`);
-    render(filmsContainerOuter, this._extraContainerComments.getElement(), Position.BEFOREEND);
-    const containerMostCommented = this._extraContainerComments.getElement().querySelector(`.films-list__container`);
-    // Check if all films have equal comments count
-    const commentsCount = films[0].commentsCount;
-    const isEqualCommentsCount = commented.every((el) => el[`commentsCount`] === commentsCount);
-
-    // Get films selection
-    if (isEqualCommentsCount) {
-      this._mostCommented = getRandSelection(commented, FilmsCount.FEATURED);
-    } else {
-      this._mostCommented = commented.slice(0, FilmsCount.FEATURED);
-    }
-
-    this._mostCommented
-      .forEach((el) => this._renderFilm(containerMostCommented, el));
-  }
-
   _updateFilmsCount(el) {
     el.textContent = `${FilmsCount.TOTAL} movies inside`;
   }
@@ -126,49 +80,36 @@ export default class PageController {
     el.textContent = ``;
   }
 
-  _removePrevFilms() {
-    // Reset previous films sequence
-    this._filmsSequence = null;
+  _renderSearchResultCount() {
+    render(this._container, this._searchResultCount.getElement(), Position.AFTERBEGIN);
+  }
 
-    // Remove previous films elements
-    this._filmsContainer.innerHTML = ``;
+  _removeSearchResultCount() {
+    unrender(this._searchResultCount.getElement());
+    this._searchResultCount.removeElement();
+    this._searchResultCount = null;
+  }
 
-    // If rendered, remove show more button corresponding to the previous films
-    if (this._show._element) {
-      unrender(this._show.getElement());
-      this._show.removeElement();
+  _renderSearchResults(filmsFound) {
+    this._mainNavContainer.hide();
+    this._sort.hide();
+
+    // If rendered from prev search - remove
+    if (this._searchResultCount) {
+      this._removeSearchResultCount();
     }
-  }
 
-  _removePrevFeaturedFilms() {
-    unrender(this._extraContainerRating.getElement());
-    this._extraContainerRating.removeElement();
-    unrender(this._extraContainerComments.getElement());
-    this._extraContainerComments.removeElement();
-  }
+    // Render result count
+    this._searchResultCount = new SearchResultCount(filmsFound);
+    this._renderSearchResultCount();
 
-  _resetPageCounters() {
-    this._filmPageStart = 0;
-    this._filmPageEnd = FilmsCount.PER_PAGE;
-  }
-
-  _renderFilmList(filmsSequence) {
-    this._removePrevFilms();
-    this._resetPageCounters();
-    this._filmsSequence = filmsSequence;
-
-    // Render films
-    this._filmsSequence.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(this._filmsContainer, el));
-
-    // Render show more button
-    render(this._loadMoreContainer, this._show.getElement(), Position.BEFOREEND);
-    this._show.getElement().addEventListener(`click`, this._onShowButtonClick.bind(this));
-  }
-
-  _renderFilm(container, item) {
-    const filmController = new FilmController(container, item, this._onDataChange, this._onViewChange);
-    filmController.init();
-    this._subscriptions.push(filmController.setDefaultView.bind(filmController));
+    // Render message or film list
+    if (!filmsFound.length) {
+      this._filmListController.renderSearchMessage();
+    } else {
+      this._filmListController._removePrevFeaturedFilms();
+      this._filmListController.renderFilmListMain(filmsFound);
+    }
   }
 
   init() {
@@ -178,11 +119,20 @@ export default class PageController {
       this._updateNoFilms(filmsCountEl);
     } else {
       // Render page otherwise
+      // Header
+      this._renderSearchQuery();
+      this._renderUser();
+
+      // Controls and layout
       this._renderFilters();
       this._renderSort();
       this._renderPageLayout();
-      this._renderFilmList(this._films);
-      this._renderFeaturedFilms(this._films);
+
+      // Films list
+      this._filmListController = new FilmListController(this._filmsContainer, this._loadMoreContainer, this._films);
+      this._filmListController.renderFilmListMain(this._films);
+      this._filmListController.renderFeaturedFilms(this._films);
+      // Footer
       this._updateFilmsCount(filmsCountEl);
     }
   }
@@ -199,29 +149,34 @@ export default class PageController {
       default: this._films,
     };
 
-    this._renderFilmList(sortMap[e.target.dataset.sortType]);
+    this._filmListController.renderFilmListMain(sortMap[e.target.dataset.sortType]);
   }
 
-  _onShowButtonClick() {
-    this._filmPageStart += FilmsCount.PER_PAGE;
-    this._filmPageEnd += FilmsCount.PER_PAGE;
+  _onSearchEntry(e) {
+    e.preventDefault();
+    let filmsFound = [];
+    const queryNoPunctuation = e.target.value
+      .replace(/[^\w\s]|_/g, ``);
+    const query = new RegExp(queryNoPunctuation, `i`);
+    this._films.forEach((film) => {
+      if (film.title.match(query)) {
+        filmsFound.push(film);
+      }
+    });
+    this._renderSearchResults(filmsFound);
+  }
 
-    if (this._filmPageEnd >= this._filmsSequence.length) {
-      // Remove show more button when last film is rendered
-      unrender(this._show.getElement());
-      this._show.removeElement();
+  _onSearchReset(e) {
+    e.preventDefault();
+    // Update search status
+    this._searchController._searchRun = false;
+    this._mainNavContainer.show();
+    this._sort.show();
+    // If rendered from prev search - remove
+    if (this._searchResultCount) {
+      this._removeSearchResultCount();
     }
-
-    this._filmsSequence.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(this._filmsContainer, el));
-  }
-
-  _onDataChange(newData, oldData) {
-    this._films[this._films.findIndex((el) => el === oldData)] = newData;
-    this._renderFilmList(this._films);
-    this._renderFeaturedFilms(this._films);
-  }
-
-  _onViewChange() {
-    this._subscriptions.forEach((el) => el());
+    this._filmListController.renderFilmListMain(this._films);
+    this._filmListController.renderFeaturedFilms(this._films);
   }
 }

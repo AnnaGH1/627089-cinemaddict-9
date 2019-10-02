@@ -17,7 +17,7 @@ export default class FilmCard extends AbstractComponent {
     this._genres = film.genres;
     this._url = film.url;
     this._description = film.description;
-    this._commentsCount = film.commentsCount;
+    this._comments = film.comments;
     this._isWatchlist = film.isWatchlist;
     this._isHistory = film.isHistory;
     this._isFavorites = film.isFavorites;
@@ -35,7 +35,7 @@ export default class FilmCard extends AbstractComponent {
     </p>
     <img src="${this._url}" alt="" class="film-card__poster">
     <p class="film-card__description">${this._description}</p>
-    <a class="film-card__comments">${this._commentsCount} ${getNounForm(`comment`, this._commentsCount)}</a>
+    <a class="film-card__comments">${this._comments.length} ${getNounForm(`comment`, this._comments.length)}</a>
         <form class="film-card__controls">
             <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${this._isWatchlist ? `film-card__controls-item--active` : ``}">Add to watchlist</button>
             <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${this._isHistory ? `film-card__controls-item--active` : ``}">Mark as watched</button>

@@ -1,6 +1,6 @@
 import AbstractComponent from '../abstract/abstract-component';
-import {getRandSelection, getNounForm} from '../../utils';
-import {userScores, comments} from '../../model/data';
+import {getNounForm} from '../../utils';
+import {userScores} from '../../helper';
 import moment from 'moment';
 
 export default class FilmPopup extends AbstractComponent {
@@ -18,7 +18,7 @@ export default class FilmPopup extends AbstractComponent {
     this._genres = film.genres;
     this._url = film.url;
     this._description = film.description;
-    this._commentsCount = film.commentsCount;
+    this._comments = film.comments;
     this._isWatchlist = film.isWatchlist;
     this._isHistory = film.isHistory;
     this._isFavorites = film.isFavorites;
@@ -71,7 +71,7 @@ export default class FilmPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${this._year}</td>
+                <td class="film-details__cell">${moment(this._year).format(`YYYY`)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -109,14 +109,14 @@ export default class FilmPopup extends AbstractComponent {
       ${this._getUserRatingTemplate()}    
       <div class="form-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._commentsCount}</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments.length}</span></h3>
   
           <ul class="film-details__comments-list">
-            ${getRandSelection(comments, this._commentsCount).map(FilmPopup.getCommentTemplate).join(``)}
+            ${this._comments.map(FilmPopup.getCommentTemplate).join(``)}
           </ul>
   
           <div class="film-details__new-comment">
-            <div for="add-emoji" class="film-details__add-emoji-label"></div>
+            <div class="film-details__add-emoji-label"></div>
   
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>

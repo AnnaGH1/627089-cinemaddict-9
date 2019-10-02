@@ -1,17 +1,15 @@
-import {getRandSelection, getRandomIntInclusive, capitalizeFirstLetter, countAll, countByFlag, countStats, isHolder, defineUser} from "../utils";
+import {
+  getRandSelection,
+  getRandomIntInclusive
+} from "../utils";
+import {
+  FilmsCount,
+  FilterMap,
+  getFilters
+} from '../helper';
 
 const IMG_PATH = `./images/posters/`;
-export const IMG_USER = `./images/bitmap@2x.png`;
 const MOCK_ITEMS_MAX = 3;
-const Control = {
-  FILTERS: {
-    all: countAll,
-    watchlist: countByFlag,
-    history: countByFlag,
-    favorites: countByFlag,
-    stats: countStats,
-  },
-};
 const Films = {
   TITLES: [
     `The Dance of Life`,
@@ -84,16 +82,6 @@ const Films = {
     `Mary Beth Hughes`,
   ],
 };
-export const FilmsCount = {
-  TOTAL: 16,
-  PER_PAGE: 5,
-  BY_USER: 1,
-  FEATURED: 2,
-};
-export const PromoCategory = {
-  RATING: `Top rated`,
-  COMMENTS: `Most commented`,
-};
 const Rating = {
   MIN: 0,
   MAX: 5,
@@ -110,28 +98,7 @@ const CommentsCount = {
   MIN: 0,
   MAX: 5,
 };
-export const userTitle = {
-  novice: {
-    title: `Novice`,
-    isHolder,
-    min: 1,
-    max: 10,
-  },
-  fan: {
-    title: `Fan`,
-    isHolder,
-    min: 11,
-    max: 20,
-  },
-  movieBuff: {
-    title: `Movie Buff`,
-    isHolder,
-    min: 21,
-    max: FilmsCount.TOTAL,
-  },
-};
-export const userScores = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-export const comments = [
+export const commentsStart = [
   {
     author: `Tim Macoveev`,
     text: `Interesting setting and a good cast`,
@@ -182,7 +149,7 @@ const getFilm = () => (
     genres: new Set(getRandSelection(Films.GENRES, MOCK_ITEMS_MAX)),
     url: `${IMG_PATH}${Films.IMAGES[Math.floor(Math.random() * Films.IMAGES.length)]}`,
     description: getRandSelection(Films.DESCRIPTION, MOCK_ITEMS_MAX).join(` `).toString(),
-    commentsCount: getRandomIntInclusive(CommentsCount.MIN, CommentsCount.MAX),
+    comments: getRandSelection(commentsStart, getRandomIntInclusive(CommentsCount.MIN, CommentsCount.MAX)),
     isWatchlist: Boolean(Math.round(Math.random())),
     isHistory: Boolean(Math.round(Math.random())),
     isFavorites: Boolean(Math.round(Math.random())),
@@ -190,29 +157,5 @@ const getFilm = () => (
   }
 );
 
-/**
- * Gets filters data
- * @param {Object} filtersData - names and count functions
- * @param {Array} films
- * @return {Array}
- */
-const getFilters = (filtersData, films) => {
-  const filters = [];
-  Object.keys(filtersData).forEach((key) => {
-    const name = (key === `all`) ? `${capitalizeFirstLetter(key)} movies` : capitalizeFirstLetter(key);
-    const flag = `is${capitalizeFirstLetter(key)}`;
-    filters.push({
-      name,
-      url: `#${key}`,
-      count: filtersData[key](films, flag),
-      isActive: false,
-    });
-  });
-  return filters;
-};
-
 export const films = new Array(FilmsCount.TOTAL).fill({}).map(getFilm);
-export const filters = getFilters(Control.FILTERS, films);
-export const body = document.querySelector(`body`);
-export const filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
-export const userType = defineUser(FilmsCount.BY_USER, userTitle, IMG_USER);
+export const filters = getFilters(FilterMap, films);
