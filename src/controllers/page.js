@@ -154,7 +154,15 @@ export default class PageController {
 
   _onSearchEntry(e) {
     e.preventDefault();
-    const filmsFound = this._films.filter((film) => film.title.includes(e.target.value));
+    let filmsFound = [];
+    const queryNoPunctuation = e.target.value
+      .replace(/[^\w\s]|_/g, ``);
+    const query = new RegExp(queryNoPunctuation, `i`);
+    this._films.forEach((film) => {
+      if (film.title.match(query)) {
+        filmsFound.push(film);
+      }
+    });
     this._renderSearchResults(filmsFound);
   }
 
