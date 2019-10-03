@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
@@ -186,3 +188,29 @@ export const getMax = (object) => {
         Object.values(object));
   });
 };
+
+/**
+ * Gets emoji img element
+ * @param {string} emoji
+ * @return {string}
+ */
+export const getEmojiEl = (emoji) => `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji">`;
+
+/**
+ * Gets new comment element
+ * @param {Object} comment
+ * @return {string}
+ */
+export const getCommentEl = (comment) => `<li class="film-details__comment">
+      <span class="film-details__comment-emoji">
+        <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji">
+      </span>
+      <div>
+        <p class="film-details__comment-text">${comment.text}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${comment.author}</span>
+          <span class="film-details__comment-day">${moment(comment.time).format(`MMM DD YYYY kk:mm`)}</span>
+          <button class="film-details__comment-delete">Delete</button>
+        </p>
+      </div>
+    </li>`;

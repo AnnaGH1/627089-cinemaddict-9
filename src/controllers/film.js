@@ -1,6 +1,6 @@
 import FilmCard from "../components/film-mode/film-card";
 import FilmPopup from "../components/film-mode/film-popup";
-import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender} from "../utils";
+import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender, getEmojiEl, getCommentEl} from "../utils";
 import {body} from '../helper';
 
 export default class FilmController {
@@ -92,16 +92,6 @@ export default class FilmController {
     this._userCommentEl = this._popup.getElement().querySelector(`.film-details__new-comment`);
   }
 
-  _updateHistoryView() {
-    if (this._data.isHistory) {
-      this._userRatingEl.classList.remove(`visually-hidden`);
-      this._userCommentEl.classList.remove(`visually-hidden`);
-    } else {
-      this._userRatingEl.classList.add(`visually-hidden`);
-      this._userCommentEl.classList.add(`visually-hidden`);
-    }
-  }
-
   _clearPrevEmoji() {
     this._popup.getElement()
       .querySelectorAll(`.film-details__emoji-item`)
@@ -147,7 +137,6 @@ export default class FilmController {
     // Render popup
     render(body, this._popup.getElement(), Position.BEFOREEND);
     this._updateRefPopup();
-    this._updateHistoryView();
     document.addEventListener(`keydown`, onEscKeyDown);
   }
 
@@ -223,6 +212,8 @@ export default class FilmController {
 
   _onPopupControlClick(e) {
     e.target.previousElementSibling.toggleAttribute(`checked`);
+    this._onWatchedControlClick(e);
+
     const formData = new FormData(this._popup.getElement().querySelector(`.film-details__inner`));
     if (e.target.classList.contains(`film-details__control-label--watched`) && !e.target.previousElementSibling.hasAttribute(`checked`)) {
       // Removed to history, update data and remove user score
@@ -273,7 +264,11 @@ export default class FilmController {
 
   _onEmojiClick(e) {
     this._clearPrevEmoji();
-    e.target.parentNode.previousElementSibling.setAttribute(`checked`, ``);
+    const emojiInput = e.target.parentNode.previousElementSibling;
+    emojiInput.setAttribute(`checked`, ``);
+    this._popup.getElement()
+      .querySelector(`.film-details__add-emoji-label`)
+      .insertAdjacentHTML(Position.AFTERBEGIN, getEmojiEl(emojiInput.value));
   }
 
   _onCommentSubmit() {
@@ -285,6 +280,10 @@ export default class FilmController {
       emoji: formData.get(`comment-emoji`) ? formData.get(`comment-emoji`) : `smile`,
       time: Date.now(),
     };
+
+    const commentsContainer = this._popup.getElement()
+      .querySelector(`.film-details__comments-list`);
+    commentsContainer.insertAdjacentHTML(Position.AFTERBEGIN, getCommentEl(entryComment));
     formEl.reset();
     const entryFilm = {
       title: this._data.title,
@@ -324,7 +323,7 @@ export default class FilmController {
       genres: this._data.genres,
       url: this._data.url,
       description: this._data.description,
-      commentsCount: this._data.commentsCount,
+      comments: this._data.comments,
       isWatchlist: this._data.isWatchlist,
       isHistory: this._data.isHistory,
       isFavorites: this._data.isFavorites,
@@ -348,12 +347,23 @@ export default class FilmController {
       genres: this._data.genres,
       url: this._data.url,
       description: this._data.description,
-      commentsCount: this._data.commentsCount,
+      comments: this._data.comments,
       isWatchlist: this._data.isWatchlist,
       isHistory: this._data.isHistory,
       isFavorites: this._data.isFavorites,
       userScore: null,
     };
     this._onDataChange(entry, this._data);
+  }
+
+  _onWatchedControlClick(e) {
+    // Update view depending on watched control state
+    if (e.target.classList.contains(`film-details__control-label--watched`) && e.target.previousElementSibling.hasAttribute(`checked`)) {
+      this._userRatingEl.classList.remove(`visually-hidden`);
+      this._userCommentEl.classList.remove(`visually-hidden`);
+    } else {
+      this._userRatingEl.classList.add(`visually-hidden`);
+      this._userCommentEl.classList.add(`visually-hidden`);
+    }
   }
 }

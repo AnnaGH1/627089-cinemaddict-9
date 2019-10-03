@@ -1,8 +1,4 @@
 import {
-  capitalizeFirstLetter,
-  countAll,
-  countByFlag,
-  countStats,
   isHolder,
   defineUser
 } from '../utils';
@@ -40,35 +36,6 @@ export const userTitle = {
   },
 };
 export const userScores = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-export const FilterMap = {
-  all: countAll,
-  watchlist: countByFlag,
-  history: countByFlag,
-  favorites: countByFlag,
-  stats: countStats,
-};
-
-/**
- * Gets filters data
- * @param {Object} filtersData - names and count functions
- * @param {Array} filmsData
- * @return {Array}
- */
-export const getFilters = (filtersData, filmsData) => {
-  const filters = [];
-  Object.keys(filtersData).forEach((key) => {
-    const name = (key === `all`) ? `${capitalizeFirstLetter(key)} movies` : capitalizeFirstLetter(key);
-    const flag = `is${capitalizeFirstLetter(key)}`;
-    filters.push({
-      name,
-      url: `#${key}`,
-      count: filtersData[key](filmsData, flag),
-      isActive: false,
-    });
-  });
-  return filters;
-};
 
 export const userType = defineUser(FilmsCount.BY_USER, userTitle, IMG_USER);
 

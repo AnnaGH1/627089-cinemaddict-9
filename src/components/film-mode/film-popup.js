@@ -115,7 +115,7 @@ export default class FilmPopup extends AbstractComponent {
             ${this._comments.map(FilmPopup.getCommentTemplate).join(``)}
           </ul>
   
-          <div class="film-details__new-comment">
+          <div class="film-details__new-comment ${this._isHistory ? `` : `visually-hidden`}">
             <div class="film-details__add-emoji-label"></div>
   
             <label class="film-details__comment-label">
@@ -151,7 +151,7 @@ export default class FilmPopup extends AbstractComponent {
   }
 
   _getUserRatingTemplate() {
-    return `<div class="form-details__middle-container">
+    return `<div class="form-details__middle-container ${this._isHistory ? `` : `visually-hidden`}">
       <section class="film-details__user-rating-wrap">
         <div class="film-details__user-rating-controls">
           <button class="film-details__watched-reset" type="button">Undo</button>
