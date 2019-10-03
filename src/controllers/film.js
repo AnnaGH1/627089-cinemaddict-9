@@ -13,6 +13,7 @@ export default class FilmController {
     this._popup = new FilmPopup(data);
     this._userRatingEl = null;
     this._userCommentEl = null;
+    this._commentsCountEl = null;
   }
 
   _subscribeOnFilmEvents() {
@@ -84,6 +85,23 @@ export default class FilmController {
           e.preventDefault();
           this._onCommentSubmit();
         }
+      });
+
+    // Remove comment element
+    this._popup.getElement()
+      .querySelectorAll(`.film-details__comment`)
+      .forEach((el) => {
+        el.addEventListener(`click`, (e) => {
+          if (e.target.classList.contains(`film-details__comment-delete`)) {
+            e.preventDefault();
+            e.currentTarget.parentNode.removeChild(e.currentTarget);
+
+            // Update comments count
+            this._commentsCountEl = this._popup.getElement()
+              .querySelector(`.film-details__comments-count`);
+            this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) - 1;
+          }
+        });
       });
   }
 
@@ -281,9 +299,16 @@ export default class FilmController {
       time: Date.now(),
     };
 
+    // Add comment element
     const commentsContainer = this._popup.getElement()
       .querySelector(`.film-details__comments-list`);
     commentsContainer.insertAdjacentHTML(Position.AFTERBEGIN, getCommentEl(entryComment));
+
+    // Update comments count
+    this._commentsCountEl = this._popup.getElement()
+      .querySelector(`.film-details__comments-count`);
+    this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) + 1;
+
     formEl.reset();
     const entryFilm = {
       title: this._data.title,

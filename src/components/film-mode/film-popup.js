@@ -198,7 +198,7 @@ export default class FilmPopup extends AbstractComponent {
   static getCommentTemplate(comment) {
     return `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji">
+        <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="${comment.emoji}">
       </span>
       <div>
         <p class="film-details__comment-text">${comment.text}</p>
