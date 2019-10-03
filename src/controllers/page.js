@@ -12,8 +12,8 @@ import {
 } from '../helper';
 import Message from '../components/films-list/message';
 import PageLayout from '../components/films-list/page-layout';
-import Sort from '../components/nav/sort';
 import MainNavController from './main-nav';
+import SortController from './sort';
 import StatisticsController from './statistics';
 import FilmListController from './film-list';
 import SearchController from './search';
@@ -27,8 +27,8 @@ export default class PageController {
     this._user = new User(userType);
     this._pageLayout = new PageLayout();
     this._mainNavController = null;
+    this._sortController = null;
     this._statisticsController = null;
-    this._sort = new Sort();
     this._message = new Message();
     this._filmsContainer = null;
     this._loadMoreContainer = null;
@@ -40,6 +40,7 @@ export default class PageController {
     this._onSearchEntry = this._onSearchEntry.bind(this);
     this._onSearchReset = this._onSearchReset.bind(this);
     this._onFilterClick = this._onFilterClick.bind(this);
+    this._onSortClick = this._onSortClick.bind(this);
   }
 
   _renderMessage() {
@@ -58,13 +59,13 @@ export default class PageController {
   }
 
   _renderMainNav(films) {
-    this._mainNavController = new MainNavController(this._container, films, this._onFilterClick, this._sort);
+    this._mainNavController = new MainNavController(this._container, films, this._onFilterClick);
     this._mainNavController.init();
   }
 
   _renderSort() {
-    render(this._container, this._sort.getElement(), Position.BEFOREEND);
-    this._sort.getElement().addEventListener(`click`, this._onSortLinkClick.bind(this));
+    this._sortController = new SortController(this._container, this._onSortClick);
+    this._sortController.init();
   }
 
   _renderStatistics(films) {
@@ -113,7 +114,7 @@ export default class PageController {
 
   _renderSearchResults(filmsFound) {
     this._mainNavController._mainNav.hide();
-    this._sort.hide();
+    this._sortController._sort.hide();
 
     // If rendered from prev search - remove
     if (this._searchResultCount) {
@@ -181,7 +182,7 @@ export default class PageController {
     }
   }
 
-  _onSortLinkClick(e) {
+  _onSortClick(e) {
     e.preventDefault();
     if (e.target.tagName !== `A`) {
       return;
@@ -215,7 +216,7 @@ export default class PageController {
     // Update search status
     this._searchController._searchRun = false;
     this._mainNavController._mainNav.show();
-    this._sort.show();
+    this._sortController._sort.show();
     // If rendered from prev search - remove
     if (this._searchResultCount) {
       this._removeSearchResultCount();

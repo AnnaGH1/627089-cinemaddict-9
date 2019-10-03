@@ -2,11 +2,10 @@ import MainNav from '../components/nav/main-nav';
 import {Position, render} from '../utils';
 
 export default class MainNavController {
-  constructor(container, films, onFilterClick, sortEl) {
+  constructor(container, films, onFilterClick) {
     this._container = container;
     this._films = films;
     this._onFilterClick = onFilterClick;
-    this._sortEl = sortEl;
     this._mainNav = null;
   }
 
@@ -30,14 +29,14 @@ export default class MainNavController {
           e.preventDefault();
 
           // Hide sort and film lists
-          this._sortEl.hide();
+          this._container.querySelector(`.sort`).classList.add(`visually-hidden`);
           this._container.querySelector(`.films`).classList.add(`visually-hidden`);
 
           // Show statistics
           this._container.querySelector(`.statistic`).classList.remove(`visually-hidden`);
         } else {
           // Show sort and film lists
-          this._sortEl.show();
+          this._container.querySelector(`.sort`).classList.remove(`visually-hidden`);
           this._container.querySelector(`.films`).classList.remove(`visually-hidden`);
 
           // Hide statistics
