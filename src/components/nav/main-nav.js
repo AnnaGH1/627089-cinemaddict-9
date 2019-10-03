@@ -12,8 +12,8 @@ export default class MainNav extends AbstractComponent {
         <a 
           href="#all" 
           data-filter-type="all"
-          class="main-navigation__item">
-          All
+          class="main-navigation__item main-navigation__item--active">
+          All movies
         </a>
         <a 
           href="#watchlist" 

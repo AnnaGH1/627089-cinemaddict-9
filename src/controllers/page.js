@@ -58,7 +58,7 @@ export default class PageController {
   }
 
   _renderMainNav(films) {
-    this._mainNavController = new MainNavController(this._container, films, this._onFilterClick);
+    this._mainNavController = new MainNavController(this._container, films, this._onFilterClick, this._sort);
     this._mainNavController.init();
   }
 
@@ -146,9 +146,11 @@ export default class PageController {
 
       // Controls and layout
       this._renderMainNav(this._films);
-      this._renderStatistics(this._films);
       this._renderSort();
       this._renderPageLayout();
+
+      // Statistics
+      this._renderStatistics(this._films);
 
       // Films list
       this._filmListController = new FilmListController(this._filmsContainer, this._loadMoreContainer, this._films, this._updateMainNav, this._updateStatistics);
@@ -170,7 +172,13 @@ export default class PageController {
       favorites: this._films.filter((el) => el.isFavorites),
     };
 
-    this._filmListController.renderFilmListMain(filterMap[e.target.dataset.filterType]);
+    if (e.target.dataset.filterType !== `all`) {
+      this._filmListController._removePrevFeaturedFilms();
+      this._filmListController.renderFilmListMain(filterMap[e.target.dataset.filterType]);
+    } else {
+      this._filmListController.renderFilmListMain(filterMap[e.target.dataset.filterType]);
+      this._filmListController.renderFeaturedFilms(this._films);
+    }
   }
 
   _onSortLinkClick(e) {
