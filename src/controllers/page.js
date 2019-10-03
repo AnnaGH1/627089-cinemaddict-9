@@ -36,6 +36,7 @@ export default class PageController {
     this._searchController = null;
     this._searchResultCount = null;
     this._updateMainNav = this._updateMainNav.bind(this);
+    this._updateStatistics = this._updateStatistics.bind(this);
     this._onSearchEntry = this._onSearchEntry.bind(this);
     this._onSearchReset = this._onSearchReset.bind(this);
     this._onFilterClick = this._onFilterClick.bind(this);
@@ -66,10 +67,17 @@ export default class PageController {
     this._sort.getElement().addEventListener(`click`, this._onSortLinkClick.bind(this));
   }
 
-  _renderStatistics() {
+  _renderStatistics(films) {
     const mainContainer = document.querySelector(`.main`);
-    this._statisticsController = new StatisticsController(mainContainer);
+    const filmsWatched = films.filter((el) => el.isHistory);
+    this._statisticsController = new StatisticsController(mainContainer, filmsWatched);
     this._statisticsController.init();
+  }
+
+  _updateStatistics(films) {
+    unrender(this._statisticsController._statistics.getElement());
+    this._statisticsController._statistics.removeElement();
+    this._renderStatistics(films);
   }
 
   _renderPageLayout() {
@@ -138,12 +146,12 @@ export default class PageController {
 
       // Controls and layout
       this._renderMainNav(this._films);
-      this._renderStatistics();
+      this._renderStatistics(this._films);
       this._renderSort();
       this._renderPageLayout();
 
       // Films list
-      this._filmListController = new FilmListController(this._filmsContainer, this._loadMoreContainer, this._films, this._updateMainNav);
+      this._filmListController = new FilmListController(this._filmsContainer, this._loadMoreContainer, this._films, this._updateMainNav, this._updateStatistics);
       this._filmListController.renderFilmListMain(this._films);
       this._filmListController.renderFeaturedFilms(this._films);
 

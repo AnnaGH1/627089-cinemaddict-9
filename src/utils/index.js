@@ -174,3 +174,15 @@ export const defineUser = (count, title, image) => {
  * @return {string}
  */
 export const getNounForm = (noun, count) => count === 1 ? noun : noun + `s`;
+
+/**
+ * Get keys corresponding to the max value in an object
+ * @param {Object} object
+ * @return {Array}
+ */
+export const getMax = (object) => {
+  return Object.keys(object).filter((x) => {
+    return object[x] === Math.max.apply(null,
+        Object.values(object));
+  });
+};
