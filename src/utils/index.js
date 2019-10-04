@@ -178,6 +178,20 @@ export const defineUser = (count, title, image) => {
 export const getNounForm = (noun, count) => count === 1 ? noun : noun + `s`;
 
 /**
+ * Get number of full hours from mins
+ * @param {number} mins
+ * @return {number}
+ */
+export const minsToHours = (mins) => Math.floor(mins / 60);
+
+/**
+ * Get the remaining number of minutes after full hours
+ * @param {number} mins
+ * @return {number}
+ */
+export const minsToHoursRemainder = (mins) => mins % 60;
+
+/**
  * Get keys corresponding to the max value in an object
  * @param {Object} object
  * @return {Array}

@@ -13,6 +13,7 @@ export default class StatisticsController {
     this._genresUnique = null;
     this._genresMap = {};
     this._topGenre = null;
+    this._userHistoryChart = null;
   }
 
   _getValues() {
@@ -46,7 +47,7 @@ export default class StatisticsController {
 
   _renderChart() {
     const ctx = document.querySelector(`.statistic__chart`);
-    const userHistoryChart = new Chart(ctx, {
+    this._userHistoryChart = new Chart(ctx, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
@@ -54,10 +55,19 @@ export default class StatisticsController {
         datasets: [{
           data: Object.values(this._genresMap),
           backgroundColor: `#ffe800`,
-          defaultFontColor: `red`,
         }]
       },
       options: {
+        plugins: {
+          datalabels: {
+            font: {
+              size: 28,
+              weight: `bold`,
+            },
+            color: `#fff`,
+            align: `start`,
+          }
+        },
         legend: {
           display: false,
         },
@@ -66,6 +76,13 @@ export default class StatisticsController {
             ticks: {
               display: false,
               beginAtZero: true
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              fontColor: `#fff`,
+              fontSize: 24,
+              padding: 50,
             }
           }],
         }

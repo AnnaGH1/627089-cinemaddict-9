@@ -1,4 +1,5 @@
 import AbstractComponent from '../abstract/abstract-component';
+import {minsToHours, minsToHoursRemainder} from '../../utils';
 
 export default class Statistics extends AbstractComponent {
   constructor(count, duration, topGenre) {
@@ -42,7 +43,7 @@ export default class Statistics extends AbstractComponent {
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text"> <span class="statistic__item-description">h</span> ${this._duration} <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${minsToHours(this._duration)} <span class="statistic__item-description">h</span> ${minsToHoursRemainder(this._duration)} <span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
