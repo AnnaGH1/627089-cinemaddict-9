@@ -39,12 +39,20 @@ export default class FilmController {
   }
 
   _subscribeOnPopupEventsControls() {
+    // Toggle controls
     this._popup.getElement()
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`film-details__control-label--watchlist`) || e.target.classList.contains(`film-details__control-label--watched`) || e.target.classList.contains(`film-details__control-label--favorite`)) {
           e.preventDefault();
-          this._onPopupControlClick(e);
+          e.target.previousElementSibling.toggleAttribute(`checked`);
         }
+      });
+
+    // Toggle rating section
+    this._popup.getElement()
+      .querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, (e) => {
+        this._onWatchedControlClick(e);
       });
   }
 
@@ -116,6 +124,35 @@ export default class FilmController {
       .forEach((el) => el.removeAttribute(`checked`));
   }
 
+  _saveDataOnPopupClose() {
+    const formData = new FormData(this._popup.getElement().querySelector(`.film-details__inner`));
+    const userScoreEl = this._popup.getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelector(`input[type=radio]:checked`);
+
+    const entry = {
+      title: this._data.title,
+      category: this._data.category,
+      rating: this._data.rating,
+      year: this._data.year,
+      duration: this._data.duration,
+      country: this._data.country,
+      director: this._data.director,
+      writers: this._data.writers,
+      actors: this._data.actors,
+      genres: this._data.genres,
+      url: this._data.url,
+      description: this._data.description,
+      comments: this._data.comments,
+      isWatchlist: !!formData.get(`watchlist`),
+      isHistory: !!formData.get(`watched`),
+      isFavorites: !!formData.get(`favorite`),
+      userScore: userScoreEl ? userScoreEl.value : null,
+    };
+
+    this._onDataChange(entry, this._data);
+  }
+
   _openPopup() {
     // Closes popup on Esc keydown
     const onEscKeyDown = (e) => {
@@ -125,6 +162,8 @@ export default class FilmController {
     };
 
     const closePopup = () => {
+      this._saveDataOnPopupClose();
+
       unrender(this._popup.getElement());
       this._popup.removeElement();
       document.removeEventListener(`keydown`, onEscKeyDown);
@@ -228,58 +267,6 @@ export default class FilmController {
     }
   }
 
-  _onPopupControlClick(e) {
-    e.target.previousElementSibling.toggleAttribute(`checked`);
-    this._onWatchedControlClick(e);
-
-    const formData = new FormData(this._popup.getElement().querySelector(`.film-details__inner`));
-    if (e.target.classList.contains(`film-details__control-label--watched`) && !e.target.previousElementSibling.hasAttribute(`checked`)) {
-      // Removed to history, update data and remove user score
-      const entry = {
-        title: this._data.title,
-        category: this._data.category,
-        rating: this._data.rating,
-        year: this._data.year,
-        duration: this._data.duration,
-        country: this._data.country,
-        director: this._data.director,
-        writers: this._data.writers,
-        actors: this._data.actors,
-        genres: this._data.genres,
-        url: this._data.url,
-        description: this._data.description,
-        comments: this._data.comments,
-        isWatchlist: !!formData.get(`watchlist`),
-        isHistory: !!formData.get(`watched`),
-        isFavorites: !!formData.get(`favorite`),
-        userScore: null,
-      };
-      this._onDataChange(entry, this._data);
-    } else {
-      // Other controls toggled, update data
-      const entry = {
-        title: this._data.title,
-        category: this._data.category,
-        rating: this._data.rating,
-        year: this._data.year,
-        duration: this._data.duration,
-        country: this._data.country,
-        director: this._data.director,
-        writers: this._data.writers,
-        actors: this._data.actors,
-        genres: this._data.genres,
-        url: this._data.url,
-        description: this._data.description,
-        comments: this._data.comments,
-        isWatchlist: !!formData.get(`watchlist`),
-        isHistory: !!formData.get(`watched`),
-        isFavorites: !!formData.get(`favorite`),
-        userScore: this._data.userScore,
-      };
-      this._onDataChange(entry, this._data);
-    }
-  }
-
   _onEmojiClick(e) {
     this._clearPrevEmoji();
     const emojiInput = e.target.parentNode.previousElementSibling;
@@ -335,60 +322,24 @@ export default class FilmController {
   _onScoreClick(e) {
     e.preventDefault();
     e.target.previousElementSibling.setAttribute(`checked`, ``);
-    const entry = {
-      title: this._data.title,
-      category: this._data.category,
-      rating: this._data.rating,
-      year: this._data.year,
-      duration: this._data.duration,
-      country: this._data.country,
-      director: this._data.director,
-      writers: this._data.writers,
-      actors: this._data.actors,
-      genres: this._data.genres,
-      url: this._data.url,
-      description: this._data.description,
-      comments: this._data.comments,
-      isWatchlist: this._data.isWatchlist,
-      isHistory: this._data.isHistory,
-      isFavorites: this._data.isFavorites,
-      userScore: e.target.previousElementSibling.value,
-    };
-    this._onDataChange(entry, this._data);
   }
 
   _onRemoveScoreClick(e) {
     e.preventDefault();
-    const entry = {
-      title: this._data.title,
-      category: this._data.category,
-      rating: this._data.rating,
-      year: this._data.year,
-      duration: this._data.duration,
-      country: this._data.country,
-      director: this._data.director,
-      writers: this._data.writers,
-      actors: this._data.actors,
-      genres: this._data.genres,
-      url: this._data.url,
-      description: this._data.description,
-      comments: this._data.comments,
-      isWatchlist: this._data.isWatchlist,
-      isHistory: this._data.isHistory,
-      isFavorites: this._data.isFavorites,
-      userScore: null,
-    };
-    this._onDataChange(entry, this._data);
+    const userScoreEl = this._popup.getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelector(`input[type=radio]:checked`);
+    userScoreEl.removeAttribute(`checked`);
   }
 
   _onWatchedControlClick(e) {
     // Update view depending on watched control state
-    if (e.target.classList.contains(`film-details__control-label--watched`) && e.target.previousElementSibling.hasAttribute(`checked`)) {
-      this._userRatingEl.classList.remove(`visually-hidden`);
-      this._userCommentEl.classList.remove(`visually-hidden`);
-    } else {
+    if (e.target.previousElementSibling.hasAttribute(`checked`)) {
       this._userRatingEl.classList.add(`visually-hidden`);
       this._userCommentEl.classList.add(`visually-hidden`);
+    } else {
+      this._userRatingEl.classList.remove(`visually-hidden`);
+      this._userCommentEl.classList.remove(`visually-hidden`);
     }
   }
 }
