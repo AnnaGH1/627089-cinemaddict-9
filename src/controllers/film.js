@@ -14,6 +14,7 @@ export default class FilmController {
     this._userRatingEl = null;
     this._userCommentEl = null;
     this._commentsCountEl = null;
+    this._newComments = [];
   }
 
   _subscribeOnFilmEvents() {
@@ -45,6 +46,11 @@ export default class FilmController {
         if (e.target.classList.contains(`film-details__control-label--watchlist`) || e.target.classList.contains(`film-details__control-label--watched`) || e.target.classList.contains(`film-details__control-label--favorite`)) {
           e.preventDefault();
           e.target.previousElementSibling.toggleAttribute(`checked`);
+
+          // Clear rating if removed from history
+          if (e.target.classList.contains(`film-details__control-label--watched`) && !e.target.previousElementSibling.hasAttribute(`checked`)) {
+            this._clearScorePopup();
+          }
         }
       });
 
@@ -52,6 +58,7 @@ export default class FilmController {
     this._popup.getElement()
       .querySelector(`.film-details__control-label--watched`)
       .addEventListener(`click`, (e) => {
+        e.preventDefault();
         this._onWatchedControlClick(e);
       });
   }
@@ -69,7 +76,8 @@ export default class FilmController {
     this._popup.getElement()
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`film-details__watched-reset`)) {
-          this._onRemoveScoreClick(e);
+          e.preventDefault();
+          this._clearScorePopup();
         }
       });
   }
@@ -130,6 +138,8 @@ export default class FilmController {
       .querySelector(`.film-details__user-rating-score`)
       .querySelector(`input[type=radio]:checked`);
 
+    const comments = this._newComments.length ? [...this._newComments, ...this._data.comments] : this._data.comments;
+
     const entry = {
       title: this._data.title,
       category: this._data.category,
@@ -143,7 +153,7 @@ export default class FilmController {
       genres: this._data.genres,
       url: this._data.url,
       description: this._data.description,
-      comments: this._data.comments,
+      comments,
       isWatchlist: !!formData.get(`watchlist`),
       isHistory: !!formData.get(`watched`),
       isFavorites: !!formData.get(`favorite`),
@@ -221,7 +231,7 @@ export default class FilmController {
       .querySelector(`.film-card__controls-item--favorite`)
       .classList.contains(`film-card__controls-item--active`);
     if (!isHistory) {
-      // Removed to history, update data and remove user score
+      // Removed from history, update data and remove user score
       const entry = {
         title: this._data.title,
         category: this._data.category,
@@ -285,6 +295,7 @@ export default class FilmController {
       emoji: formData.get(`comment-emoji`) ? formData.get(`comment-emoji`) : `smile`,
       time: Date.now(),
     };
+    this._newComments.unshift(entryComment);
 
     // Add comment element
     const commentsContainer = this._popup.getElement()
@@ -297,26 +308,6 @@ export default class FilmController {
     this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) + 1;
 
     formEl.reset();
-    const entryFilm = {
-      title: this._data.title,
-      category: this._data.category,
-      rating: this._data.rating,
-      year: this._data.year,
-      duration: this._data.duration,
-      country: this._data.country,
-      director: this._data.director,
-      writers: this._data.writers,
-      actors: this._data.actors,
-      genres: this._data.genres,
-      url: this._data.url,
-      description: this._data.description,
-      comments: [entryComment, ...this._data.comments],
-      isWatchlist: this._data.isWatchlist,
-      isHistory: this._data.isHistory,
-      isFavorites: this._data.isFavorites,
-      userScore: this._data.userScore,
-    };
-    this._onDataChange(entryFilm, this._data);
   }
 
   _onScoreClick(e) {
@@ -324,8 +315,7 @@ export default class FilmController {
     e.target.previousElementSibling.setAttribute(`checked`, ``);
   }
 
-  _onRemoveScoreClick(e) {
-    e.preventDefault();
+  _clearScorePopup() {
     const userScoreEl = this._popup.getElement()
       .querySelector(`.film-details__user-rating-score`)
       .querySelector(`input[type=radio]:checked`);
