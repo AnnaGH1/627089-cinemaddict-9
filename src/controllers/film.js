@@ -1,6 +1,6 @@
 import FilmCard from "../components/film-mode/film-card";
 import FilmPopup from "../components/film-mode/film-popup";
-import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender, getEmojiEl, getCommentEl} from "../utils";
+import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender, createElement} from "../utils";
 import {body} from '../helper';
 
 export default class FilmController {
@@ -12,8 +12,11 @@ export default class FilmController {
     this._film = new FilmCard(data);
     this._popup = new FilmPopup(data);
     this._userRatingEl = null;
+    this._userScoreEl = null;
     this._userCommentEl = null;
     this._commentsCountEl = null;
+    this._commentsContainer = null;
+    this._emojiPreviewContainer = null;
     this._newComments = [];
   }
 
@@ -86,7 +89,7 @@ export default class FilmController {
     // Add emoji
     this._popup.getElement()
       .addEventListener(`click`, (e) => {
-        if (e.target.getAttribute(`alt`) === `emoji` && e.target.parentNode.classList.contains(`film-details__emoji-label`)) {
+        if (e.target.tagName === `IMG` && e.target.parentNode.classList.contains(`film-details__emoji-label`)) {
           e.preventDefault();
           this._onEmojiClick(e);
         }
@@ -122,14 +125,20 @@ export default class FilmController {
   }
 
   _updateRefPopup() {
+    this._commentsContainer = this._popup.getElement().querySelector(`.film-details__comments-list`);
     this._userRatingEl = this._popup.getElement().querySelector(`.form-details__middle-container`);
     this._userCommentEl = this._popup.getElement().querySelector(`.film-details__new-comment`);
+    this._emojiPreviewContainer = this._popup.getElement().querySelector(`.film-details__add-emoji-label`);
   }
 
   _clearPrevEmoji() {
+    // Clear data
     this._popup.getElement()
       .querySelectorAll(`.film-details__emoji-item`)
       .forEach((el) => el.removeAttribute(`checked`));
+
+    // Clear preview
+    this._emojiPreviewContainer.innerHTML = ``;
   }
 
   _saveDataOnPopupClose() {
@@ -281,9 +290,7 @@ export default class FilmController {
     this._clearPrevEmoji();
     const emojiInput = e.target.parentNode.previousElementSibling;
     emojiInput.setAttribute(`checked`, ``);
-    this._popup.getElement()
-      .querySelector(`.film-details__add-emoji-label`)
-      .insertAdjacentHTML(Position.AFTERBEGIN, getEmojiEl(emojiInput.value));
+    render(this._emojiPreviewContainer, createElement(FilmPopup.getEmotionPreviewTemplate(emojiInput.value)), Position.BEFOREEND);
   }
 
   _onCommentSubmit() {
@@ -298,9 +305,7 @@ export default class FilmController {
     this._newComments.unshift(entryComment);
 
     // Add comment element
-    const commentsContainer = this._popup.getElement()
-      .querySelector(`.film-details__comments-list`);
-    commentsContainer.insertAdjacentHTML(Position.AFTERBEGIN, getCommentEl(entryComment));
+    render(this._commentsContainer, createElement(FilmPopup.getCommentTemplate(entryComment)), Position.AFTERBEGIN);
 
     // Update comments count
     this._commentsCountEl = this._popup.getElement()
@@ -308,6 +313,8 @@ export default class FilmController {
     this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) + 1;
 
     formEl.reset();
+    // Clear preview
+    this._emojiPreviewContainer.innerHTML = ``;
   }
 
   _onScoreClick(e) {
@@ -316,10 +323,12 @@ export default class FilmController {
   }
 
   _clearScorePopup() {
-    const userScoreEl = this._popup.getElement()
+    this._userScoreEl = this._popup.getElement()
       .querySelector(`.film-details__user-rating-score`)
       .querySelector(`input[type=radio]:checked`);
-    userScoreEl.removeAttribute(`checked`);
+    if (this._userScoreEl) {
+      this._userScoreEl.removeAttribute(`checked`);
+    }
   }
 
   _onWatchedControlClick(e) {

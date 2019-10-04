@@ -35,6 +35,7 @@ export const userTitle = {
     max: FilmsCount.TOTAL,
   },
 };
+export const emotions = [`smile`, `sleeping`, `puke`, `angry`];
 export const userScores = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export const userType = defineUser(FilmsCount.BY_USER, userTitle, IMG_USER);
