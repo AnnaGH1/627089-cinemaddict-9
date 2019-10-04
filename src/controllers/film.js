@@ -1,6 +1,6 @@
 import FilmCard from "../components/film-mode/film-card";
 import FilmPopup from "../components/film-mode/film-popup";
-import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender} from "../utils";
+import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender, createElement} from "../utils";
 import {body} from '../helper';
 
 export default class FilmController {
@@ -12,7 +12,12 @@ export default class FilmController {
     this._film = new FilmCard(data);
     this._popup = new FilmPopup(data);
     this._userRatingEl = null;
+    this._userScoreEl = null;
     this._userCommentEl = null;
+    this._commentsCountEl = null;
+    this._commentsContainer = null;
+    this._emojiPreviewContainer = null;
+    this._newComments = [];
   }
 
   _subscribeOnFilmEvents() {
@@ -38,12 +43,26 @@ export default class FilmController {
   }
 
   _subscribeOnPopupEventsControls() {
+    // Toggle controls
     this._popup.getElement()
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`film-details__control-label--watchlist`) || e.target.classList.contains(`film-details__control-label--watched`) || e.target.classList.contains(`film-details__control-label--favorite`)) {
           e.preventDefault();
-          this._onPopupControlClick(e);
+          e.target.previousElementSibling.toggleAttribute(`checked`);
+
+          // Clear rating if removed from history
+          if (e.target.classList.contains(`film-details__control-label--watched`) && !e.target.previousElementSibling.hasAttribute(`checked`)) {
+            this._clearScorePopup();
+          }
         }
+      });
+
+    // Toggle rating section
+    this._popup.getElement()
+      .querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, (e) => {
+        e.preventDefault();
+        this._onWatchedControlClick(e);
       });
   }
 
@@ -60,7 +79,8 @@ export default class FilmController {
     this._popup.getElement()
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`film-details__watched-reset`)) {
-          this._onRemoveScoreClick(e);
+          e.preventDefault();
+          this._clearScorePopup();
         }
       });
   }
@@ -69,7 +89,7 @@ export default class FilmController {
     // Add emoji
     this._popup.getElement()
       .addEventListener(`click`, (e) => {
-        if (e.target.getAttribute(`alt`) === `emoji` && e.target.parentNode.classList.contains(`film-details__emoji-label`)) {
+        if (e.target.tagName === `IMG` && e.target.parentNode.classList.contains(`film-details__emoji-label`)) {
           e.preventDefault();
           this._onEmojiClick(e);
         }
@@ -85,27 +105,71 @@ export default class FilmController {
           this._onCommentSubmit();
         }
       });
+
+    // Remove comment element
+    this._popup.getElement()
+      .querySelectorAll(`.film-details__comment`)
+      .forEach((el) => {
+        el.addEventListener(`click`, (e) => {
+          if (e.target.classList.contains(`film-details__comment-delete`)) {
+            e.preventDefault();
+            e.currentTarget.parentNode.removeChild(e.currentTarget);
+
+            // Update comments count
+            this._commentsCountEl = this._popup.getElement()
+              .querySelector(`.film-details__comments-count`);
+            this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) - 1;
+          }
+        });
+      });
   }
 
   _updateRefPopup() {
+    this._commentsContainer = this._popup.getElement().querySelector(`.film-details__comments-list`);
     this._userRatingEl = this._popup.getElement().querySelector(`.form-details__middle-container`);
     this._userCommentEl = this._popup.getElement().querySelector(`.film-details__new-comment`);
-  }
-
-  _updateHistoryView() {
-    if (this._data.isHistory) {
-      this._userRatingEl.classList.remove(`visually-hidden`);
-      this._userCommentEl.classList.remove(`visually-hidden`);
-    } else {
-      this._userRatingEl.classList.add(`visually-hidden`);
-      this._userCommentEl.classList.add(`visually-hidden`);
-    }
+    this._emojiPreviewContainer = this._popup.getElement().querySelector(`.film-details__add-emoji-label`);
   }
 
   _clearPrevEmoji() {
+    // Clear data
     this._popup.getElement()
       .querySelectorAll(`.film-details__emoji-item`)
       .forEach((el) => el.removeAttribute(`checked`));
+
+    // Clear preview
+    this._emojiPreviewContainer.innerHTML = ``;
+  }
+
+  _saveDataOnPopupClose() {
+    const formData = new FormData(this._popup.getElement().querySelector(`.film-details__inner`));
+    const userScoreEl = this._popup.getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelector(`input[type=radio]:checked`);
+
+    const comments = this._newComments.length ? [...this._newComments, ...this._data.comments] : this._data.comments;
+
+    const entry = {
+      title: this._data.title,
+      category: this._data.category,
+      rating: this._data.rating,
+      year: this._data.year,
+      duration: this._data.duration,
+      country: this._data.country,
+      director: this._data.director,
+      writers: this._data.writers,
+      actors: this._data.actors,
+      genres: this._data.genres,
+      url: this._data.url,
+      description: this._data.description,
+      comments,
+      isWatchlist: !!formData.get(`watchlist`),
+      isHistory: !!formData.get(`watched`),
+      isFavorites: !!formData.get(`favorite`),
+      userScore: userScoreEl ? userScoreEl.value : null,
+    };
+
+    this._onDataChange(entry, this._data);
   }
 
   _openPopup() {
@@ -117,6 +181,8 @@ export default class FilmController {
     };
 
     const closePopup = () => {
+      this._saveDataOnPopupClose();
+
       unrender(this._popup.getElement());
       this._popup.removeElement();
       document.removeEventListener(`keydown`, onEscKeyDown);
@@ -147,7 +213,6 @@ export default class FilmController {
     // Render popup
     render(body, this._popup.getElement(), Position.BEFOREEND);
     this._updateRefPopup();
-    this._updateHistoryView();
     document.addEventListener(`keydown`, onEscKeyDown);
   }
 
@@ -175,7 +240,7 @@ export default class FilmController {
       .querySelector(`.film-card__controls-item--favorite`)
       .classList.contains(`film-card__controls-item--active`);
     if (!isHistory) {
-      // Removed to history, update data and remove user score
+      // Removed from history, update data and remove user score
       const entry = {
         title: this._data.title,
         category: this._data.category,
@@ -215,56 +280,6 @@ export default class FilmController {
         isWatchlist,
         isHistory,
         isFavorites,
-        userScore: this._data.userScore,
-      };
-      this._onDataChange(entry, this._data);
-    }
-  }
-
-  _onPopupControlClick(e) {
-    e.target.previousElementSibling.toggleAttribute(`checked`);
-    const formData = new FormData(this._popup.getElement().querySelector(`.film-details__inner`));
-    if (e.target.classList.contains(`film-details__control-label--watched`) && !e.target.previousElementSibling.hasAttribute(`checked`)) {
-      // Removed to history, update data and remove user score
-      const entry = {
-        title: this._data.title,
-        category: this._data.category,
-        rating: this._data.rating,
-        year: this._data.year,
-        duration: this._data.duration,
-        country: this._data.country,
-        director: this._data.director,
-        writers: this._data.writers,
-        actors: this._data.actors,
-        genres: this._data.genres,
-        url: this._data.url,
-        description: this._data.description,
-        comments: this._data.comments,
-        isWatchlist: !!formData.get(`watchlist`),
-        isHistory: !!formData.get(`watched`),
-        isFavorites: !!formData.get(`favorite`),
-        userScore: null,
-      };
-      this._onDataChange(entry, this._data);
-    } else {
-      // Other controls toggled, update data
-      const entry = {
-        title: this._data.title,
-        category: this._data.category,
-        rating: this._data.rating,
-        year: this._data.year,
-        duration: this._data.duration,
-        country: this._data.country,
-        director: this._data.director,
-        writers: this._data.writers,
-        actors: this._data.actors,
-        genres: this._data.genres,
-        url: this._data.url,
-        description: this._data.description,
-        comments: this._data.comments,
-        isWatchlist: !!formData.get(`watchlist`),
-        isHistory: !!formData.get(`watched`),
-        isFavorites: !!formData.get(`favorite`),
         userScore: this._data.userScore,
       };
       this._onDataChange(entry, this._data);
@@ -273,7 +288,9 @@ export default class FilmController {
 
   _onEmojiClick(e) {
     this._clearPrevEmoji();
-    e.target.parentNode.previousElementSibling.setAttribute(`checked`, ``);
+    const emojiInput = e.target.parentNode.previousElementSibling;
+    emojiInput.setAttribute(`checked`, ``);
+    render(this._emojiPreviewContainer, createElement(FilmPopup.getEmotionPreviewTemplate(emojiInput.value)), Position.BEFOREEND);
   }
 
   _onCommentSubmit() {
@@ -285,75 +302,43 @@ export default class FilmController {
       emoji: formData.get(`comment-emoji`) ? formData.get(`comment-emoji`) : `smile`,
       time: Date.now(),
     };
+    this._newComments.unshift(entryComment);
+
+    // Add comment element
+    render(this._commentsContainer, createElement(FilmPopup.getCommentTemplate(entryComment)), Position.AFTERBEGIN);
+
+    // Update comments count
+    this._commentsCountEl = this._popup.getElement()
+      .querySelector(`.film-details__comments-count`);
+    this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) + 1;
+
     formEl.reset();
-    const entryFilm = {
-      title: this._data.title,
-      category: this._data.category,
-      rating: this._data.rating,
-      year: this._data.year,
-      duration: this._data.duration,
-      country: this._data.country,
-      director: this._data.director,
-      writers: this._data.writers,
-      actors: this._data.actors,
-      genres: this._data.genres,
-      url: this._data.url,
-      description: this._data.description,
-      comments: [entryComment, ...this._data.comments],
-      isWatchlist: this._data.isWatchlist,
-      isHistory: this._data.isHistory,
-      isFavorites: this._data.isFavorites,
-      userScore: this._data.userScore,
-    };
-    this._onDataChange(entryFilm, this._data);
+    // Clear preview
+    this._emojiPreviewContainer.innerHTML = ``;
   }
 
   _onScoreClick(e) {
     e.preventDefault();
     e.target.previousElementSibling.setAttribute(`checked`, ``);
-    const entry = {
-      title: this._data.title,
-      category: this._data.category,
-      rating: this._data.rating,
-      year: this._data.year,
-      duration: this._data.duration,
-      country: this._data.country,
-      director: this._data.director,
-      writers: this._data.writers,
-      actors: this._data.actors,
-      genres: this._data.genres,
-      url: this._data.url,
-      description: this._data.description,
-      commentsCount: this._data.commentsCount,
-      isWatchlist: this._data.isWatchlist,
-      isHistory: this._data.isHistory,
-      isFavorites: this._data.isFavorites,
-      userScore: e.target.previousElementSibling.value,
-    };
-    this._onDataChange(entry, this._data);
   }
 
-  _onRemoveScoreClick(e) {
-    e.preventDefault();
-    const entry = {
-      title: this._data.title,
-      category: this._data.category,
-      rating: this._data.rating,
-      year: this._data.year,
-      duration: this._data.duration,
-      country: this._data.country,
-      director: this._data.director,
-      writers: this._data.writers,
-      actors: this._data.actors,
-      genres: this._data.genres,
-      url: this._data.url,
-      description: this._data.description,
-      commentsCount: this._data.commentsCount,
-      isWatchlist: this._data.isWatchlist,
-      isHistory: this._data.isHistory,
-      isFavorites: this._data.isFavorites,
-      userScore: null,
-    };
-    this._onDataChange(entry, this._data);
+  _clearScorePopup() {
+    this._userScoreEl = this._popup.getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelector(`input[type=radio]:checked`);
+    if (this._userScoreEl) {
+      this._userScoreEl.removeAttribute(`checked`);
+    }
+  }
+
+  _onWatchedControlClick(e) {
+    // Update view depending on watched control state
+    if (e.target.previousElementSibling.hasAttribute(`checked`)) {
+      this._userRatingEl.classList.add(`visually-hidden`);
+      this._userCommentEl.classList.add(`visually-hidden`);
+    } else {
+      this._userRatingEl.classList.remove(`visually-hidden`);
+      this._userCommentEl.classList.remove(`visually-hidden`);
+    }
   }
 }

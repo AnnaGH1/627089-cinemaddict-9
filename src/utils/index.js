@@ -46,8 +46,8 @@ export const createElement = (template) => {
 
 /**
  * Renders element
- * @param {Element} container
- * @param {Element} element
+ * @param {Node} container
+ * @param {Node} element
  * @param {string} place
  * @return {*|void}
  */
@@ -59,16 +59,6 @@ export const render = (container, element, place) => renderMap[place](container,
  * @return {Element}
  */
 export const unrender = (element) => element ? element.remove() : element;
-
-
-/**
- * Renders component inside container
- * @param {Element} container
- * @param {string} component
- * @param {string} position for component
- * @return {Element}
- */
-export const renderComponent = (container, component, position = Position.BEFOREEND) => container.insertAdjacentHTML(position, component);
 
 /**
  * Gets random elements from array
@@ -97,32 +87,12 @@ export const getRandomIntInclusive = (min, max) => {
 };
 
 /**
- * Capitalizes the first letter of a string
- * @param {string} string
- * @return {string}
- */
-export const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
-
-/**
- * Counts all films
- * @param {Array} films
- * @return {number}
- */
-export const countAll = (films) => films.length;
-
-/**
  * Counts films by flag
  * @param {Array} films
  * @param {string} flag
  * @return {number}
  */
 export const countByFlag = (films, flag) => films.filter((el) => el[flag]).length;
-
-/**
- * Assigns an empty string for Stats count
- * @return {string}
- */
-export const countStats = () => ``;
 
 /**
  * Checks user title based on a number of films watched
@@ -174,3 +144,29 @@ export const defineUser = (count, title, image) => {
  * @return {string}
  */
 export const getNounForm = (noun, count) => count === 1 ? noun : noun + `s`;
+
+/**
+ * Get number of full hours from mins
+ * @param {number} mins
+ * @return {number}
+ */
+export const minsToHours = (mins) => Math.floor(mins / 60);
+
+/**
+ * Get the remaining number of minutes after full hours
+ * @param {number} mins
+ * @return {number}
+ */
+export const minsToHoursRemainder = (mins) => mins % 60;
+
+/**
+ * Get keys corresponding to the max value in an object
+ * @param {Object} object
+ * @return {Array}
+ */
+export const getMax = (object) => {
+  return Object.keys(object).filter((x) => {
+    return object[x] === Math.max.apply(null,
+        Object.values(object));
+  });
+};

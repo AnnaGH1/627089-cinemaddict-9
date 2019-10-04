@@ -1,10 +1,7 @@
-import {films, filters} from './model/data';
+import {films} from './model/data';
 import PageController from './controllers/page';
-import StatisticsController from './controllers/statistics';
 
 const mainContainer = document.querySelector(`.main`);
-const statisticsController = new StatisticsController(mainContainer);
-const pageController = new PageController(mainContainer, films, filters);
+const pageController = new PageController(mainContainer, films);
 
 pageController.init();
-statisticsController.init();

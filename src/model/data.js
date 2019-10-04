@@ -2,11 +2,7 @@ import {
   getRandSelection,
   getRandomIntInclusive
 } from "../utils";
-import {
-  FilmsCount,
-  FilterMap,
-  getFilters
-} from '../helper';
+import {FilmsCount} from '../helper';
 
 const IMG_PATH = `./images/posters/`;
 const MOCK_ITEMS_MAX = 3;
@@ -141,7 +137,7 @@ const getFilm = () => (
     category: Films.CATEGORIES[getRandomIntInclusive(0, Films.CATEGORIES.length - 1)],
     rating: getRandomIntInclusive(Rating.MIN, Rating.MAX),
     year: getRandomIntInclusive(Year.MIN, Year.MAX),
-    duration: `${getRandomIntInclusive(Duration.MIN, Duration.MAX)} min`,
+    duration: getRandomIntInclusive(Duration.MIN, Duration.MAX),
     country: Films.COUNTRIES[getRandomIntInclusive(0, Films.COUNTRIES.length - 1)],
     director: Films.DIRECTORS[getRandomIntInclusive(0, Films.DIRECTORS.length - 1)],
     writers: new Set(getRandSelection(Films.WRITERS, MOCK_ITEMS_MAX)),
@@ -158,4 +154,3 @@ const getFilm = () => (
 );
 
 export const films = new Array(FilmsCount.TOTAL).fill({}).map(getFilm);
-export const filters = getFilters(FilterMap, films);

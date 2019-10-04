@@ -7,7 +7,7 @@ import SearchMessage from '../components/search/search-message';
 
 
 export default class FilmListController {
-  constructor(filmsContainer, loadMoreContainer, films) {
+  constructor(filmsContainer, loadMoreContainer, films, updateMainNav, updateStatistics) {
     this._filmsContainer = filmsContainer;
     this._loadMoreContainer = loadMoreContainer;
     this._films = films;
@@ -24,6 +24,8 @@ export default class FilmListController {
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
     this._searchMessage = new SearchMessage();
+    this._updateMainNav = updateMainNav;
+    this._updateStatistics = updateStatistics;
   }
 
   _removePrevFilms() {
@@ -156,6 +158,8 @@ export default class FilmListController {
     this._films[this._films.findIndex((el) => el === oldData)] = newData;
     this.renderFilmListMain(this._films);
     this.renderFeaturedFilms(this._films);
+    this._updateMainNav(this._films);
+    this._updateStatistics(this._films);
   }
 
   _onViewChange() {

@@ -1,16 +1,20 @@
 import AbstractComponent from '../abstract/abstract-component';
+import {minsToHours, minsToHoursRemainder} from '../../utils';
 
 export default class Statistics extends AbstractComponent {
-  constructor() {
+  constructor(count, duration, topGenre) {
     super();
+    this._count = count;
+    this._duration = duration;
+    this._topGenre = topGenre;
   }
 
   getTemplate() {
-    return `<section class="statistic">
+    return `<section class="statistic visually-hidden">
     <p class="statistic__rank">
       Your rank 
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35"> 
-      <span class="statistic__rank-label">Sci-Fighter</span>
+      <span class="statistic__rank-label">${this._topGenre} Fan</span>
     </p>
   
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -35,15 +39,15 @@ export default class Statistics extends AbstractComponent {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${this._count} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${minsToHours(this._duration)} <span class="statistic__item-description">h</span> ${minsToHoursRemainder(this._duration)} <span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">Sci-Fi</p>
+        <p class="statistic__item-text">${this._topGenre}</p>
       </li>
     </ul>
   

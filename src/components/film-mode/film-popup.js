@@ -1,6 +1,6 @@
 import AbstractComponent from '../abstract/abstract-component';
 import {getNounForm} from '../../utils';
-import {userScores} from '../../helper';
+import {userScores, emotions} from '../../helper';
 import moment from 'moment';
 
 export default class FilmPopup extends AbstractComponent {
@@ -115,7 +115,7 @@ export default class FilmPopup extends AbstractComponent {
             ${this._comments.map(FilmPopup.getCommentTemplate).join(``)}
           </ul>
   
-          <div class="film-details__new-comment">
+          <div class="film-details__new-comment ${this._isHistory ? `` : `visually-hidden`}">
             <div class="film-details__add-emoji-label"></div>
   
             <label class="film-details__comment-label">
@@ -123,25 +123,7 @@ export default class FilmPopup extends AbstractComponent {
             </label>
   
             <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-              <label class="film-details__emoji-label" for="emoji-smile">
-                <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-              </label>
-  
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-              <label class="film-details__emoji-label" for="emoji-sleeping">
-                <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-              </label>
-  
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-              <label class="film-details__emoji-label" for="emoji-puke">
-                <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-              </label>
-  
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-              <label class="film-details__emoji-label" for="emoji-angry">
-                <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-              </label>
+                ${emotions.map(FilmPopup.getEmotionTemplate).join(``)}
             </div>
           </div>
         </section>
@@ -150,8 +132,13 @@ export default class FilmPopup extends AbstractComponent {
   </section>`;
   }
 
+  /**
+   * Gets user rating template
+   * @return {string}
+   * @private
+   */
   _getUserRatingTemplate() {
-    return `<div class="form-details__middle-container">
+    return `<div class="form-details__middle-container ${this._isHistory ? `` : `visually-hidden`}">
       <section class="film-details__user-rating-wrap">
         <div class="film-details__user-rating-controls">
           <button class="film-details__watched-reset" type="button">Undo</button>
@@ -176,6 +163,12 @@ export default class FilmPopup extends AbstractComponent {
     </div>`;
   }
 
+  /**
+   * Gets score template
+   * @param {number} score
+   * @return {string}
+   * @private
+   */
   _getScoreTemplate(score) {
     return `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${score}" id="rating-${score}" ${this._userScore === score.toString() ? `checked` : ``}>
         <label class="film-details__user-rating-label" for="rating-${score}">${score}</label>`;
@@ -198,7 +191,7 @@ export default class FilmPopup extends AbstractComponent {
   static getCommentTemplate(comment) {
     return `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji">
+        <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="${comment.emoji}">
       </span>
       <div>
         <p class="film-details__comment-text">${comment.text}</p>
@@ -209,5 +202,26 @@ export default class FilmPopup extends AbstractComponent {
         </p>
       </div>
     </li>`;
+  }
+
+  /**
+   * Gets emotion template
+   * @param {string} emotion
+   * @return {string}
+   */
+  static getEmotionTemplate(emotion) {
+    return `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}">
+      <label class="film-details__emoji-label" for="emoji-${emotion}">
+        <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="${emotion}">
+      </label>`;
+  }
+
+  /**
+   * Gets emotion preview template
+   * @param {string} emotion
+   * @return {string}
+   */
+  static getEmotionPreviewTemplate(emotion) {
+    return `<img src="images/emoji/${emotion}.png" width="55" height="55" alt="${emotion}">`;
   }
 }
