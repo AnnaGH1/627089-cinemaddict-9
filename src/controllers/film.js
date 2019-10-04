@@ -1,7 +1,8 @@
 import FilmCard from "../components/film-mode/film-card";
 import FilmPopup from "../components/film-mode/film-popup";
 import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender, createElement} from "../utils";
-import {body} from '../helper';
+import {body} from '../helper/const';
+import {api} from '../main';
 
 export default class FilmController {
   constructor(container, data, onDataChange, onViewChange) {
@@ -10,7 +11,7 @@ export default class FilmController {
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
     this._film = new FilmCard(data);
-    this._popup = new FilmPopup(data);
+    this._popup = null;
     this._userRatingEl = null;
     this._userScoreEl = null;
     this._userCommentEl = null;
@@ -35,9 +36,15 @@ export default class FilmController {
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`film-card__poster`) || e.target.classList.contains(`film-card__title`) || e.target.classList.contains(`film-card__comments`)) {
           e.preventDefault();
-          // Close previous popups
-          this._onViewChange();
-          this._openPopup();
+          // Load comments
+          api
+            .getComments(this._data.id)
+            .then((comments) => {
+              this._popup = new FilmPopup(this._data, comments);
+              // Close previous popups
+              this._onViewChange();
+              this._openPopup();
+            });
         }
       });
   }
@@ -150,6 +157,7 @@ export default class FilmController {
     const comments = this._newComments.length ? [...this._newComments, ...this._data.comments] : this._data.comments;
 
     const entry = {
+      id: this._data.id,
       title: this._data.title,
       category: this._data.category,
       rating: this._data.rating,
@@ -162,6 +170,7 @@ export default class FilmController {
       genres: this._data.genres,
       url: this._data.url,
       description: this._data.description,
+      commentsIds: this._data.commentsIds,
       comments,
       isWatchlist: !!formData.get(`watchlist`),
       isHistory: !!formData.get(`watched`),
@@ -217,7 +226,8 @@ export default class FilmController {
   }
 
   setDefaultView() {
-    if (document.body.contains(this._popup.getElement())) {
+    // Check if popup was instantiated and rendered
+    if (this._popup && this._popup.getElement()) {
       unrender(this._popup.getElement());
       this._popup.removeElement();
     }

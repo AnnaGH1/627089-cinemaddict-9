@@ -1,5 +1,5 @@
 import {getRandSelection, Position, render, sortByPropDown, unrender} from '../utils';
-import {FilmsCount, PromoCategory} from '../helper';
+import {FilmsCount, PromoCategory} from '../helper/const';
 import FilmController from './film';
 import Show from '../components/films-list/show';
 import FeaturedContainer from '../components/films-featured/featured-container';
@@ -107,7 +107,7 @@ export default class FilmListController {
   }
 
   _renderMostCommented(films) {
-    const commented = films.filter((film) => film.comments.length > 0);
+    const commented = films.filter((film) => film.commentsIds.length > 0);
     // Do not render if all films have no comments
     if (!commented.length) {
       return;
@@ -117,14 +117,14 @@ export default class FilmListController {
     render(filmsContainerOuter, this._extraContainerComments.getElement(), Position.BEFOREEND);
     const containerMostCommented = this._extraContainerComments.getElement().querySelector(`.films-list__container`);
     // Check if all films have equal comments count
-    const commentsCount = commented[0].comments.length;
-    const isEqualCommentsCount = commented.every((el) => el[`comments`].length === commentsCount);
+    const commentsCount = commented[0].commentsIds.length;
+    const isEqualCommentsCount = commented.every((el) => el[`commentsIds`].length === commentsCount);
 
     // Get films selection
     if (isEqualCommentsCount) {
       this._mostCommented = getRandSelection(commented, FilmsCount.FEATURED);
     } else {
-      const commentedDesc = commented.sort((a, b) => b[`comments`].length - a[`comments`].length);
+      const commentedDesc = commented.sort((a, b) => b[`commentsIds`].length - a[`commentsIds`].length);
       this._mostCommented = commentedDesc.slice(0, FilmsCount.FEATURED);
     }
 

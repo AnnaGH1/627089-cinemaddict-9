@@ -1,10 +1,10 @@
 import AbstractComponent from '../abstract/abstract-component';
-import {getNounForm} from '../../utils';
-import {userScores, emotions} from '../../helper';
+import {getNounForm, minsToHours, minsToHoursRemainder} from '../../utils';
+import {userScores, emotions} from '../../helper/const';
 import moment from 'moment';
 
 export default class FilmPopup extends AbstractComponent {
-  constructor(film) {
+  constructor(film, comments) {
     super();
     this._title = film.title;
     this._category = film.category;
@@ -18,7 +18,7 @@ export default class FilmPopup extends AbstractComponent {
     this._genres = film.genres;
     this._url = film.url;
     this._description = film.description;
-    this._comments = film.comments;
+    this._comments = comments;
     this._isWatchlist = film.isWatchlist;
     this._isHistory = film.isHistory;
     this._isFavorites = film.isFavorites;
@@ -63,19 +63,19 @@ export default class FilmPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">${[...this._writers].join(`, `)}</td>
+                <td class="film-details__cell">${this._writers.join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">${[...this._actors].join(`, `)}</td>
+                <td class="film-details__cell">${this._actors.join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${moment(this._year).format(`YYYY`)}</td>
+                <td class="film-details__cell">${this._year}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${this._duration}</td>
+                <td class="film-details__cell">${minsToHours(this._duration)} h ${minsToHoursRemainder(this._duration)} m</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
@@ -84,7 +84,7 @@ export default class FilmPopup extends AbstractComponent {
               <tr class="film-details__row">
                 <td class="film-details__term">${getNounForm(`Genre`, this._genres.size)}</td>
                 <td class="film-details__cell">
-                    ${[...this._genres].map(FilmPopup.getGenreTemplate).join(``)}
+                    ${this._genres.map(FilmPopup.getGenreTemplate).join(``)}
                   </td>
               </tr>
             </table>

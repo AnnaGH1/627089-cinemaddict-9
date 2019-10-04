@@ -9,7 +9,7 @@ import {
   FilmsCount,
   filmsCountEl,
   userType,
-} from '../helper';
+} from '../helper/const';
 import Message from '../components/films-list/message';
 import PageLayout from '../components/films-list/page-layout';
 import MainNavController from './main-nav';
