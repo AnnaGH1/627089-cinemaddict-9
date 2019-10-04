@@ -60,16 +60,6 @@ export const render = (container, element, place) => renderMap[place](container,
  */
 export const unrender = (element) => element ? element.remove() : element;
 
-
-// /**
-//  * Renders component inside container
-//  * @param {Element} container
-//  * @param {string} component
-//  * @param {string} position for component
-//  * @return {Element}
-//  */
-// export const renderComponent = (container, component, position = Position.BEFOREEND) => container.insertAdjacentHTML(position, component);
-
 /**
  * Gets random elements from array
  * @param {Array} arr
@@ -96,20 +86,6 @@ export const getRandomIntInclusive = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-// /**
-//  * Capitalizes the first letter of a string
-//  * @param {string} string
-//  * @return {string}
-//  */
-// export const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
-
-// /**
-//  * Counts all films
-//  * @param {Array} films
-//  * @return {number}
-//  */
-// export const countAll = (films) => films.length;
-
 /**
  * Counts films by flag
  * @param {Array} films
@@ -117,12 +93,6 @@ export const getRandomIntInclusive = (min, max) => {
  * @return {number}
  */
 export const countByFlag = (films, flag) => films.filter((el) => el[flag]).length;
-
-// /**
-//  * Assigns an empty string for Stats count
-//  * @return {string}
-//  */
-// export const countStats = () => ``;
 
 /**
  * Checks user title based on a number of films watched
@@ -200,29 +170,3 @@ export const getMax = (object) => {
         Object.values(object));
   });
 };
-
-// /**
-//  * Gets emoji img element
-//  * @param {string} emoji
-//  * @return {string}
-//  */
-// export const getEmojiEl = (emoji) => `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji">`;
-//
-// /**
-//  * Gets new comment element
-//  * @param {Object} comment
-//  * @return {string}
-//  */
-// export const getCommentEl = (comment) => `<li class="film-details__comment">
-//       <span class="film-details__comment-emoji">
-//         <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="${comment.emoji}">
-//       </span>
-//       <div>
-//         <p class="film-details__comment-text">${comment.text}</p>
-//         <p class="film-details__comment-info">
-//           <span class="film-details__comment-author">${comment.author}</span>
-//           <span class="film-details__comment-day">${moment(comment.time).format(`MMM DD YYYY kk:mm`)}</span>
-//           <button class="film-details__comment-delete">Delete</button>
-//         </p>
-//       </div>
-//     </li>`;
