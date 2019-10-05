@@ -3,6 +3,7 @@ import FilmPopup from "../components/film-mode/film-popup";
 import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender, createElement} from "../utils";
 import {body} from '../helper/const';
 import {api} from '../main';
+import {RequestType} from '../helper/const';
 
 export default class FilmController {
   constructor(container, data, onDataChange, onViewChange) {
@@ -159,6 +160,7 @@ export default class FilmController {
     const entry = {
       id: this._data.id,
       title: this._data.title,
+      titleAlt: this._data.titleAlt,
       category: this._data.category,
       rating: this._data.rating,
       year: this._data.year,
@@ -175,10 +177,11 @@ export default class FilmController {
       isWatchlist: !!formData.get(`watchlist`),
       isHistory: !!formData.get(`watched`),
       isFavorites: !!formData.get(`favorite`),
-      userScore: userScoreEl ? userScoreEl.value : null,
+      userScore: userScoreEl ? Number(userScoreEl.value) : 0,
+      watchingDate: this._data.watchingDate,
     };
 
-    this._onDataChange(entry, this._data);
+    this._onDataChange(entry, RequestType.FILM);
   }
 
   _openPopup() {
@@ -252,7 +255,9 @@ export default class FilmController {
     if (!isHistory) {
       // Removed from history, update data and remove user score
       const entry = {
+        id: this._data.id,
         title: this._data.title,
+        titleAlt: this._data.titleAlt,
         category: this._data.category,
         rating: this._data.rating,
         year: this._data.year,
@@ -269,12 +274,15 @@ export default class FilmController {
         isHistory,
         isFavorites,
         userScore: null,
+        watchingDate: this._data.watchingDate,
       };
-      this._onDataChange(entry, this._data);
+      this._onDataChange(entry, RequestType.FILM);
     } else {
       // Other controls toggled, update data
       const entry = {
+        id: this._data.id,
         title: this._data.title,
+        titleAlt: this._data.titleAlt,
         category: this._data.category,
         rating: this._data.rating,
         year: this._data.year,
@@ -291,8 +299,9 @@ export default class FilmController {
         isHistory,
         isFavorites,
         userScore: this._data.userScore,
+        watchingDate: this._data.watchingDate,
       };
-      this._onDataChange(entry, this._data);
+      this._onDataChange(entry, RequestType.FILM);
     }
   }
 

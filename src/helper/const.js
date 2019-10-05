@@ -50,5 +50,10 @@ export const Stats = {
   },
 };
 
+export const RequestType = {
+  FILM: `film`,
+  COMMENT: `comment`,
+};
+
 export const body = document.querySelector(`body`);
 export const filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);

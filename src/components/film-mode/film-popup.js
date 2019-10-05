@@ -7,6 +7,7 @@ export default class FilmPopup extends AbstractComponent {
   constructor(film, comments) {
     super();
     this._title = film.title;
+    this._titleAlt = film.titleAlt;
     this._category = film.category;
     this._rating = film.rating;
     this._year = film.year;
@@ -48,7 +49,7 @@ export default class FilmPopup extends AbstractComponent {
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${this._title}</h3>
-                <p class="film-details__title-original">Original: ${this._title}</p>
+                <p class="film-details__title-original">Original: ${this._titleAlt}</p>
               </div>
   
               <div class="film-details__rating">
@@ -71,11 +72,11 @@ export default class FilmPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${this._year}</td>
+                <td class="film-details__cell">${this._year ? this._year.getFullYear() : ``}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${minsToHours(this._duration)} h ${minsToHoursRemainder(this._duration)} m</td>
+                <td class="film-details__cell">${minsToHours(this._duration)}h ${minsToHoursRemainder(this._duration)}m</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
@@ -170,7 +171,7 @@ export default class FilmPopup extends AbstractComponent {
    * @private
    */
   _getScoreTemplate(score) {
-    return `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${score}" id="rating-${score}" ${this._userScore === score.toString() ? `checked` : ``}>
+    return `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${score}" id="rating-${score}" ${this._userScore === score ? `checked` : ``}>
         <label class="film-details__user-rating-label" for="rating-${score}">${score}</label>`;
   }
 

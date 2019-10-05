@@ -4,7 +4,8 @@ import FilmController from './film';
 import Show from '../components/films-list/show';
 import FeaturedContainer from '../components/films-featured/featured-container';
 import SearchMessage from '../components/search/search-message';
-
+import {api} from '../main';
+import {RequestType} from '../helper/const';
 
 export default class FilmListController {
   constructor(filmsContainer, loadMoreContainer, films, updateMainNav, updateStatistics) {
@@ -154,12 +155,23 @@ export default class FilmListController {
     this._filmsSequence.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(this._filmsContainer, el));
   }
 
-  _onDataChange(newData, oldData) {
-    this._films[this._films.findIndex((el) => el === oldData)] = newData;
-    this.renderFilmListMain(this._films);
-    this.renderFeaturedFilms(this._films);
-    this._updateMainNav(this._films);
-    this._updateStatistics(this._films);
+  _onDataChange(newData, type) {
+    if (type === RequestType.FILM) {
+      // Upload changes
+      api
+        .updateFilm(newData.id, newData)
+        .then(() => {
+          // Update page
+          api
+            .getFilms()
+            .then((films) => {
+              this.renderFilmListMain(films);
+              this.renderFeaturedFilms(films);
+              this._updateMainNav(films);
+              this._updateStatistics(films);
+            });
+        });
+    }
   }
 
   _onViewChange() {

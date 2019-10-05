@@ -30,6 +30,20 @@ export default class API {
       .then(ModelComment.parseComments);
   }
 
+  updateFilm(id, data) {
+    const dataRaw = ModelFilm.toRAW(data);
+    return this._load({
+      url: `movies/${id}`,
+      method: Method.PUT,
+      body: JSON.stringify(dataRaw),
+      headers: new Headers({
+        'Content-Type': `application/json`
+      })
+    })
+      .then(API.toJSON)
+      .then(ModelFilm.parseFilm);
+  }
+
   _load({
     url,
     method = Method.GET,

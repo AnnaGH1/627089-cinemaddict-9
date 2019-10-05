@@ -22,9 +22,9 @@ export default class FilmCard extends AbstractComponent {
     <h3 class="film-card__title">${this._title}</h3>
     <p class="film-card__rating">${this._rating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">${this._year}</span>
-      <span class="film-card__duration">${minsToHours(this._duration)} h ${minsToHoursRemainder(this._duration)} m</span>
-      <span class="film-card__genre">${this._genres[0]}</span>
+      <span class="film-card__year">${this._year ? this._year.getFullYear() : ``}</span>
+      <span class="film-card__duration">${minsToHours(this._duration)}h ${minsToHoursRemainder(this._duration)}m</span>
+      <span class="film-card__genre">${this._genres.length ? this._genres[0] : ``}</span>
     </p>
     <img src="./${this._url}" alt="${this._title}" class="film-card__poster">
     <p class="film-card__description">${this._description}</p>
