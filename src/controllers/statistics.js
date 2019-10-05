@@ -2,7 +2,7 @@ import Statistics from '../components/statistics/statistics';
 import {Position, render, getMax, getRandSelection, unrender} from '../utils';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {Milliseconds} from '../helper/const';
+import {Stats} from '../helper/const';
 
 export default class StatisticsController {
   constructor(container, films) {
@@ -117,49 +117,29 @@ export default class StatisticsController {
     });
   }
 
-  _render(timeframe = `all-time`) {
+  _render(timeframeCurrent) {
     this._renderContent(this._currentValues.count, this._currentValues.duration, this._currentValues.topGenre);
     this._renderChart(this._currentValues.genresMap);
-    this._markCurrentTimeframe(timeframe);
+    this._markCurrentTimeframe(timeframeCurrent);
   }
 
   init() {
     this._setCurrentValues(this._films);
-    this._render();
+    this._render(Stats.TIMEFRAME_DEFAULT);
   }
 
   _onTimeframeClick(e) {
     const timeframe = e.target.previousElementSibling.value;
-    switch (timeframe) {
-      case `today`:
-        this._removePrevStatistics();
-        this._setCurrentValues(this._getFilmsTimeframe(Milliseconds.today));
-        this._render(timeframe);
-        this._statistics.getElement().classList.remove(`visually-hidden`);
-        break;
-      case `week`:
-        this._removePrevStatistics();
-        this._setCurrentValues(this._getFilmsTimeframe(Milliseconds.week));
-        this._render(timeframe);
-        this._statistics.getElement().classList.remove(`visually-hidden`);
-        break;
-      case `month`:
-        this._removePrevStatistics();
-        this._setCurrentValues(this._getFilmsTimeframe(Milliseconds.month));
-        this._render(timeframe);
-        this._statistics.getElement().classList.remove(`visually-hidden`);
-        break;
-      case `year`:
-        this._removePrevStatistics();
-        this._setCurrentValues(this._getFilmsTimeframe(Milliseconds.year));
-        this._render(timeframe);
-        this._statistics.getElement().classList.remove(`visually-hidden`);
-        break;
-      case `all-time`:
-        this._removePrevStatistics();
-        this._setCurrentValues(this._films);
-        this._render(timeframe);
-        this._statistics.getElement().classList.remove(`visually-hidden`);
+    if (timeframe !== Stats.TIMEFRAME_DEFAULT) {
+      this._removePrevStatistics();
+      this._setCurrentValues(this._getFilmsTimeframe(Stats.MILLISECONDS[timeframe]));
+      this._render(timeframe);
+      this._statistics.getElement().classList.remove(`visually-hidden`);
+    } else {
+      this._removePrevStatistics();
+      this._setCurrentValues(this._films);
+      this._render(timeframe);
+      this._statistics.getElement().classList.remove(`visually-hidden`);
     }
   }
 }

@@ -40,11 +40,14 @@ export const userScores = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export const userType = defineUser(FilmsCount.BY_USER, userTitle, IMG_USER);
 
-export const Milliseconds = {
-  today: 86400000,
-  week: 604800000,
-  month: 2628000000,
-  year: 31536000000,
+export const Stats = {
+  TIMEFRAME_DEFAULT: `all-time`,
+  MILLISECONDS: {
+    today: 86400000,
+    week: 604800000,
+    month: 2628000000,
+    year: 31536000000,
+  },
 };
 
 export const body = document.querySelector(`body`);
