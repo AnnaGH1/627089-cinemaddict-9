@@ -55,7 +55,8 @@ export const RequestType = {
   COMMENT: {
     ADD: `add`,
     DELETE: `delete`,
-  }
+  },
+  RATING: `rating`,
 };
 
 export const body = document.querySelector(`body`);
