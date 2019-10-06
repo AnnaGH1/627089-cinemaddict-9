@@ -1,12 +1,13 @@
 import AbstractComponent from '../abstract/abstract-component';
-import {getNounForm} from '../../utils';
-import {userScores, emotions} from '../../helper';
+import {getNounForm, minsToHours, minsToHoursRemainder} from '../../utils';
+import {userScores, emotions} from '../../helper/const';
 import moment from 'moment';
 
 export default class FilmPopup extends AbstractComponent {
-  constructor(film) {
+  constructor(film, comments) {
     super();
     this._title = film.title;
+    this._titleAlt = film.titleAlt;
     this._category = film.category;
     this._rating = film.rating;
     this._year = film.year;
@@ -18,7 +19,7 @@ export default class FilmPopup extends AbstractComponent {
     this._genres = film.genres;
     this._url = film.url;
     this._description = film.description;
-    this._comments = film.comments;
+    this._comments = comments;
     this._isWatchlist = film.isWatchlist;
     this._isHistory = film.isHistory;
     this._isFavorites = film.isFavorites;
@@ -48,7 +49,7 @@ export default class FilmPopup extends AbstractComponent {
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${this._title}</h3>
-                <p class="film-details__title-original">Original: ${this._title}</p>
+                <p class="film-details__title-original">Original: ${this._titleAlt}</p>
               </div>
   
               <div class="film-details__rating">
@@ -63,19 +64,19 @@ export default class FilmPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">${[...this._writers].join(`, `)}</td>
+                <td class="film-details__cell">${this._writers.join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">${[...this._actors].join(`, `)}</td>
+                <td class="film-details__cell">${this._actors.join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${moment(this._year).format(`YYYY`)}</td>
+                <td class="film-details__cell">${this._year ? this._year.getFullYear() : ``}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${this._duration}</td>
+                <td class="film-details__cell">${minsToHours(this._duration)}h ${minsToHoursRemainder(this._duration)}m</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
@@ -84,7 +85,7 @@ export default class FilmPopup extends AbstractComponent {
               <tr class="film-details__row">
                 <td class="film-details__term">${getNounForm(`Genre`, this._genres.size)}</td>
                 <td class="film-details__cell">
-                    ${[...this._genres].map(FilmPopup.getGenreTemplate).join(``)}
+                    ${this._genres.map(FilmPopup.getGenreTemplate).join(``)}
                   </td>
               </tr>
             </table>
@@ -170,7 +171,7 @@ export default class FilmPopup extends AbstractComponent {
    * @private
    */
   _getScoreTemplate(score) {
-    return `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${score}" id="rating-${score}" ${this._userScore === score.toString() ? `checked` : ``}>
+    return `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${score}" id="rating-${score}" ${this._userScore === score ? `checked` : ``}>
         <label class="film-details__user-rating-label" for="rating-${score}">${score}</label>`;
   }
 
@@ -189,7 +190,7 @@ export default class FilmPopup extends AbstractComponent {
    * @return {string}
    */
   static getCommentTemplate(comment) {
-    return `<li class="film-details__comment">
+    return `<li  id="${comment.id}" class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="${comment.emoji}">
       </span>

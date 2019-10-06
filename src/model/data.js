@@ -2,7 +2,7 @@ import {
   getRandSelection,
   getRandomIntInclusive
 } from "../utils";
-import {FilmsCount} from '../helper';
+import {FilmsCount} from '../helper/const';
 
 const IMG_PATH = `./images/posters/`;
 const MOCK_ITEMS_MAX = 3;

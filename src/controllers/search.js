@@ -1,6 +1,6 @@
 import SearchQuery from '../components/search/search-query';
 import {Position, render} from '../utils';
-import {QUERY_LENGTH_MIN} from '../helper';
+import {QUERY_LENGTH_MIN} from '../helper/const';
 
 export default class SearchController {
   constructor(container, onSearchEntry, onSearchReset) {

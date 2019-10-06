@@ -1,7 +1,9 @@
 import FilmCard from "../components/film-mode/film-card";
 import FilmPopup from "../components/film-mode/film-popup";
 import {Key, Position, isCtrlEnterKeydown, isCommandEnterKeydown, render, unrender, createElement} from "../utils";
-import {body} from '../helper';
+import {body} from '../helper/const';
+import {api} from '../main';
+import {RequestType} from '../helper/const';
 
 export default class FilmController {
   constructor(container, data, onDataChange, onViewChange) {
@@ -10,14 +12,47 @@ export default class FilmController {
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
     this._film = new FilmCard(data);
-    this._popup = new FilmPopup(data);
+    this._popup = null;
     this._userRatingEl = null;
     this._userScoreEl = null;
     this._userCommentEl = null;
     this._commentsCountEl = null;
     this._commentsContainer = null;
     this._emojiPreviewContainer = null;
-    this._newComments = [];
+    this._popupForm = null;
+    this._commentToDelete = null;
+  }
+
+  _uploadFilmChangesPopup() {
+    const formData = new FormData(this._popup.getElement().querySelector(`.film-details__inner`));
+    const userScoreEl = this._popup.getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelector(`input[type=radio]:checked`);
+
+    const entry = {
+      id: this._data.id,
+      title: this._data.title,
+      titleAlt: this._data.titleAlt,
+      category: this._data.category,
+      rating: this._data.rating,
+      year: this._data.year,
+      duration: this._data.duration,
+      country: this._data.country,
+      director: this._data.director,
+      writers: this._data.writers,
+      actors: this._data.actors,
+      genres: this._data.genres,
+      url: this._data.url,
+      description: this._data.description,
+      commentsIds: this._data.commentsIds,
+      isWatchlist: !!formData.get(`watchlist`),
+      isHistory: !!formData.get(`watched`),
+      isFavorites: !!formData.get(`favorite`),
+      userScore: userScoreEl ? Number(userScoreEl.value) : 0,
+      watchingDate: this._data.watchingDate,
+    };
+
+    this._onDataChange(entry, RequestType.FILM);
   }
 
   _subscribeOnFilmEvents() {
@@ -35,9 +70,15 @@ export default class FilmController {
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`film-card__poster`) || e.target.classList.contains(`film-card__title`) || e.target.classList.contains(`film-card__comments`)) {
           e.preventDefault();
-          // Close previous popups
-          this._onViewChange();
-          this._openPopup();
+          // Load comments
+          api
+            .getComments(this._data.id)
+            .then((comments) => {
+              this._popup = new FilmPopup(this._data, comments);
+              // Close previous popups
+              this._onViewChange();
+              this._openPopup();
+            });
         }
       });
   }
@@ -54,6 +95,7 @@ export default class FilmController {
           if (e.target.classList.contains(`film-details__control-label--watched`) && !e.target.previousElementSibling.hasAttribute(`checked`)) {
             this._clearScorePopup();
           }
+          this._uploadFilmChangesPopup();
         }
       });
 
@@ -81,6 +123,7 @@ export default class FilmController {
         if (e.target.classList.contains(`film-details__watched-reset`)) {
           e.preventDefault();
           this._clearScorePopup();
+          this._uploadFilmChangesPopup();
         }
       });
   }
@@ -113,15 +156,22 @@ export default class FilmController {
         el.addEventListener(`click`, (e) => {
           if (e.target.classList.contains(`film-details__comment-delete`)) {
             e.preventDefault();
-            e.currentTarget.parentNode.removeChild(e.currentTarget);
-
-            // Update comments count
-            this._commentsCountEl = this._popup.getElement()
-              .querySelector(`.film-details__comments-count`);
-            this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) - 1;
+            this._commentToDelete = Number(e.target.parentNode.parentNode.parentNode.id);
+            this._onDataChange(null, RequestType.COMMENT.DELETE, null, null, Number(this._commentToDelete), this._updateCommentView.bind(this));
           }
         });
       });
+  }
+
+  _updateCommentView() {
+    // Remove comment element
+    const commentEl = document.getElementById(this._commentToDelete);
+    commentEl.parentNode.removeChild(commentEl);
+    this._commentToDelete = null;
+    // Update comments count
+    this._commentsCountEl = this._popup.getElement()
+      .querySelector(`.film-details__comments-count`);
+    this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) - 1;
   }
 
   _updateRefPopup() {
@@ -141,37 +191,6 @@ export default class FilmController {
     this._emojiPreviewContainer.innerHTML = ``;
   }
 
-  _saveDataOnPopupClose() {
-    const formData = new FormData(this._popup.getElement().querySelector(`.film-details__inner`));
-    const userScoreEl = this._popup.getElement()
-      .querySelector(`.film-details__user-rating-score`)
-      .querySelector(`input[type=radio]:checked`);
-
-    const comments = this._newComments.length ? [...this._newComments, ...this._data.comments] : this._data.comments;
-
-    const entry = {
-      title: this._data.title,
-      category: this._data.category,
-      rating: this._data.rating,
-      year: this._data.year,
-      duration: this._data.duration,
-      country: this._data.country,
-      director: this._data.director,
-      writers: this._data.writers,
-      actors: this._data.actors,
-      genres: this._data.genres,
-      url: this._data.url,
-      description: this._data.description,
-      comments,
-      isWatchlist: !!formData.get(`watchlist`),
-      isHistory: !!formData.get(`watched`),
-      isFavorites: !!formData.get(`favorite`),
-      userScore: userScoreEl ? userScoreEl.value : null,
-    };
-
-    this._onDataChange(entry, this._data);
-  }
-
   _openPopup() {
     // Closes popup on Esc keydown
     const onEscKeyDown = (e) => {
@@ -181,8 +200,6 @@ export default class FilmController {
     };
 
     const closePopup = () => {
-      this._saveDataOnPopupClose();
-
       unrender(this._popup.getElement());
       this._popup.removeElement();
       document.removeEventListener(`keydown`, onEscKeyDown);
@@ -217,7 +234,8 @@ export default class FilmController {
   }
 
   setDefaultView() {
-    if (document.body.contains(this._popup.getElement())) {
+    // Check if popup was instantiated and rendered
+    if (this._popup && this._popup.getElement()) {
       unrender(this._popup.getElement());
       this._popup.removeElement();
     }
@@ -242,7 +260,9 @@ export default class FilmController {
     if (!isHistory) {
       // Removed from history, update data and remove user score
       const entry = {
+        id: this._data.id,
         title: this._data.title,
+        titleAlt: this._data.titleAlt,
         category: this._data.category,
         rating: this._data.rating,
         year: this._data.year,
@@ -254,17 +274,20 @@ export default class FilmController {
         genres: this._data.genres,
         url: this._data.url,
         description: this._data.description,
-        comments: this._data.comments,
+        commentsIds: this._data.commentsIds,
         isWatchlist,
         isHistory,
         isFavorites,
         userScore: null,
+        watchingDate: this._data.watchingDate,
       };
-      this._onDataChange(entry, this._data);
+      this._onDataChange(entry, RequestType.FILM);
     } else {
       // Other controls toggled, update data
       const entry = {
+        id: this._data.id,
         title: this._data.title,
+        titleAlt: this._data.titleAlt,
         category: this._data.category,
         rating: this._data.rating,
         year: this._data.year,
@@ -276,13 +299,14 @@ export default class FilmController {
         genres: this._data.genres,
         url: this._data.url,
         description: this._data.description,
-        comments: this._data.comments,
+        commentsIds: this._data.commentsIds,
         isWatchlist,
         isHistory,
         isFavorites,
         userScore: this._data.userScore,
+        watchingDate: this._data.watchingDate,
       };
-      this._onDataChange(entry, this._data);
+      this._onDataChange(entry, RequestType.FILM);
     }
   }
 
@@ -294,25 +318,29 @@ export default class FilmController {
   }
 
   _onCommentSubmit() {
-    const formEl = this._popup.getElement().querySelector(`.film-details__inner`);
-    const formData = new FormData(formEl);
-    const entryComment = {
+    this._popupForm = this._popup.getElement().querySelector(`.film-details__inner`);
+    const formDataComment = new FormData(this._popupForm);
+    const entry = {
       author: `Author`,
-      text: formData.get(`comment`),
-      emoji: formData.get(`comment-emoji`) ? formData.get(`comment-emoji`) : `smile`,
-      time: Date.now(),
+      text: formDataComment.get(`comment`),
+      emoji: formDataComment.get(`comment-emoji`) ? formDataComment.get(`comment-emoji`) : `smile`,
+      time: new Date(),
     };
-    this._newComments.unshift(entryComment);
 
+    this._onDataChange(entry, RequestType.COMMENT.ADD, this._data.id, this._renderNewComment.bind(this));
+  }
+
+  _renderNewComment(comment) {
     // Add comment element
-    render(this._commentsContainer, createElement(FilmPopup.getCommentTemplate(entryComment)), Position.AFTERBEGIN);
+    render(this._commentsContainer, createElement(FilmPopup.getCommentTemplate(comment)), Position.BEFOREEND);
 
     // Update comments count
     this._commentsCountEl = this._popup.getElement()
       .querySelector(`.film-details__comments-count`);
     this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) + 1;
 
-    formEl.reset();
+    this._popupForm.reset();
+
     // Clear preview
     this._emojiPreviewContainer.innerHTML = ``;
   }
@@ -320,6 +348,7 @@ export default class FilmController {
   _onScoreClick(e) {
     e.preventDefault();
     e.target.previousElementSibling.setAttribute(`checked`, ``);
+    this._uploadFilmChangesPopup();
   }
 
   _clearScorePopup() {
