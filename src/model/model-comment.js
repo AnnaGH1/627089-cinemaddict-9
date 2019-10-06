@@ -3,8 +3,18 @@ export default class ModelComment {
     this.id = dataComment[`id`];
     this.author = dataComment[`author`];
     this.text = dataComment[`comment`];
-    this.date = dataComment[`date`];
+    this.time = dataComment[`date`];
     this.emoji = dataComment[`emotion`];
+  }
+
+  static toRAW(data) {
+    return {
+      'id': data.id,
+      'author': data.author,
+      'comment': data.text,
+      'date': data.time,
+      'emotion': data.emoji,
+    };
   }
 
   static parseComment(data) {

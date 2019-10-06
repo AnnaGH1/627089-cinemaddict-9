@@ -155,22 +155,43 @@ export default class FilmListController {
     this._filmsSequence.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(this._filmsContainer, el));
   }
 
-  _onDataChange(newData, type) {
-    if (type === RequestType.FILM) {
-      // Upload changes
-      api
-        .updateFilm(newData.id, newData)
-        .then(() => {
-          // Update page
-          api
-            .getFilms()
-            .then((films) => {
-              this.renderFilmListMain(films);
-              this.renderFeaturedFilms(films);
-              this._updateMainNav(films);
-              this._updateStatistics(films);
-            });
-        });
+  _onDataChange(
+      newData,
+      type,
+      idFilm,
+      renderComment,
+      idComment,
+      updateCommentView
+  ) {
+    switch (type) {
+      case RequestType.FILM:
+        // Upload changes
+        api
+          .updateFilm(newData.id, newData)
+          .then(() => {
+            // Update page
+            api
+              .getFilms()
+              .then((films) => {
+                this.renderFilmListMain(films);
+                this.renderFeaturedFilms(films);
+                this._updateMainNav(films);
+                this._updateStatistics(films);
+              });
+          });
+        break;
+      case RequestType.COMMENT.ADD:
+        api
+          .createComment(newData, idFilm)
+          .then(() => {
+            renderComment(newData);
+          });
+        break;
+      case RequestType.COMMENT.DELETE:
+        api.deleteComment(idComment)
+          .then(() => {
+            updateCommentView();
+          });
     }
   }
 

@@ -52,7 +52,10 @@ export const Stats = {
 
 export const RequestType = {
   FILM: `film`,
-  COMMENT: `comment`,
+  COMMENT: {
+    ADD: `add`,
+    DELETE: `delete`,
+  }
 };
 
 export const body = document.querySelector(`body`);

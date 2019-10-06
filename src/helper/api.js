@@ -44,6 +44,27 @@ export default class API {
       .then(ModelFilm.parseFilm);
   }
 
+  createComment(data, filmId) {
+    const dataRaw = ModelComment.toRAW(data);
+    return this._load({
+      url: `comments/${filmId}`,
+      method: Method.POST,
+      body: JSON.stringify(dataRaw),
+      headers: new Headers({
+        'Content-Type': `application/json`
+      })
+    })
+      .then(API.toJSON)
+      .then(ModelComment.parseComment);
+  }
+
+  deleteComment(id) {
+    return this._load({
+      url: `comments/${id}`,
+      method: Method.DELETE
+    });
+  }
+
   _load({
     url,
     method = Method.GET,
