@@ -162,7 +162,8 @@ export default class FilmListController {
       idFilm,
       renderComment,
       idComment,
-      updateCommentView
+      updateCommentView,
+      showCommentError
   ) {
     switch (type) {
       case RequestType.FILM:
@@ -192,6 +193,9 @@ export default class FilmListController {
               time: newData.time,
             };
             renderComment(newDataClean);
+          })
+          .catch(() => {
+            showCommentError();
           });
         break;
       case RequestType.COMMENT.DELETE:

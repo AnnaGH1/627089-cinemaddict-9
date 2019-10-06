@@ -18,6 +18,7 @@ export default class FilmController {
     this._userCommentEl = null;
     this._commentsCountEl = null;
     this._commentsContainer = null;
+    this._commentInput = null;
     this._emojiPreviewContainer = null;
     this._popupForm = null;
     this._commentToDelete = null;
@@ -175,10 +176,12 @@ export default class FilmController {
   }
 
   _updateRefPopup() {
-    this._commentsContainer = this._popup.getElement().querySelector(`.film-details__comments-list`);
+    this._popupForm = this._popup.getElement().querySelector(`.film-details__inner`);
     this._userRatingEl = this._popup.getElement().querySelector(`.form-details__middle-container`);
+    this._commentsContainer = this._popup.getElement().querySelector(`.film-details__comments-list`);
     this._userCommentEl = this._popup.getElement().querySelector(`.film-details__new-comment`);
     this._emojiPreviewContainer = this._popup.getElement().querySelector(`.film-details__add-emoji-label`);
+    this._commentInput = this._popup.getElement().querySelector(`.film-details__comment-input`);
   }
 
   _clearPrevEmoji() {
@@ -318,7 +321,6 @@ export default class FilmController {
   }
 
   _onCommentSubmit() {
-    this._popupForm = this._popup.getElement().querySelector(`.film-details__inner`);
     const formDataComment = new FormData(this._popupForm);
     const entry = {
       author: `Author`,
@@ -327,22 +329,41 @@ export default class FilmController {
       time: new Date(),
     };
 
-    this._onDataChange(entry, RequestType.COMMENT.ADD, this._data.id, this._renderNewComment.bind(this));
+    // Disable comment input
+    this._commentInput.setAttribute(`disabled`, ``);
+
+    // Remove error styles
+    this._commentInput.classList.remove(`shake`);
+    this._commentInput.classList.remove(`film-details__comment-input--error`);
+
+    this._onDataChange(entry, RequestType.COMMENT.ADD, this._data.id, this._renderNewComment.bind(this), null, null, this._showCommentError.bind(this));
   }
 
   _renderNewComment(comment) {
     // Add comment element
     render(this._commentsContainer, createElement(FilmPopup.getCommentTemplate(comment)), Position.BEFOREEND);
 
-    // Update comments count
-    this._commentsCountEl = this._popup.getElement()
-      .querySelector(`.film-details__comments-count`);
-    this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) + 1;
-
+    // Enable form
+    this._commentInput.removeAttribute(`disabled`);
+    this._commentInput.classList.remove(`film-details__comment-input--error`);
     this._popupForm.reset();
 
     // Clear preview
     this._emojiPreviewContainer.innerHTML = ``;
+
+    // Update comments count
+    this._commentsCountEl = this._popup.getElement()
+      .querySelector(`.film-details__comments-count`);
+    this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) + 1;
+  }
+
+  _showCommentError() {
+    // Enable form
+    this._commentInput.removeAttribute(`disabled`);
+
+    // Styles
+    this._commentInput.classList.add(`shake`);
+    this._commentInput.classList.add(`film-details__comment-input--error`);
   }
 
   _onScoreClick(e) {
