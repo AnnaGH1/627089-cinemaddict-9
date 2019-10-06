@@ -1,3 +1,4 @@
+import dompurify from 'dompurify';
 import {getRandSelection, Position, render, sortByPropDown, unrender} from '../utils';
 import {FilmsCount, PromoCategory} from '../helper/const';
 import FilmController from './film';
@@ -184,7 +185,13 @@ export default class FilmListController {
         api
           .createComment(newData, idFilm)
           .then(() => {
-            renderComment(newData);
+            const newDataClean = {
+              author: newData.author,
+              text: dompurify.sanitize(newData.text),
+              emoji: newData.emoji,
+              time: newData.time,
+            };
+            renderComment(newDataClean);
           });
         break;
       case RequestType.COMMENT.DELETE:
