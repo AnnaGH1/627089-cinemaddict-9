@@ -22,6 +22,38 @@ export default class FilmController {
     this._newComments = [];
   }
 
+  _uploadChangesPopup() {
+    const formData = new FormData(this._popup.getElement().querySelector(`.film-details__inner`));
+    const userScoreEl = this._popup.getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelector(`input[type=radio]:checked`);
+
+    const entry = {
+      id: this._data.id,
+      title: this._data.title,
+      titleAlt: this._data.titleAlt,
+      category: this._data.category,
+      rating: this._data.rating,
+      year: this._data.year,
+      duration: this._data.duration,
+      country: this._data.country,
+      director: this._data.director,
+      writers: this._data.writers,
+      actors: this._data.actors,
+      genres: this._data.genres,
+      url: this._data.url,
+      description: this._data.description,
+      commentsIds: this._data.commentsIds,
+      isWatchlist: !!formData.get(`watchlist`),
+      isHistory: !!formData.get(`watched`),
+      isFavorites: !!formData.get(`favorite`),
+      userScore: userScoreEl ? Number(userScoreEl.value) : 0,
+      watchingDate: this._data.watchingDate,
+    };
+
+    this._onDataChange(entry, RequestType.FILM);
+  }
+
   _subscribeOnFilmEvents() {
     // Toggle film controls
     this._film.getElement()
@@ -62,6 +94,7 @@ export default class FilmController {
           if (e.target.classList.contains(`film-details__control-label--watched`) && !e.target.previousElementSibling.hasAttribute(`checked`)) {
             this._clearScorePopup();
           }
+          this._uploadChangesPopup();
         }
       });
 
@@ -89,6 +122,7 @@ export default class FilmController {
         if (e.target.classList.contains(`film-details__watched-reset`)) {
           e.preventDefault();
           this._clearScorePopup();
+          this._uploadChangesPopup();
         }
       });
   }
@@ -149,41 +183,6 @@ export default class FilmController {
     this._emojiPreviewContainer.innerHTML = ``;
   }
 
-  _saveDataOnPopupClose() {
-    const formData = new FormData(this._popup.getElement().querySelector(`.film-details__inner`));
-    const userScoreEl = this._popup.getElement()
-      .querySelector(`.film-details__user-rating-score`)
-      .querySelector(`input[type=radio]:checked`);
-
-    const comments = this._newComments.length ? [...this._newComments, ...this._data.comments] : this._data.comments;
-
-    const entry = {
-      id: this._data.id,
-      title: this._data.title,
-      titleAlt: this._data.titleAlt,
-      category: this._data.category,
-      rating: this._data.rating,
-      year: this._data.year,
-      duration: this._data.duration,
-      country: this._data.country,
-      director: this._data.director,
-      writers: this._data.writers,
-      actors: this._data.actors,
-      genres: this._data.genres,
-      url: this._data.url,
-      description: this._data.description,
-      commentsIds: this._data.commentsIds,
-      comments,
-      isWatchlist: !!formData.get(`watchlist`),
-      isHistory: !!formData.get(`watched`),
-      isFavorites: !!formData.get(`favorite`),
-      userScore: userScoreEl ? Number(userScoreEl.value) : 0,
-      watchingDate: this._data.watchingDate,
-    };
-
-    this._onDataChange(entry, RequestType.FILM);
-  }
-
   _openPopup() {
     // Closes popup on Esc keydown
     const onEscKeyDown = (e) => {
@@ -193,8 +192,6 @@ export default class FilmController {
     };
 
     const closePopup = () => {
-      this._saveDataOnPopupClose();
-
       unrender(this._popup.getElement());
       this._popup.removeElement();
       document.removeEventListener(`keydown`, onEscKeyDown);
@@ -339,6 +336,7 @@ export default class FilmController {
   _onScoreClick(e) {
     e.preventDefault();
     e.target.previousElementSibling.setAttribute(`checked`, ``);
+    this._uploadChangesPopup();
   }
 
   _clearScorePopup() {
