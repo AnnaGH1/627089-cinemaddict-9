@@ -162,7 +162,10 @@ export default class FilmListController {
       idFilm,
       renderComment,
       idComment,
-      updateCommentView
+      updateCommentView,
+      showCommentError,
+      updateRatingView,
+      showRatingError
   ) {
     switch (type) {
       case RequestType.FILM:
@@ -192,12 +195,34 @@ export default class FilmListController {
               time: newData.time,
             };
             renderComment(newDataClean);
+          })
+          .catch(() => {
+            showCommentError();
           });
         break;
       case RequestType.COMMENT.DELETE:
         api.deleteComment(idComment)
           .then(() => {
             updateCommentView();
+          });
+        break;
+      case RequestType.RATING:
+        api
+          .updateRating(newData.id, newData)
+          .then(() => {
+            // Update page and rating view
+            api
+              .getFilms()
+              .then((films) => {
+                this.renderFilmListMain(films);
+                this.renderFeaturedFilms(films);
+                this._updateMainNav(films);
+                this._updateStatistics(films);
+                updateRatingView();
+              });
+          })
+          .catch(() => {
+            showRatingError();
           });
     }
   }

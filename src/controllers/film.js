@@ -18,9 +18,11 @@ export default class FilmController {
     this._userCommentEl = null;
     this._commentsCountEl = null;
     this._commentsContainer = null;
+    this._commentInput = null;
     this._emojiPreviewContainer = null;
     this._popupForm = null;
     this._commentToDelete = null;
+    this._scoreSelected = null;
   }
 
   _uploadFilmChangesPopup() {
@@ -53,6 +55,49 @@ export default class FilmController {
     };
 
     this._onDataChange(entry, RequestType.FILM);
+  }
+
+  _uploadFilmChangesScore() {
+    // Reset rating section
+    this._popupForm.setAttribute(`disabled`, ``);
+    this._userRatingEl.classList.remove(`shake`);
+
+    const formData = new FormData(this._popup.getElement().querySelector(`.film-details__inner`));
+
+    const entry = {
+      id: this._data.id,
+      title: this._data.title,
+      titleAlt: this._data.titleAlt,
+      category: this._data.category,
+      rating: this._data.rating,
+      year: this._data.year,
+      duration: this._data.duration,
+      country: this._data.country,
+      director: this._data.director,
+      writers: this._data.writers,
+      actors: this._data.actors,
+      genres: this._data.genres,
+      url: this._data.url,
+      description: this._data.description,
+      commentsIds: this._data.commentsIds,
+      isWatchlist: !!formData.get(`watchlist`),
+      isHistory: !!formData.get(`watched`),
+      isFavorites: !!formData.get(`favorite`),
+      userScore: this._scoreSelected ? Number(this._scoreSelected.value) : 0,
+      watchingDate: this._data.watchingDate,
+    };
+
+    this._onDataChange(
+        entry,
+        RequestType.RATING,
+        null,
+        null,
+        null,
+        null,
+        null,
+        this._updateRatingView.bind(this),
+        this._showRatingError.bind(this)
+    );
   }
 
   _subscribeOnFilmEvents() {
@@ -122,8 +167,9 @@ export default class FilmController {
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`film-details__watched-reset`)) {
           e.preventDefault();
-          this._clearScorePopup();
-          this._uploadFilmChangesPopup();
+          this._clearRatingErrorStyle();
+          this._scoreSelected = null;
+          this._uploadFilmChangesScore();
         }
       });
   }
@@ -174,11 +220,72 @@ export default class FilmController {
     this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) - 1;
   }
 
+  _renderNewComment(comment) {
+    // Add comment element
+    render(this._commentsContainer, createElement(FilmPopup.getCommentTemplate(comment)), Position.BEFOREEND);
+
+    // Enable form
+    this._commentInput.removeAttribute(`disabled`);
+    this._commentInput.classList.remove(`film-details__comment-input--error`);
+    this._popupForm.reset();
+
+    // Clear preview
+    this._emojiPreviewContainer.innerHTML = ``;
+
+    // Update comments count
+    this._commentsCountEl = this._popup.getElement()
+      .querySelector(`.film-details__comments-count`);
+    this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) + 1;
+  }
+
+  _showCommentError() {
+    // Enable form
+    this._commentInput.removeAttribute(`disabled`);
+
+    // Styles
+    this._commentInput.classList.add(`shake`);
+    this._commentInput.classList.add(`film-details__comment-input--error`);
+  }
+
+  _updateRatingView() {
+    if (this._scoreSelected) {
+      this._scoreSelected.setAttribute(`checked`, ``);
+    } else {
+      this._clearScorePopup();
+    }
+  }
+
+  _showRatingError() {
+    this._popupForm.removeAttribute(`disabled`);
+    this._userRatingEl.classList.add(`shake`);
+    if (this._scoreSelected) {
+      this._scoreSelected.nextElementSibling
+        .classList.add(`score-error`);
+    }
+  }
+
+  _clearScorePopup() {
+    this._userScoreEl = this._popup.getElement()
+      .querySelector(`.film-details__user-rating-score`)
+      .querySelector(`input[type=radio]:checked`);
+    if (this._userScoreEl) {
+      this._userScoreEl.removeAttribute(`checked`);
+    }
+  }
+
+  _clearRatingErrorStyle() {
+    this._popup.getElement()
+      .querySelectorAll(`.film-details__user-rating-label`)
+      .forEach((el) => el.classList.remove(`score-error`));
+  }
+
   _updateRefPopup() {
-    this._commentsContainer = this._popup.getElement().querySelector(`.film-details__comments-list`);
+    this._popupForm = this._popup.getElement().querySelector(`.film-details__inner`);
     this._userRatingEl = this._popup.getElement().querySelector(`.form-details__middle-container`);
+    this._commentsContainer = this._popup.getElement().querySelector(`.film-details__comments-list`);
     this._userCommentEl = this._popup.getElement().querySelector(`.film-details__new-comment`);
     this._emojiPreviewContainer = this._popup.getElement().querySelector(`.film-details__add-emoji-label`);
+    this._commentInput = this._popup.getElement().querySelector(`.film-details__comment-input`);
   }
 
   _clearPrevEmoji() {
@@ -318,7 +425,6 @@ export default class FilmController {
   }
 
   _onCommentSubmit() {
-    this._popupForm = this._popup.getElement().querySelector(`.film-details__inner`);
     const formDataComment = new FormData(this._popupForm);
     const entry = {
       author: `Author`,
@@ -327,37 +433,21 @@ export default class FilmController {
       time: new Date(),
     };
 
-    this._onDataChange(entry, RequestType.COMMENT.ADD, this._data.id, this._renderNewComment.bind(this));
-  }
+    // Disable comment input
+    this._commentInput.setAttribute(`disabled`, ``);
 
-  _renderNewComment(comment) {
-    // Add comment element
-    render(this._commentsContainer, createElement(FilmPopup.getCommentTemplate(comment)), Position.BEFOREEND);
+    // Remove error styles
+    this._commentInput.classList.remove(`shake`);
+    this._commentInput.classList.remove(`film-details__comment-input--error`);
 
-    // Update comments count
-    this._commentsCountEl = this._popup.getElement()
-      .querySelector(`.film-details__comments-count`);
-    this._commentsCountEl.textContent = Number(this._commentsCountEl.textContent) + 1;
-
-    this._popupForm.reset();
-
-    // Clear preview
-    this._emojiPreviewContainer.innerHTML = ``;
+    this._onDataChange(entry, RequestType.COMMENT.ADD, this._data.id, this._renderNewComment.bind(this), null, null, this._showCommentError.bind(this));
   }
 
   _onScoreClick(e) {
     e.preventDefault();
-    e.target.previousElementSibling.setAttribute(`checked`, ``);
-    this._uploadFilmChangesPopup();
-  }
-
-  _clearScorePopup() {
-    this._userScoreEl = this._popup.getElement()
-      .querySelector(`.film-details__user-rating-score`)
-      .querySelector(`input[type=radio]:checked`);
-    if (this._userScoreEl) {
-      this._userScoreEl.removeAttribute(`checked`);
-    }
+    this._clearRatingErrorStyle();
+    this._scoreSelected = e.target.previousElementSibling;
+    this._uploadFilmChangesScore();
   }
 
   _onWatchedControlClick(e) {
