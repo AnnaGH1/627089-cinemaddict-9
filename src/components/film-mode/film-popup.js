@@ -72,7 +72,7 @@ export default class FilmPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${this._year ? this._year.getFullYear() : ``}</td>
+                <td class="film-details__cell">${this._year ? moment(this._year).format(`DD MMMM YYYY`) : ``}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -83,9 +83,9 @@ export default class FilmPopup extends AbstractComponent {
                 <td class="film-details__cell">${this._country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">${getNounForm(`Genre`, this._genres.size)}</td>
+                <td class="film-details__term">${getNounForm(`Genre`, this._genres.length)}</td>
                 <td class="film-details__cell">
-                    ${this._genres.map(FilmPopup.getGenreTemplate).join(``)}
+                    ${this._genres.length ? this._genres.map(FilmPopup.getGenreTemplate).join(``) : ``}
                   </td>
               </tr>
             </table>
@@ -198,7 +198,7 @@ export default class FilmPopup extends AbstractComponent {
         <p class="film-details__comment-text">${comment.text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${moment(comment.time).format(`MMM DD YYYY kk:mm`)}</span>
+          <span class="film-details__comment-day">${moment(comment.time).format(`YY/MM/DD HH:mm`)}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>

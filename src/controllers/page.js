@@ -3,7 +3,6 @@ import {
   render,
   unrender,
   sortByPropDown,
-  sortByPropUp,
 } from '../utils';
 import {
   FilmsCount,
@@ -89,7 +88,7 @@ export default class PageController {
   }
 
   _updateFilmsCount(el) {
-    el.textContent = `${FilmsCount.TOTAL} movies inside`;
+    el.textContent = `${this._films.length} movies inside`;
   }
 
   _updateNoFilms(el) {
@@ -189,7 +188,7 @@ export default class PageController {
     }
 
     const sortMap = {
-      date: sortByPropUp(this._films, `year`),
+      date: sortByPropDown(this._films, `year`),
       rating: sortByPropDown(this._films, `rating`),
       default: this._films,
     };

@@ -1,5 +1,6 @@
 import ModelFilm from '../model/model-film';
 import ModelComment from '../model/model-comment';
+import {RESPONSE_STATUS} from './const';
 
 const Method = {
   GET: `GET`,
@@ -94,11 +95,10 @@ export default class API {
   }
 
   static checkStatus(response) {
-    if (response.status >= 200 && response.status < 300) {
+    if (response.status >= RESPONSE_STATUS.SUCCESS.MIN && response.status <= RESPONSE_STATUS.SUCCESS.MAX) {
       return response;
-    } else {
-      throw new Error(`${response.status}: ${response.statusText}`);
     }
+    throw new Error(`${response.status}: ${response.statusText}`);
   }
 
   static toJSON(response) {

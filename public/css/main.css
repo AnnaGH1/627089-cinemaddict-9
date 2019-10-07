@@ -1107,3 +1107,7 @@ button {
 .score-error {
    background-color: #ff3931;
  }
+.load-message {
+  height: calc(100vh - 280px);
+  font-size: var(--font-size-bigger);
+}

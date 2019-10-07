@@ -8,6 +8,8 @@ export const Key = {
   ENTER: `Enter`,
 };
 
+const MINS_IN_HOUR = 60;
+
 export const isCtrlEnterKeydown = (e) => e.ctrlKey && e.key === Key.ENTER;
 
 export const isCommandEnterKeydown = (e) => e.metaKey && e.key === Key.ENTER;
@@ -150,14 +152,14 @@ export const getNounForm = (noun, count) => count === 1 ? noun : noun + `s`;
  * @param {number} mins
  * @return {number}
  */
-export const minsToHours = (mins) => Math.floor(mins / 60);
+export const minsToHours = (mins) => Math.floor(mins / MINS_IN_HOUR);
 
 /**
  * Get the remaining number of minutes after full hours
  * @param {number} mins
  * @return {number}
  */
-export const minsToHoursRemainder = (mins) => mins % 60;
+export const minsToHoursRemainder = (mins) => mins % MINS_IN_HOUR;
 
 /**
  * Get keys corresponding to the max value in an object

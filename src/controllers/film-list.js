@@ -195,6 +195,17 @@ export default class FilmListController {
               time: newData.time,
             };
             renderComment(newDataClean);
+
+            // Update page
+            api
+              .getFilms()
+              .then((films) => {
+                this.renderFilmListMain(films);
+                this.renderFeaturedFilms(films);
+                this._updateMainNav(films);
+                this._updateStatistics(films);
+              });
+
           })
           .catch(() => {
             showCommentError();

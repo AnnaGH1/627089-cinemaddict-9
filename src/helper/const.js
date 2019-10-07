@@ -59,5 +59,12 @@ export const RequestType = {
   RATING: `rating`,
 };
 
+export const RESPONSE_STATUS = {
+  SUCCESS: {
+    MIN: 200,
+    MAX: 299,
+  }
+};
+
 export const body = document.querySelector(`body`);
 export const filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
