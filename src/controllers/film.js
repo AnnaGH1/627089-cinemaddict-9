@@ -24,7 +24,26 @@ export default class FilmController {
     this._commentToDelete = null;
     this._scoreSelected = null;
     this._updateCommentView = this._updateCommentView.bind(this);
+    this._renderNewComment = this._renderNewComment.bind(this);
+    this._showCommentError = this._showCommentError.bind(this);
     this._onCommentDelete = this._onCommentDelete.bind(this);
+    this._onScoreClick = this._onScoreClick.bind(this);
+    this._onScoreUndoClick = this._onScoreUndoClick.bind(this);
+    this._updateRatingView = this._updateRatingView.bind(this);
+    this._showRatingError = this._showRatingError.bind(this);
+  }
+
+  setDefaultView() {
+    // Check if popup was instantiated and rendered
+    if (this._popup && this._popup.getElement()) {
+      unrender(this._popup.getElement());
+      this._popup.removeElement();
+    }
+  }
+
+  init() {
+    this._subscribeOnFilmEvents();
+    render(this._container, this._film.getElement(), Position.BEFOREEND);
   }
 
   _uploadFilmChangesPopup() {
@@ -97,8 +116,8 @@ export default class FilmController {
         null,
         null,
         null,
-        this._updateRatingView.bind(this),
-        this._showRatingError.bind(this)
+        this._updateRatingView,
+        this._showRatingError
     );
   }
 
@@ -158,22 +177,15 @@ export default class FilmController {
   _subscribeOnPopupEventsScore() {
     // Add score
     this._popup.getElement()
-      .addEventListener(`click`, (e) => {
-        if (e.target.classList.contains(`film-details__user-rating-label`)) {
-          this._onScoreClick(e);
-        }
+      .querySelectorAll(`.film-details__user-rating-label`)
+      .forEach((el) => {
+        el.addEventListener(`click`, this._onScoreClick);
       });
 
     // Remove score
     this._popup.getElement()
-      .addEventListener(`click`, (e) => {
-        if (e.target.classList.contains(`film-details__watched-reset`)) {
-          e.preventDefault();
-          this._clearRatingErrorStyle();
-          this._scoreSelected = null;
-          this._uploadFilmChangesScore();
-        }
-      });
+      .querySelector(`.film-details__watched-reset`)
+      .addEventListener(`click`, this._onScoreUndoClick);
   }
 
   _subscribeOnPopupEventsComment() {
@@ -340,19 +352,6 @@ export default class FilmController {
     document.addEventListener(`keydown`, onEscKeyDown);
   }
 
-  setDefaultView() {
-    // Check if popup was instantiated and rendered
-    if (this._popup && this._popup.getElement()) {
-      unrender(this._popup.getElement());
-      this._popup.removeElement();
-    }
-  }
-
-  init() {
-    this._subscribeOnFilmEvents();
-    render(this._container, this._film.getElement(), Position.BEFOREEND);
-  }
-
   _onFilmControlClick(e) {
     e.target.classList.toggle(`film-card__controls-item--active`);
     const isWatchlist = this._film.getElement()
@@ -440,7 +439,7 @@ export default class FilmController {
     this._commentInput.classList.remove(`shake`);
     this._commentInput.classList.remove(`film-details__comment-input--error`);
 
-    this._onDataChange(entry, RequestType.COMMENT.ADD, this._data.id, this._renderNewComment.bind(this), null, null, this._showCommentError.bind(this));
+    this._onDataChange(entry, RequestType.COMMENT.ADD, this._data.id, this._renderNewComment, null, null, this._showCommentError);
   }
 
   _onCommentDelete(e) {
@@ -453,6 +452,13 @@ export default class FilmController {
     e.preventDefault();
     this._clearRatingErrorStyle();
     this._scoreSelected = e.target.previousElementSibling;
+    this._uploadFilmChangesScore();
+  }
+
+  _onScoreUndoClick(e) {
+    e.preventDefault();
+    this._clearRatingErrorStyle();
+    this._scoreSelected = null;
     this._uploadFilmChangesScore();
   }
 

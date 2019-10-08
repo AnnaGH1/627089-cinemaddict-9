@@ -8,7 +8,12 @@ export default class SearchController {
     this._onSearchEntry = onSearchEntry;
     this._onSearchReset = onSearchReset;
     this._searchQuery = new SearchQuery();
-    this._searchRun = false;
+    this.searchRun = false;
+  }
+
+  init() {
+    this._subscribeOnEvents();
+    render(this._container, this._searchQuery.getElement(), Position.BEFOREEND);
   }
 
   _subscribeOnEvents() {
@@ -18,7 +23,7 @@ export default class SearchController {
       .addEventListener(`keyup`, (e) => {
         if (e.target.value.length >= QUERY_LENGTH_MIN) {
           // Update search status
-          this._searchRun = true;
+          this.searchRun = true;
           this._onSearchEntry(e);
         }
       });
@@ -27,7 +32,7 @@ export default class SearchController {
     this._searchQuery.getElement()
       .querySelector(`.search__field`)
       .addEventListener(`input`, (e) => {
-        if (this._searchRun) {
+        if (this.searchRun) {
           if (!e.target.value) {
             this._onSearchReset(e);
           }
@@ -40,10 +45,5 @@ export default class SearchController {
       .addEventListener(`click`, (e) => {
         this._onSearchReset(e);
       });
-  }
-
-  init() {
-    this._subscribeOnEvents();
-    render(this._container, this._searchQuery.getElement(), Position.BEFOREEND);
   }
 }
