@@ -23,11 +23,49 @@ export default class FilmListController {
     this._filmPageStart = 0;
     this._filmPageEnd = FilmsCount.PER_PAGE;
     this._subscriptions = [];
-    this._onDataChange = this._onDataChange.bind(this);
-    this._onViewChange = this._onViewChange.bind(this);
     this._searchMessage = new SearchMessage();
     this._updateMainNav = updateMainNav;
     this._updateStatistics = updateStatistics;
+    this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
+    this._onShowButtonClick = this._onShowButtonClick.bind(this);
+  }
+
+  renderSearchMessage() {
+    this._removePrevFilms();
+    this._resetPageCounters();
+    this.removePrevFeaturedFilms();
+
+    render(this._filmsContainer, this._searchMessage.getElement(), Position.BEFOREEND);
+  }
+
+  renderFilmListMain(filmsSequence) {
+    this._removePrevFilms();
+    this._resetPageCounters();
+    this._filmsSequence = filmsSequence;
+
+    // Render films
+    this._filmsSequence.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(this._filmsContainer, el));
+
+    // Render show more button if film list is long enough
+    if (filmsSequence.length > FilmsCount.PER_PAGE) {
+      render(this._loadMoreContainer, this._show.getElement(), Position.BEFOREEND);
+      this._show.getElement().addEventListener(`click`, this._onShowButtonClick);
+      this._isShowRendered = true;
+    }
+  }
+
+  renderFeaturedFilms(films) {
+    this.removePrevFeaturedFilms();
+    this._renderTopRated(films);
+    this._renderMostCommented(films);
+  }
+
+  removePrevFeaturedFilms() {
+    unrender(this._extraContainerRating.getElement());
+    this._extraContainerRating.removeElement();
+    unrender(this._extraContainerComments.getElement());
+    this._extraContainerComments.removeElement();
   }
 
   _removePrevFilms() {
@@ -54,35 +92,6 @@ export default class FilmListController {
     const filmController = new FilmController(container, item, this._onDataChange, this._onViewChange);
     filmController.init();
     this._subscriptions.push(filmController.setDefaultView.bind(filmController));
-  }
-
-  renderFilmListMain(filmsSequence) {
-    this._removePrevFilms();
-    this._resetPageCounters();
-    this._filmsSequence = filmsSequence;
-
-    // Render films
-    this._filmsSequence.slice(this._filmPageStart, this._filmPageEnd).forEach((el) => this._renderFilm(this._filmsContainer, el));
-
-    // Render show more button if film list is long enough
-    if (filmsSequence.length > FilmsCount.PER_PAGE) {
-      render(this._loadMoreContainer, this._show.getElement(), Position.BEFOREEND);
-      this._show.getElement().addEventListener(`click`, this._onShowButtonClick.bind(this));
-      this._isShowRendered = true;
-    }
-  }
-
-  renderFeaturedFilms(films) {
-    this._removePrevFeaturedFilms();
-    this._renderTopRated(films);
-    this._renderMostCommented(films);
-  }
-
-  _removePrevFeaturedFilms() {
-    unrender(this._extraContainerRating.getElement());
-    this._extraContainerRating.removeElement();
-    unrender(this._extraContainerComments.getElement());
-    this._extraContainerComments.removeElement();
   }
 
   _renderTopRated(films) {
@@ -132,14 +141,6 @@ export default class FilmListController {
 
     this._mostCommented
       .forEach((el) => this._renderFilm(containerMostCommented, el));
-  }
-
-  renderSearchMessage() {
-    this._removePrevFilms();
-    this._resetPageCounters();
-    this._removePrevFeaturedFilms();
-
-    render(this._filmsContainer, this._searchMessage.getElement(), Position.BEFOREEND);
   }
 
   _onShowButtonClick() {
@@ -195,6 +196,17 @@ export default class FilmListController {
               time: newData.time,
             };
             renderComment(newDataClean);
+
+            // Update page
+            api
+              .getFilms()
+              .then((films) => {
+                this.renderFilmListMain(films);
+                this.renderFeaturedFilms(films);
+                this._updateMainNav(films);
+                this._updateStatistics(films);
+              });
+
           })
           .catch(() => {
             showCommentError();
@@ -204,13 +216,8 @@ export default class FilmListController {
         api.deleteComment(idComment)
           .then(() => {
             updateCommentView();
-          });
-        break;
-      case RequestType.RATING:
-        api
-          .updateRating(newData.id, newData)
-          .then(() => {
-            // Update page and rating view
+
+            // Update page
             api
               .getFilms()
               .then((films) => {
@@ -218,7 +225,24 @@ export default class FilmListController {
                 this.renderFeaturedFilms(films);
                 this._updateMainNav(films);
                 this._updateStatistics(films);
-                updateRatingView();
+              });
+
+          });
+        break;
+      case RequestType.RATING:
+        api
+          .updateRating(newData.id, newData)
+          .then(() => {
+            updateRatingView();
+
+            // Update page
+            api
+              .getFilms()
+              .then((films) => {
+                this.renderFilmListMain(films);
+                this.renderFeaturedFilms(films);
+                this._updateMainNav(films);
+                this._updateStatistics(films);
               });
           })
           .catch(() => {
