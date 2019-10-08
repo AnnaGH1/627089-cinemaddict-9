@@ -8,9 +8,14 @@ export default class StatisticsController {
   constructor(container, films) {
     this._container = container;
     this._films = films;
-    this._statistics = null;
+    this.statistics = null;
     this._currentValues = null;
     this._userHistoryChart = null;
+  }
+
+  init() {
+    this._setCurrentValues(this._films);
+    this._render(Stats.TIMEFRAME_DEFAULT);
   }
 
   _getFilmsTimeframe(period) {
@@ -45,12 +50,12 @@ export default class StatisticsController {
   }
 
   _removePrevStatistics() {
-    unrender(this._statistics.getElement());
-    this._statistics.removeElement();
+    unrender(this.statistics.getElement());
+    this.statistics.removeElement();
   }
 
   _subscribeOnEvents() {
-    this._statistics.getElement()
+    this.statistics.getElement()
       .querySelector(`.statistic__filters`)
       .addEventListener(`click`, (e) => {
         if (e.target.classList.contains(`statistic__filters-label`)) {
@@ -61,14 +66,14 @@ export default class StatisticsController {
   }
 
   _markCurrentTimeframe(timeframe) {
-    this._statistics.getElement()
+    this.statistics.getElement()
       .querySelector(`#statistic-${timeframe}`)
       .setAttribute(`checked`, ``);
   }
 
   _renderContent(count, duration, topGenre) {
-    this._statistics = new Statistics(count, duration, topGenre);
-    render(this._container, this._statistics.getElement(), Position.BEFOREEND);
+    this.statistics = new Statistics(count, duration, topGenre);
+    render(this._container, this.statistics.getElement(), Position.BEFOREEND);
     this._subscribeOnEvents();
   }
 
@@ -123,23 +128,18 @@ export default class StatisticsController {
     this._markCurrentTimeframe(timeframeCurrent);
   }
 
-  init() {
-    this._setCurrentValues(this._films);
-    this._render(Stats.TIMEFRAME_DEFAULT);
-  }
-
   _onTimeframeClick(e) {
     const timeframe = e.target.previousElementSibling.value;
     if (timeframe !== Stats.TIMEFRAME_DEFAULT) {
       this._removePrevStatistics();
       this._setCurrentValues(this._getFilmsTimeframe(Stats.MILLISECONDS[timeframe]));
       this._render(timeframe);
-      this._statistics.getElement().classList.remove(`visually-hidden`);
+      this.statistics.getElement().classList.remove(`visually-hidden`);
     } else {
       this._removePrevStatistics();
       this._setCurrentValues(this._films);
       this._render(timeframe);
-      this._statistics.getElement().classList.remove(`visually-hidden`);
+      this.statistics.getElement().classList.remove(`visually-hidden`);
     }
   }
 }

@@ -3,7 +3,6 @@ import {
   render,
   unrender,
   sortByPropDown,
-  sortByPropUp,
 } from '../utils';
 import {
   FilmsCount,
@@ -43,6 +42,35 @@ export default class PageController {
     this._onSortClick = this._onSortClick.bind(this);
   }
 
+  init() {
+    // Show message if there are no films
+    if (!FilmsCount.TOTAL) {
+      this._renderMessage();
+      this._updateNoFilms(filmsCountEl);
+    } else {
+      // Render page otherwise
+      // Header
+      this._renderSearchQuery();
+      this._renderUser();
+
+      // Controls and layout
+      this._renderMainNav(this._films);
+      this._renderSort();
+      this._renderPageLayout();
+
+      // Statistics
+      this._renderStatistics(this._films);
+
+      // Films list
+      this._filmListController = new FilmListController(this._filmsContainer, this._loadMoreContainer, this._films, this._updateMainNav, this._updateStatistics);
+      this._filmListController.renderFilmListMain(this._films);
+      this._filmListController.renderFeaturedFilms(this._films);
+
+      // Footer
+      this._updateFilmsCount(filmsCountEl);
+    }
+  }
+
   _renderMessage() {
     render(this._container, this._message.getElement(), Position.BEFOREEND);
   }
@@ -76,8 +104,8 @@ export default class PageController {
   }
 
   _updateStatistics(films) {
-    unrender(this._statisticsController._statistics.getElement());
-    this._statisticsController._statistics.removeElement();
+    unrender(this._statisticsController.statistics.getElement());
+    this._statisticsController.statistics.removeElement();
     this._renderStatistics(films);
   }
 
@@ -89,7 +117,7 @@ export default class PageController {
   }
 
   _updateFilmsCount(el) {
-    el.textContent = `${FilmsCount.TOTAL} movies inside`;
+    el.textContent = `${this._films.length} movies inside`;
   }
 
   _updateNoFilms(el) {
@@ -97,8 +125,8 @@ export default class PageController {
   }
 
   _updateMainNav(films) {
-    unrender(this._mainNavController._mainNav.getElement());
-    this._mainNavController._mainNav.removeElement();
+    unrender(this._mainNavController.mainNav.getElement());
+    this._mainNavController.mainNav.removeElement();
     this._renderMainNav(films);
   }
 
@@ -113,8 +141,8 @@ export default class PageController {
   }
 
   _renderSearchResults(filmsFound) {
-    this._mainNavController._mainNav.hide();
-    this._sortController._sort.hide();
+    this._mainNavController.mainNav.hide();
+    this._sortController.sort.hide();
 
     // If rendered from prev search - remove
     if (this._searchResultCount) {
@@ -129,37 +157,8 @@ export default class PageController {
     if (!filmsFound.length) {
       this._filmListController.renderSearchMessage();
     } else {
-      this._filmListController._removePrevFeaturedFilms();
+      this._filmListController.removePrevFeaturedFilms();
       this._filmListController.renderFilmListMain(filmsFound);
-    }
-  }
-
-  init() {
-    // Show message if there are no films
-    if (!FilmsCount.TOTAL) {
-      this._renderMessage();
-      this._updateNoFilms(filmsCountEl);
-    } else {
-      // Render page otherwise
-      // Header
-      this._renderSearchQuery();
-      this._renderUser();
-
-      // Controls and layout
-      this._renderMainNav(this._films);
-      this._renderSort();
-      this._renderPageLayout();
-
-      // Statistics
-      this._renderStatistics(this._films);
-
-      // Films list
-      this._filmListController = new FilmListController(this._filmsContainer, this._loadMoreContainer, this._films, this._updateMainNav, this._updateStatistics);
-      this._filmListController.renderFilmListMain(this._films);
-      this._filmListController.renderFeaturedFilms(this._films);
-
-      // Footer
-      this._updateFilmsCount(filmsCountEl);
     }
   }
 
@@ -174,7 +173,7 @@ export default class PageController {
     };
 
     if (e.target.dataset.filterType !== `all`) {
-      this._filmListController._removePrevFeaturedFilms();
+      this._filmListController.removePrevFeaturedFilms();
       this._filmListController.renderFilmListMain(filterMap[e.target.dataset.filterType]);
     } else {
       this._filmListController.renderFilmListMain(filterMap[e.target.dataset.filterType]);
@@ -189,7 +188,7 @@ export default class PageController {
     }
 
     const sortMap = {
-      date: sortByPropUp(this._films, `year`),
+      date: sortByPropDown(this._films, `year`),
       rating: sortByPropDown(this._films, `rating`),
       default: this._films,
     };
@@ -214,9 +213,9 @@ export default class PageController {
   _onSearchReset(e) {
     e.preventDefault();
     // Update search status
-    this._searchController._searchRun = false;
-    this._mainNavController._mainNav.show();
-    this._sortController._sort.show();
+    this._searchController.searchRun = false;
+    this._mainNavController.mainNav.show();
+    this._sortController.sort.show();
     // If rendered from prev search - remove
     if (this._searchResultCount) {
       this._removeSearchResultCount();

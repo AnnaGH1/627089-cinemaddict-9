@@ -6,7 +6,13 @@ export default class MainNavController {
     this._container = container;
     this._films = films;
     this._onFilterClick = onFilterClick;
-    this._mainNav = null;
+    this.mainNav = null;
+  }
+
+  init() {
+    this.mainNav = new MainNav(this._films);
+    this._subscribeOnEvents();
+    render(this._container, this.mainNav.getElement(), Position.AFTERBEGIN);
   }
 
   _removePrevActive() {
@@ -15,7 +21,7 @@ export default class MainNavController {
   }
 
   _subscribeOnEvents() {
-    this._mainNav.getElement()
+    this.mainNav.getElement()
       .addEventListener(`click`, (e) => {
         if (e.target.tagName !== `A`) {
           return;
@@ -45,11 +51,5 @@ export default class MainNavController {
           this._onFilterClick(e);
         }
       });
-  }
-
-  init() {
-    this._mainNav = new MainNav(this._films);
-    this._subscribeOnEvents();
-    render(this._container, this._mainNav.getElement(), Position.AFTERBEGIN);
   }
 }

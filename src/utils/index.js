@@ -1,16 +1,18 @@
-export const Position = {
+const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
 };
-export const Key = {
+const Key = {
   ESCAPE_IE: `Escape`,
   ESCAPE: `Esc`,
   ENTER: `Enter`,
 };
 
-export const isCtrlEnterKeydown = (e) => e.ctrlKey && e.key === Key.ENTER;
+const MINS_IN_HOUR = 60;
 
-export const isCommandEnterKeydown = (e) => e.metaKey && e.key === Key.ENTER;
+const isCtrlEnterKeydown = (e) => e.ctrlKey && e.key === Key.ENTER;
+
+const isCommandEnterKeydown = (e) => e.metaKey && e.key === Key.ENTER;
 
 /**
  * Prepends element to container
@@ -38,7 +40,7 @@ const renderMap = {
  * @param {string} template
  * @return {ChildNode}
  */
-export const createElement = (template) => {
+const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;
   return newElement.firstChild;
@@ -51,14 +53,14 @@ export const createElement = (template) => {
  * @param {string} place
  * @return {*|void}
  */
-export const render = (container, element, place) => renderMap[place](container, element);
+const render = (container, element, place) => renderMap[place](container, element);
 
 /**
  * Unrenders element
  * @param {Element} element
  * @return {Element}
  */
-export const unrender = (element) => element ? element.remove() : element;
+const unrender = (element) => element ? element.remove() : element;
 
 /**
  * Gets random elements from array
@@ -66,7 +68,7 @@ export const unrender = (element) => element ? element.remove() : element;
  * @param {number} count
  * @return {Array}
  */
-export const getRandSelection = (arr, count) => {
+const getRandSelection = (arr, count) => {
   const selection = [];
   while (selection.length < count) {
     selection.push(arr[Math.floor(Math.random() * arr.length)]);
@@ -80,7 +82,7 @@ export const getRandSelection = (arr, count) => {
  * @param {number} max
  * @return {number}
  */
-export const getRandomIntInclusive = (min, max) => {
+const getRandomIntInclusive = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -92,7 +94,7 @@ export const getRandomIntInclusive = (min, max) => {
  * @param {string} flag
  * @return {number}
  */
-export const countByFlag = (films, flag) => films.filter((el) => el[flag]).length;
+const countByFlag = (films, flag) => films.filter((el) => el[flag]).length;
 
 /**
  * Checks user title based on a number of films watched
@@ -100,7 +102,7 @@ export const countByFlag = (films, flag) => films.filter((el) => el[flag]).lengt
  * @param {Object} title
  * @return {boolean}
  */
-export const isHolder = (count, title) => count >= title.min && count <= title.max;
+const isHolder = (count, title) => count >= title.min && count <= title.max;
 
 /**
  * Sorts array elements in descending order by property
@@ -108,15 +110,7 @@ export const isHolder = (count, title) => count >= title.min && count <= title.m
  * @param {string} prop
  * @return {Array}
  */
-export const sortByPropDown = (list, prop) => list.slice().sort((a, b) => b[prop] - a[prop]);
-
-/**
- * Sorts array elements in ascending order by property
- * @param {Array.<Object>} list
- * @param {string} prop
- * @return {Array}
- */
-export const sortByPropUp = (list, prop) => list.slice().sort((a, b) => a[prop] - b[prop]);
+const sortByPropDown = (list, prop) => list.slice().sort((a, b) => b[prop] - a[prop]);
 
 /**
  * Assigns title to user based on a number of films watched
@@ -125,7 +119,7 @@ export const sortByPropUp = (list, prop) => list.slice().sort((a, b) => a[prop] 
  * @param {string} image
  * @return {Object}
  */
-export const defineUser = (count, title, image) => {
+const defineUser = (count, title, image) => {
   const user = {};
   user.url = image;
   for (let key of Object.keys(title)) {
@@ -143,30 +137,50 @@ export const defineUser = (count, title, image) => {
  * @param {number} count
  * @return {string}
  */
-export const getNounForm = (noun, count) => count === 1 ? noun : noun + `s`;
+const getNounForm = (noun, count) => count === 1 ? noun : noun + `s`;
 
 /**
  * Get number of full hours from mins
  * @param {number} mins
  * @return {number}
  */
-export const minsToHours = (mins) => Math.floor(mins / 60);
+const minsToHours = (mins) => Math.floor(mins / MINS_IN_HOUR);
 
 /**
  * Get the remaining number of minutes after full hours
  * @param {number} mins
  * @return {number}
  */
-export const minsToHoursRemainder = (mins) => mins % 60;
+const minsToHoursRemainder = (mins) => mins % MINS_IN_HOUR;
 
 /**
  * Get keys corresponding to the max value in an object
  * @param {Object} object
  * @return {Array}
  */
-export const getMax = (object) => {
+const getMax = (object) => {
   return Object.keys(object).filter((x) => {
     return object[x] === Math.max.apply(null,
         Object.values(object));
   });
+};
+
+export {
+  Position,
+  Key,
+  isCtrlEnterKeydown,
+  isCommandEnterKeydown,
+  createElement,
+  render,
+  unrender,
+  getRandSelection,
+  getRandomIntInclusive,
+  countByFlag,
+  isHolder,
+  sortByPropDown,
+  defineUser,
+  getNounForm,
+  minsToHours,
+  minsToHoursRemainder,
+  getMax,
 };
