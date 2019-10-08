@@ -1,6 +1,6 @@
 import AbstractComponent from '../abstract/abstract-component';
 import {getNounForm, minsToHours, minsToHoursRemainder} from '../../utils';
-import {userScores, emotions} from '../../helper/const';
+import {USER_SCORES, EMOTIONS} from '../../helper/const';
 import moment from 'moment';
 
 export default class FilmPopup extends AbstractComponent {
@@ -124,7 +124,7 @@ export default class FilmPopup extends AbstractComponent {
             </label>
   
             <div class="film-details__emoji-list">
-                ${emotions.map(FilmPopup.getEmotionTemplate).join(``)}
+                ${EMOTIONS.map(FilmPopup.getEmotionTemplate).join(``)}
             </div>
           </div>
         </section>
@@ -156,7 +156,7 @@ export default class FilmPopup extends AbstractComponent {
             <p class="film-details__user-rating-feelings">How you feel it?</p>
 
             <div class="film-details__user-rating-score">
-                ${userScores.map(this._getScoreTemplate).join(``)}
+                ${USER_SCORES.map(this._getScoreTemplate).join(``)}
             </div>
           </section>
         </div>

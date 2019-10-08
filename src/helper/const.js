@@ -3,19 +3,19 @@ import {
   defineUser
 } from '../utils';
 
-export const QUERY_LENGTH_MIN = 3;
-export const IMG_USER = `./images/bitmap@2x.png`;
-export const PromoCategory = {
+const QUERY_LENGTH_MIN = 3;
+const IMG_USER = `./images/bitmap@2x.png`;
+const PromoCategory = {
   RATING: `Top rated`,
   COMMENTS: `Most commented`,
 };
-export const FilmsCount = {
+const FilmsCount = {
   TOTAL: 16,
   PER_PAGE: 5,
   BY_USER: 1,
   FEATURED: 2,
 };
-export const userTitle = {
+const userTitle = {
   novice: {
     title: `Novice`,
     isHolder,
@@ -35,12 +35,12 @@ export const userTitle = {
     max: FilmsCount.TOTAL,
   },
 };
-export const emotions = [`smile`, `sleeping`, `puke`, `angry`];
-export const userScores = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const EMOTIONS = [`smile`, `sleeping`, `puke`, `angry`];
+const USER_SCORES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-export const userType = defineUser(FilmsCount.BY_USER, userTitle, IMG_USER);
+const userType = defineUser(FilmsCount.BY_USER, userTitle, IMG_USER);
 
-export const Stats = {
+const Stats = {
   TIMEFRAME_DEFAULT: `all-time`,
   MILLISECONDS: {
     today: 86400000,
@@ -50,7 +50,7 @@ export const Stats = {
   },
 };
 
-export const RequestType = {
+const RequestType = {
   FILM: `film`,
   COMMENT: {
     ADD: `add`,
@@ -59,12 +59,28 @@ export const RequestType = {
   RATING: `rating`,
 };
 
-export const RESPONSE_STATUS = {
+const RESPONSE_STATUS = {
   SUCCESS: {
     MIN: 200,
     MAX: 299,
   }
 };
 
-export const body = document.querySelector(`body`);
-export const filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
+const body = document.querySelector(`body`);
+const filmsCountEl = document.querySelector(`.footer__statistics`).querySelector(`p`);
+
+export {
+  QUERY_LENGTH_MIN,
+  IMG_USER,
+  PromoCategory,
+  FilmsCount,
+  userTitle,
+  EMOTIONS,
+  USER_SCORES,
+  userType,
+  Stats,
+  RequestType,
+  RESPONSE_STATUS,
+  body,
+  filmsCountEl,
+};
