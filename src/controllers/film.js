@@ -23,6 +23,8 @@ export default class FilmController {
     this._popupForm = null;
     this._commentToDelete = null;
     this._scoreSelected = null;
+    this._updateCommentView = this._updateCommentView.bind(this);
+    this._onCommentDelete = this._onCommentDelete.bind(this);
   }
 
   _uploadFilmChangesPopup() {
@@ -197,21 +199,19 @@ export default class FilmController {
 
     // Remove comment element
     this._popup.getElement()
-      .querySelectorAll(`.film-details__comment`)
+      .querySelectorAll(`.film-details__comment-delete`)
       .forEach((el) => {
-        el.addEventListener(`click`, (e) => {
-          if (e.target.classList.contains(`film-details__comment-delete`)) {
-            e.preventDefault();
-            this._commentToDelete = Number(e.target.parentNode.parentNode.parentNode.id);
-            this._onDataChange(null, RequestType.COMMENT.DELETE, null, null, Number(this._commentToDelete), this._updateCommentView.bind(this));
-          }
-        });
+        el.addEventListener(`click`, this._onCommentDelete);
       });
   }
 
   _updateCommentView() {
-    // Remove comment element
     const commentEl = document.getElementById(this._commentToDelete);
+    const commentDelEl = commentEl.querySelector(`.film-details__comment-delete`);
+    // Remove event listener from delete btn
+    commentDelEl.removeEventListener(`click`, this._onCommentDelete);
+
+    // Remove comment element
     commentEl.parentNode.removeChild(commentEl);
     this._commentToDelete = null;
     // Update comments count
@@ -441,6 +441,12 @@ export default class FilmController {
     this._commentInput.classList.remove(`film-details__comment-input--error`);
 
     this._onDataChange(entry, RequestType.COMMENT.ADD, this._data.id, this._renderNewComment.bind(this), null, null, this._showCommentError.bind(this));
+  }
+
+  _onCommentDelete(e) {
+    e.preventDefault();
+    this._commentToDelete = Number(e.target.parentNode.parentNode.parentNode.id);
+    this._onDataChange(null, RequestType.COMMENT.DELETE, null, null, this._commentToDelete, this._updateCommentView);
   }
 
   _onScoreClick(e) {
