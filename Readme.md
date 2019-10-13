@@ -1,52 +1,17 @@
-# Личный проект «Киноман» [![Build status][travis-image]][travis-url]
+# Cinemaddict
+Academic project - Professional JavaScript (level 2) from [HTML Academy](https://htmlacademy.ru).
 
-* Студент: [Анна Беккаревич](https://htmlacademy.ru/profile/id627089).
-* Наставник: [Артём Рудов](https://htmlacademy.ru/profile/id345377).
+#### 1. Project Overview
+Application for movie fans where users can create movie lists, rate watched movies and add comments. Movies can be sorted and filtered. Statistics bar chart provides a summary of watched movies based on a selected time period.
 
----
+This application is written in the object-oriented programming (OOP) style in vanilla JavaScript (ES6) and it implements a Model-View-Presenter (MVP) design pattern.
 
-_Не удаляйте и не изменяйте папки и файлы:_
-_`.editorconfig`, `.gitattributes`, `.gitignore`, `.travis.yml`, `package.json`._
+#### 2. Dependencies
+* [Chart.js](https://www.chartjs.org)
+* [Moment.js](https://momentjs.com)
+* [DOMPurify](https://github.com/cure53/DOMPurify)
 
----
-
-### Памятка
-
-#### 1. Зарегистрируйтесь на Гитхабе
-
-Если у вас ещё нет аккаунта на [github.com](https://github.com/join), скорее зарегистрируйтесь.
-
-#### 2. Создайте форк
-
-Откройте репозиторий и нажмите кнопку «Fork» в правом верхнем углу. Репозиторий из Академии будет скопирован в ваш аккаунт.
-
-<img width="769" alt="Press 'Fork'" src="https://cloud.githubusercontent.com/assets/259739/20264045/a1ddbf40-aa7a-11e6-9a1a-724a1c0123c8.png">
-
-Получится вот так:
-
-<img width="769" alt="Forked" src="https://cloud.githubusercontent.com/assets/259739/20264122/f63219a6-aa7a-11e6-945a-89818fc7c014.png">
-
-#### 3. Клонируйте репозиторий на свой компьютер
-
-Будьте внимательны: нужно клонировать свой репозиторий (форк), а не репозиторий Академии. Также обратите внимание, что клонировать репозиторий нужно через SSH, а не через HTTPS. Нажмите зелёную кнопку в правой части экрана, чтобы скопировать SSH-адрес вашего репозитория:
-
-<img width="769" alt="SSH" src="https://cloud.githubusercontent.com/assets/259739/20264180/42704126-aa7b-11e6-9ab4-73372b812a53.png">
-
-Клонировать репозиторий можно так:
-
-```
-git clone SSH-адрес_вашего_форка
-```
-
-Команда клонирует репозиторий на ваш компьютер и подготовит всё необходимое для старта работы.
-
-#### 4. Начинайте обучение!
-
----
-
-<a href="https://htmlacademy.ru/intensive/ecmascript"><img align="left" width="50" height="50" title="HTML Academy" src="https://up.htmlacademy.ru/static/img/intensive/ecmascript/logo-for-github.svg"></a>
-
-Репозиторий создан для обучения на интенсивном онлайн‑курсе «[Профессиональный JavaScript, уровень 2](https://htmlacademy.ru/intensive/ecmascript)» от [HTML Academy](https://htmlacademy.ru).
-
-[travis-image]: https://travis-ci.com/htmlacademy-ecmascript/627089-cinemaddict-9.svg?branch=master
-[travis-url]: https://travis-ci.com/htmlacademy-ecmascript/627089-cinemaddict-9
+#### 3. Getting started
+* Download the project
+* Install all dependencies by running `npm install` from the root folder
+* Run `npm start` to launch a development server
